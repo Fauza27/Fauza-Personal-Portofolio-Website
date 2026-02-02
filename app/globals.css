@@ -1,26 +1,242 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+/* Deep Aurora Glass Design System */
+
+@theme {
+  /* Deep Aurora Color Palette */
+  --color-background: oklch(0.15 0.05 280);
+  --color-background-secondary: oklch(0.18 0.04 260);
+  --color-foreground: oklch(0.98 0 0);
+
+  --color-card: oklch(0.18 0.03 280);
+  --color-card-foreground: oklch(0.98 0 0);
+
+  --color-popover: oklch(0.16 0.03 280);
+  --color-popover-foreground: oklch(0.98 0 0);
+
+  /* Electric Purple Primary */
+  --color-primary: oklch(0.7 0.25 270);
+  --color-primary-foreground: oklch(1 0 0);
+
+  /* Cyan Secondary */
+  --color-secondary: oklch(0.7 0.2 180);
+  --color-secondary-foreground: oklch(0.15 0.05 280);
+
+  /* Muted for subtle elements */
+  --color-muted: oklch(0.25 0.02 260);
+  --color-muted-foreground: oklch(0.6 0.01 260);
+
+  /* Magenta Accent */
+  --color-accent: oklch(0.7 0.25 300);
+  --color-accent-foreground: oklch(1 0 0);
+
+  --color-destructive: oklch(0.6 0.2 0);
+  --color-destructive-foreground: oklch(1 0 0);
+
+  /* Aurora gradient colors */
+  --color-aurora-purple: oklch(0.6 0.3 270);
+  --color-aurora-cyan: oklch(0.7 0.2 180);
+  --color-aurora-magenta: oklch(0.65 0.28 300);
+  --color-aurora-indigo: oklch(0.5 0.15 240);
+
+  /* Status colors */
+  --color-success: oklch(0.65 0.2 142);
+  --color-warning: oklch(0.7 0.2 45);
+
+  /* Border radius */
+  --radius: 1rem;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+  body {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    background: linear-gradient(
+      135deg,
+      oklch(0.15 0.05 280) 0%,
+      oklch(0.18 0.04 260) 50%,
+      oklch(0.18 0.03 240) 100%
+    );
+    min-height: 100vh;
+    color: var(--color-foreground);
+  }
+
+  ::selection {
+    background: color-mix(in oklch, var(--color-primary) 30%, transparent);
+    color: var(--color-foreground);
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@layer components {
+  /* Glassmorphism Card */
+  .glass {
+    position: relative;
+    background: color-mix(in oklch, white 5%, transparent);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid color-mix(in oklch, white 10%, transparent);
+  }
+
+  .glass-strong {
+    background: color-mix(in oklch, black 30%, transparent);
+    backdrop-filter: blur(30px);
+    -webkit-backdrop-filter: blur(30px);
+    border: 1px solid color-mix(in oklch, white 15%, transparent);
+  }
+
+  /* Aurora glow effects */
+  .glow-purple {
+    box-shadow: 0 0 60px color-mix(in oklch, var(--color-aurora-purple) 30%, transparent),
+                0 0 100px color-mix(in oklch, var(--color-aurora-purple) 10%, transparent);
+  }
+
+  .glow-cyan {
+    box-shadow: 0 0 60px color-mix(in oklch, var(--color-aurora-cyan) 30%, transparent),
+                0 0 100px color-mix(in oklch, var(--color-aurora-cyan) 10%, transparent);
+  }
+
+  .glow-magenta {
+    box-shadow: 0 0 60px color-mix(in oklch, var(--color-aurora-magenta) 30%, transparent),
+                0 0 100px color-mix(in oklch, var(--color-aurora-magenta) 10%, transparent);
+  }
+
+  /* Text gradient */
+  .text-gradient {
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+    background-image: linear-gradient(
+      135deg,
+      var(--color-primary) 0%,
+      var(--color-secondary) 50%,
+      var(--color-accent) 100%
+    );
+  }
+
+  .text-gradient-subtle {
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+    background-image: linear-gradient(
+      90deg,
+      var(--color-foreground) 0%,
+      var(--color-muted-foreground) 100%
+    );
+  }
+
+  /* Dock item */
+  .dock-item {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 0.75rem;
+    transition: all 300ms ease-out;
+  }
+
+  .dock-item:hover {
+    transform: scale(1.25) translateY(-0.5rem);
+  }
+
+  .dock-item::before {
+    content: '';
+    position: absolute;
+    bottom: -0.25rem;
+    width: 0.25rem;
+    height: 0.25rem;
+    border-radius: 9999px;
+    background-color: rgb(255 255 255 / 0.5);
+    opacity: 0;
+    transition: opacity 150ms;
+  }
+
+  .dock-item.active::before {
+    opacity: 1;
+  }
+
+  /* Scrollbar styling */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: var(--color-muted);
+    border-radius: 3px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--color-muted-foreground);
+  }
+
+  /* Bento grid */
+  .bento-grid {
+    display: grid;
+    gap: 0.75rem;
+    grid-template-columns: 1fr;
+    grid-template-rows: auto;
+  }
+
+  @media (min-width: 640px) {
+    .bento-grid {
+      gap: 1rem;
+      grid-template-columns: repeat(2, 1fr);
+      grid-template-rows: repeat(3, minmax(120px, auto));
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .bento-grid {
+      grid-template-columns: repeat(4, 1fr);
+      grid-template-rows: repeat(3, minmax(120px, auto));
+    }
+  }
+
+  /* Marquee animation */
+  @keyframes marquee {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+  }
+
+  .animate-marquee {
+    animation: marquee 20s linear infinite;
+  }
+
+  /* Pulse animation */
+  @keyframes pulse-glow {
+    0%, 100% { opacity: 1; box-shadow: 0 0 8px var(--color-success); }
+    50% { opacity: 0.6; box-shadow: 0 0 16px var(--color-success); }
+  }
+
+  .pulse-status {
+    animation: pulse-glow 2s ease-in-out infinite;
+  }
+
+  /* Hide scrollbar utility */
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Disable animations for users who prefer reduced motion */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
 }

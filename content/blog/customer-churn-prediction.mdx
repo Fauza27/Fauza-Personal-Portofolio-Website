@@ -1,0 +1,242 @@
+---
+title: "Customer Churn Prediction: First ML Project"
+date: "2024-01-15"
+excerpt: "My journey learning machine learning from scratch, building a churn prediction system with 82.8% recall and deploying to production"
+author: "Muhammad Fauza"
+tags: ["Machine Learning", "Python", "Scikit-learn", "Streamlit", "SMOTE"]
+readTime: "10 min read"
+featured: true
+---
+
+## Starting from Zero
+
+This was my first machine learning project in 2024. I started with zero ML knowledge - didn't know what overfitting was, how models trained, or even basic terminology.
+
+What I did know: "ML can predict things from data." And I wanted to build something real, not just follow tutorials.
+
+I chose churn prediction because:
+- Clear use case (predict customers who will leave)
+- Available dataset (Telco Customer Churn from Kaggle)
+- Measurable business impact (save customers = save money)
+
+## The Problem
+
+Customer churn is expensive. Losing customers means:
+- Lost recurring revenue
+- Wasted acquisition costs (CAC is 5-10x more expensive than retention)
+- Potential negative word-of-mouth
+
+If we can predict who will churn before they leave, companies can intervene early: offer promotions, improve service, or provide better plans.
+
+## Dataset: Telco Customer Churn
+
+Kaggle dataset with 7,043 telecom customers. Features include:
+- Demographics (gender, senior citizen, partner, dependents)
+- Services (phone, internet, online security, tech support)
+- Account info (tenure, contract, payment method, charges)
+- Target: Churn (Yes/No)
+
+**First challenge**: Imbalanced dataset.
+- 73% didn't churn
+- 27% churned
+
+If the model just predicts "everyone stays", accuracy would be 73%. But that's useless.
+
+## Key Insights from EDA
+
+**Contract Type Impact**:
+- Month-to-month: 42.7% churn rate
+- One year: 11.3% churn rate
+- Two year: 2.8% churn rate
+
+Insight: Long-term contracts drastically reduce churn.
+
+**Tenure Impact**:
+- 0-12 months: 47.7% churn rate
+- 12-24 months: 35.2% churn rate
+- 24+ months: 15.5% churn rate
+
+Insight: New customers are highest risk.
+
+**Payment Method Impact**:
+- Electronic check: 45.3% churn rate
+- Mailed check: 19.1% churn rate
+- Bank transfer: 16.7% churn rate
+- Credit card: 15.2% churn rate
+
+Insight: Electronic check users churn most. Why? Probably easier to cancel.
+
+## Feature Engineering
+
+Created derived features to give the model more signal:
+
+**Customer Lifetime Value (CLV)**:
+```python
+data['CLV'] = data['tenure'] * data['MonthlyCharges']
+```
+
+**Average Monthly Charges**:
+```python
+data['AvgMonthlyCharges'] = data['TotalCharges'] / (data['tenure'] + 1)
+```
+
+**Tenure Groups**:
+```python
+data['TenureGroup'] = pd.cut(data['tenure'], bins=[0, 12, 24, 60, 72], 
+                               labels=['0-1 year', '1-2 years', '2-5 years', '5-6 years'])
+```
+
+These helped the model capture non-linear relationships.
+
+## Handling Class Imbalance: SMOTE
+
+This was the trickiest part. Training on imbalanced data causes model bias toward the majority class.
+
+**Solution**: SMOTE (Synthetic Minority Over-sampling Technique).
+
+```python
+from imblearn.over_sampling import SMOTE
+
+smote = SMOTE(random_state=42)
+X_train_balanced, y_train_balanced = smote.fit_resample(X_train, y_train)
+```
+
+SMOTE creates synthetic samples from the minority class (churners) by interpolating between existing samples.
+
+After SMOTE:
+- Training set balanced (50-50)
+- Test set kept original distribution (for realistic evaluation)
+
+## Model Selection
+
+Tested multiple models:
+
+| Model | Recall | Precision | F1-Score |
+|-------|--------|-----------|----------|
+| Logistic Regression | 82.8% | 65.7% | 73.3% |
+| Random Forest | 78.5% | 68.2% | 73.0% |
+| Gradient Boosting | 79.3% | 67.5% | 73.0% |
+
+**Winner**: Logistic Regression.
+
+Surprising? Yes. Complex models (RF, GB) didn't necessarily perform better. For this dataset, a simple linear model worked best.
+
+## Why Optimize for Recall?
+
+In churn prediction, **recall is more important than precision**.
+
+**Recall**: Of all churners, how many did we catch?
+**Precision**: Of all predicted churners, how many actually churned?
+
+**Trade-off**:
+- High recall, low precision: Many false positives (predict churn but they don't)
+- Low recall, high precision: Many false negatives (miss actual churners)
+
+**Business perspective**: Missing a churner (false negative) is more expensive than a false alarm (false positive).
+
+False positive: Give promo to someone who won't churn. Worst case: waste promo budget.
+
+False negative: Miss someone who will churn. Worst case: lose customer permanently.
+
+That's why I optimized for 82.8% recall, even though precision is only 65.7%.
+
+## Feature Importance
+
+From Logistic Regression coefficients, top predictors:
+
+- **Contract_Month-to-month** (0.89): Strongest predictor
+- **tenure** (0.67): Longer tenure = lower churn
+- **TotalCharges** (0.54): Higher total spend = lower churn
+- **InternetService_Fiber optic** (0.48): Fiber users churn more (interesting!)
+- **PaymentMethod_Electronic check** (0.42): High churn payment method
+
+These are actionable insights for business.
+
+## Deployment: Streamlit App
+
+A good model is useless if it can't be used. I built an interactive dashboard with Streamlit.
+
+**Features**:
+- Input customer data (contract type, tenure, charges, services)
+- Get instant prediction (Churn / No Churn)
+- See probability score (0-100%)
+- View feature importance
+- Batch prediction (upload CSV)
+
+Deployed to Streamlit Cloud - free hosting, auto-deploy from GitHub.
+
+## Business Recommendations
+
+From the analysis, actionable recommendations:
+
+### Contract Strategy
+**Finding**: Month-to-month contracts have 42.7% churn rate.
+
+**Action**:
+- Incentivize yearly contracts (10-15% discount)
+- Auto-upgrade offers after 6 months
+- Lock-in promotions
+
+**Expected Impact**: 30-40% reduction in churn.
+
+### New Customer Onboarding
+**Finding**: Customers with tenure under 12 months are highest risk.
+
+**Action**:
+- Enhanced onboarding program
+- Check-in calls at month 3, 6, 9
+- Early loyalty rewards
+
+**Expected Impact**: 25% improvement in 1-year retention.
+
+### Payment Method Optimization
+**Finding**: Electronic check users have 45.3% churn rate.
+
+**Action**:
+- Encourage auto-pay (credit card, bank transfer)
+- Offer small discount for switching payment method
+- Improve payment experience
+
+**Expected Impact**: 15-20% churn reduction in this segment.
+
+## Lessons Learned
+
+### Simple Models Can Win
+Logistic Regression outperformed Random Forest and Gradient Boosting. Don't assume complex = better.
+
+### Domain Knowledge Matters
+Understanding telco business helped in feature engineering (CLV, tenure groups) and making actionable recommendations.
+
+### Recall > Accuracy for Churn
+Optimizing for recall makes business sense. Missing a churner is expensive.
+
+### SMOTE is Powerful
+Handling class imbalance properly improved recall from 65% to 82.8%.
+
+### Deployment Matters
+An undeployed model = useless model. Streamlit made deployment easy.
+
+## What I'd Do Differently
+
+If starting again, I would:
+- Experiment with threshold tuning (default 0.5 might not be optimal)
+- Try ensemble methods (combine multiple models)
+- Add more temporal features (seasonality, trends)
+- Implement A/B testing framework to measure actual impact
+
+## Personal Reflection
+
+This project taught me that ML isn't just about models. It's more about:
+- Understanding the problem
+- Exploring the data
+- Feature engineering
+- Handling real-world issues (imbalance, deployment)
+- Communicating results to non-technical stakeholders
+
+And most importantly: **ship it**. Better to have an imperfect model in production than a perfect model in a notebook.
+
+**Live Demo**: [https://customer-churn-fauza.streamlit.app/](https://customer-churn-fauza.streamlit.app/)
+
+---
+
+*For other projects, see [Food Recommendation Chatbot](/blog/food-recommendation-chatbot), [Sales Forecasting](/blog/sales-forecasting), and [Sentinel Predictive Maintenance](/blog/sentinel-predictive-maintenance).*

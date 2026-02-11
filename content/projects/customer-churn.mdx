@@ -1,0 +1,109 @@
+---
+title: "Customer Churn Prediction System"
+category: "Machine Learning & Analytics"
+description: "End-to-end ML system dengan 82.8% recall, SMOTE untuk class imbalance, dan interactive Streamlit dashboard"
+tech: ["Python", "Scikit-learn", "Streamlit", "Pandas", "SMOTE", "Docker"]
+year: "2024"
+demo: "https://customer-churn-fauza.streamlit.app/"
+github: "https://github.com/Fauza27/Customer-Churn-Project"
+---
+
+## Technical Highlights
+
+**Complete ML Pipeline**: End-to-end development dari EDA, feature engineering, model training, hyperparameter tuning, hingga production deployment.
+
+**Class Imbalance Handling**: SMOTE implementation untuk handle 73-27 imbalanced dataset, improving recall dari 65% ke 82.8%.
+
+**Model Optimization**: Systematic comparison 5+ algorithms (Logistic Regression, Random Forest, Gradient Boosting, SVM, XGBoost) dengan focus pada recall optimization.
+
+**Production Deployment**: Interactive Streamlit dashboard dengan real-time prediction, batch processing, dan business insights visualization.
+
+## Skills Demonstrated
+
+### Machine Learning
+- **Classification Models**: Logistic Regression, Random Forest, Gradient Boosting, SVM, XGBoost
+- **Class Imbalance**: SMOTE (Synthetic Minority Over-sampling Technique)
+- **Feature Engineering**: CLV calculation, tenure grouping, derived features
+- **Model Evaluation**: Precision, Recall, F1-Score, ROC-AUC, Confusion Matrix
+- **Hyperparameter Tuning**: GridSearchCV untuk optimal parameters
+
+### Data Science
+- **Exploratory Data Analysis**: Statistical analysis, distribution analysis, correlation study
+- **Feature Selection**: Identify top predictors dengan feature importance
+- **Data Preprocessing**: Encoding categorical variables, scaling numerical features
+- **Validation Strategy**: Train-test split, cross-validation
+
+### Software Engineering
+- **Python Development**: Clean, modular code dengan proper documentation
+- **Model Persistence**: Pickle untuk model serialization
+- **Interactive Dashboard**: Streamlit untuk user-friendly interface
+- **Deployment**: Streamlit Cloud deployment dengan CI/CD
+
+### Business Analytics
+- **Actionable Insights**: Translate model results ke business recommendations
+- **Cost-Benefit Analysis**: Calculate ROI dari churn prevention
+- **Stakeholder Communication**: Present technical results untuk non-technical audience
+
+## Model Performance
+
+**Optimized for Recall**: 82.8% recall (catch 83 dari 100 churners)
+- Precision: 65.7%
+- F1-Score: 73.3%
+- ROC-AUC: 86.0%
+- Response Time: Under 100ms
+
+**Why Recall?** Dalam churn prediction, missing a churner (false negative) lebih mahal daripada false alarm (false positive). Better kasih promo ke non-churner daripada lose actual churner.
+
+## Feature Engineering
+
+**Derived Features**:
+- **CLV (Customer Lifetime Value)**: tenure × MonthlyCharges
+- **AvgMonthlyCharges**: TotalCharges / (tenure + 1)
+- **TenureGroup**: Categorical grouping (0-1 year, 1-2 years, etc.)
+
+**Top Predictors**:
+- Contract_Month-to-month (0.89 coefficient)
+- tenure (0.67)
+- TotalCharges (0.54)
+- InternetService_Fiber optic (0.48)
+- PaymentMethod_Electronic check (0.42)
+
+## Technical Challenges Solved
+
+**Class Imbalance**: Dataset 73% non-churn, 27% churn. Model bias ke majority class. Solution: SMOTE untuk synthetic oversampling, improving recall dari 65% ke 82.8%.
+
+**Model Selection**: Tested 5+ algorithms. Surprisingly, simple Logistic Regression outperformed complex models (RF, GB). Lesson: simple models often generalize better dengan limited data.
+
+**Feature Engineering**: Created derived features (CLV, AvgMonthlyCharges, TenureGroup) yang significantly improve model performance.
+
+**Deployment**: Built interactive Streamlit dashboard yang bisa dipakai non-technical users. Include batch prediction, visualization, dan business recommendations.
+
+## Business Impact
+
+**Churn Drivers Identified**:
+- Month-to-month contracts: 42.7% churn rate (3x higher than yearly)
+- New customers (under 12 months): 47.7% churn rate
+- Electronic check users: 45.3% churn rate
+
+**Actionable Recommendations**:
+- Incentivize yearly contracts (expected 30-40% churn reduction)
+- Enhanced onboarding untuk new customers (25% retention improvement)
+- Encourage auto-pay methods (15-20% churn reduction)
+
+**ROI**: Dengan 82.8% recall, perusahaan bisa identify dan retain 83 dari 100 potential churners. Assuming $500 CAC dan $50/month revenue, ROI bisa reach $500K+ annually.
+
+## Architecture
+
+**Data Pipeline**: Load → Clean → Feature Engineering → SMOTE → Train → Evaluate → Deploy
+
+**Model Training**: Systematic comparison dengan consistent evaluation metrics. GridSearchCV untuk hyperparameter tuning.
+
+**Deployment**: Streamlit dashboard dengan:
+- Single prediction (input form)
+- Batch prediction (CSV upload)
+- Feature importance visualization
+- Business insights dashboard
+
+**Live Demo**: [https://customer-churn-fauza.streamlit.app/](https://customer-churn-fauza.streamlit.app/)
+
+**Read Full Story**: [Blog Post](/blog/customer-churn-prediction)

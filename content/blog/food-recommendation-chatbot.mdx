@@ -1,0 +1,188 @@
+---
+title: "From Food Confusion to AI Chatbot"
+date: "2025-11-03"
+excerpt: "Journey of building a context-aware RAG chatbot for food recommendations, while reviving 500+ Instagram reviews buried by algorithms"
+author: "Muhammad Fauza"
+tags: ["AI", "LangChain", "RAG", "FastAPI", "Next.js", "Vector Database", "Chatbot"]
+readTime: "12 min read"
+featured: true
+---
+
+## The Problem: Decision Paralysis
+
+It started simple: being confused about what to eat.
+
+A classic problem, but it happens almost every day. Especially when you have to think about:
+- What time is it now?
+- What's my budget?
+- Do I want a full meal or just a snack?
+- Am I in the mood for healthy or "cheat day"?
+
+From there came the question: "Why not build a system that can help with this?"
+
+Not just a chatbot that answers randomly, but a system that truly understands context and makes decisions based on data.
+
+## Why Not Just a Regular Chatbot?
+
+Many AI chatbots can answer questions about food. The problem is, the answers are often made up.
+
+If asked:
+"Recommend lunch under 30k in Samarinda"
+
+A pure LLM might answer confidently, but the data source is unclear.
+
+At this point I realized: if I want relevant results, the LLM needs to be given the right context.
+
+This is where I started using the Retrieval-Augmented Generation (RAG) approach.
+
+## Architecture: How This System Works
+
+In broad strokes, the flow is like this:
+
+1. User sends a question via UI chat
+2. Backend receives and processes the query
+3. System performs semantic search to vector database
+4. Relevant data is inserted into the prompt
+5. LLM generates an answer based on that context
+6. Response is sent to frontend via streaming
+
+This approach makes answers:
+- More accurate
+- Traceable to sources
+- Much more sensible for real use cases
+
+## Building the RAG Pipeline (and Its Challenges)
+
+Conceptually RAG looks simple. But when implemented, there are many technical decisions that must be made.
+
+Some things I learned:
+
+### Data is More Important Than the Model
+
+No matter how good the model is, it will still produce bad output if:
+- The retrieval data is wrong
+- The embeddings are not representative
+- The data chunking is arbitrary
+
+I spent quite a bit of time just to:
+- Experiment with chunk sizes
+- Overlap strategies
+- And how to structure metadata
+
+### Context Window is Expensive
+
+Adding too much context to the prompt is safe, but:
+- Latency increases
+- Token costs rise
+- And sometimes it actually makes answers blurry
+
+The solution isn't "add everything", but choose the most relevant context.
+
+### Streaming is Important for UX
+
+Without streaming, the chatbot feels "silent" for a few seconds. With streaming response:
+- Users feel the system is working
+- The chat experience feels much more natural
+
+I used Server-Sent Events (SSE) to send tokens gradually to the frontend.
+
+## Data Pipeline: From Instagram to Structured Knowledge
+
+**Challenge**: 637 Instagram posts with 806 columns, inconsistent format, info scattered across captions/videos/hashtags.
+
+**Solution**:
+- Automated extraction with regex patterns (location, hours, menu)
+- Video transcription with Whisper AI (78% success rate on 500+ videos)
+- Data validation and cleaning pipeline
+- Structured metadata for efficient retrieval
+
+**Results**: 806 columns → 18 relevant features, 500+ videos transcribed, ready for production RAG system.
+
+### Cookie Rotation for Rate Limits
+
+Instagram has strict rate limits. Downloading 500+ videos would get blocked quickly.
+
+**Solution**: Implemented smart cookie rotation with 3+ accounts, random delays, and retry logic. This allowed me to download all videos without permanent blocks.
+
+## Tech Stack Used
+
+### Backend
+- FastAPI
+- LangChain for RAG orchestration
+- Vector Database (Qdrant)
+- Multiple LLM providers (AWS Bedrock - Claude 3.5 Sonnet)
+- Docker for environment consistency
+
+### Frontend
+- Next.js 14 (App Router)
+- TypeScript
+- Tailwind CSS
+- Deployed on Vercel
+
+## What I Deliberately Didn't Pursue
+
+In this project, I didn't focus on:
+- Training models from scratch
+- Large-scale fine-tuning
+- Extreme optimization in the early stages
+
+The simple reason: my main goal was to build an AI system that could be used, not just a demo.
+
+## Multi-Stage Retrieval Strategy
+
+Implemented a fallback mechanism to ensure always relevant results:
+
+1. **Strict filter**: Time-based + location + budget
+2. **Relaxed filter**: Remove budget constraint
+3. **General search**: Semantic search only
+
+This ensures 100% response rate while maintaining relevance.
+
+## Context-Aware Filtering
+
+Automatic time-based categorization:
+- Morning (06:00-10:00): Breakfast recommendations
+- Lunch (11:00-14:00): Full meals
+- Afternoon (15:00-17:00): Snacks and coffee
+- Dinner (18:00-21:00): Dinner options
+- Late night (21:00+): Late-night spots
+
+No manual filters needed - the system understands context from the query and current time.
+
+## Rich Metadata Response
+
+Each recommendation includes:
+- Instagram link to original post
+- Google Maps link for navigation
+- Menu items and prices
+- Operating hours
+- Location details
+
+Not just text recommendations - actionable information.
+
+## Impact & Metrics
+
+- **Response Time**: Under 2 seconds (perceived latency with streaming)
+- **Accuracy**: 100% grounded responses (no hallucination)
+- **Coverage**: 500+ food places in Samarinda with rich metadata
+- **Transcription**: 78% video transcription success rate (500/637 videos)
+- **Extraction**: 70% location, 50% hours, 94% hashtags extraction success
+
+## Personal Reflection
+
+This project taught me that building AI is:
+- Not just about models
+- But about architecture, trade-offs, and UX
+
+And often, the most important decisions are actually outside the model itself.
+
+If this system is developed further someday, I want to:
+- Enrich data sources
+- Improve personalization
+- And add a feedback loop from users
+
+**Live Demo**: [https://food-recomendation-chatbot.vercel.app](https://food-recomendation-chatbot.vercel.app)
+
+---
+
+*For other projects, see [Customer Churn Prediction](/blog/customer-churn-prediction), [Sales Forecasting](/blog/sales-forecasting), and [Sentinel Predictive Maintenance](/blog/sentinel-predictive-maintenance).*

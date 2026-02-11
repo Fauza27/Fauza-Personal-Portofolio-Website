@@ -1,0 +1,263 @@
+---
+title: "Sentinel: Building a Multi-Agent AI System for Predictive Maintenance"
+date: "2025-12-20"
+excerpt: "Journey of building a production-grade AI system with 10 specialized agents, 18K+ lines of code, and 95.45% recall for industrial predictive maintenance"
+author: "Muhammad Fauza"
+tags: ["AI", "LangGraph", "XGBoost", "FastAPI", "MLOps", "Multi-Agent Systems"]
+readTime: "15 min read"
+featured: true
+---
+
+## The Challenge: Industrial Predictive Maintenance
+
+Sentinel was built as the capstone project for the ASAH program (Dicoding × Accenture) - a 5-month intensive AI engineering bootcamp.
+
+The problem: Industrial equipment failures are expensive. A single unplanned downtime can cost $260,000 per hour. Traditional maintenance approaches are either:
+- **Reactive**: Fix after it breaks (expensive, dangerous)
+- **Preventive**: Fixed schedule maintenance (wasteful, still misses failures)
+
+**Predictive maintenance** is the solution: use data to predict failures before they happen.
+
+But there's a bigger challenge: maintenance engineers need to:
+- Query complex databases
+- Analyze sensor data
+- Make scheduling decisions
+- Generate reports
+- Retrain ML models
+
+All of this requires technical expertise. What if we could make it conversational?
+
+## The Vision: AI Copilot for Maintenance Engineers
+
+Instead of building just a prediction model, we built a complete AI copilot that can:
+- Answer questions in natural language (Indonesian/English)
+- Query databases without SQL knowledge
+- Predict equipment failures
+- Optimize maintenance schedules
+- Search knowledge bases (SOPs, manuals)
+- Generate reports
+- Even retrain its own ML model
+
+All through a chat interface.
+
+## Architecture: 10 Specialized AI Agents
+
+We used LangGraph to orchestrate 10 specialized agents, each with a specific role:
+
+### Agent A: Knowledge Base Search (qdrant_search)
+Semantic search through SOPs, manuals, and FAQs using Qdrant vector database.
+
+### Agent B: Database Query (database_query)
+Natural language to SQL with temporal context parsing. Understands "today", "last week", "this month".
+
+### Agent C: Predictive Maintenance (predictive_maintenance)
+XGBoost model with 95.45% recall, 87.2% precision. Predicts failures 3-7 days ahead.
+
+### Agent D: Web Search (web_search)
+Latest information from the internet using Tavily API for up-to-date technical info.
+
+### Agent E: Optimization Engine (optimization_engine)
+Schedule optimization with priority scoring, budget constraints, and technician availability.
+
+### Agent F: Simulation Engine (simulation_engine)
+What-if analysis for delay impact (cost increase, risk level).
+
+### Agent G: Feedback Loop Analyzer (feedback_loop_analyzer)
+Model performance monitoring with drift detection using KS-test.
+
+### Agent H: Intelligent Retrainer (intelligent_retrainer)
+Automated model retraining with comparison and deployment.
+
+### Agent I: Report Generator (report_generator)
+PDF report generation with charts and insights.
+
+### Agent J: Ticket Creator (ticket_creator)
+Natural language ticket creation with multi-turn conversation.
+
+## The ML Model: XGBoost with 95.45% Recall
+
+**Why high recall?** In predictive maintenance, missing a failure can be catastrophic:
+- Safety risks (equipment explosion, worker injury)
+- $260K/hour downtime cost
+- Production delays
+
+Better to have false positives (unnecessary maintenance) than false negatives (missed failures).
+
+### Model Performance
+
+**XGBoost V3**:
+- Recall: 95.45% (catch 95 out of 100 failures)
+- Precision: 87.2%
+- F1-Score: 91.2%
+- ROC-AUC: 96.8%
+
+### Feature Engineering
+
+44 engineered features including:
+- Raw sensor values (temperature, RPM, torque, vibration, pressure)
+- Rolling averages (3, 7, 14 days)
+- Rate of change
+- Interaction terms (temp × RPM)
+- Statistical features (std, min, max)
+
+## Technical Challenges Solved
+
+### Multi-Agent Coordination
+
+10 agents need to collaborate without conflict. How do you ensure:
+- Agents don't call each other infinitely?
+- State is managed correctly across agents?
+- Errors are handled gracefully?
+
+**Solution**: LangGraph state machine with conditional routing and agent collaboration protocol.
+
+### State Management
+
+Complex state across agents with retry logic. One agent's output becomes another's input.
+
+**Solution**: TypedDict state schema with proper error handling and state validation.
+
+### Bilingual Support
+
+System needs to understand both Indonesian and English, with context-aware detection.
+
+**Solution**: LLM-based language detection with conversation history context. Cache detection results to save costs.
+
+### Cost Optimization
+
+AWS Bedrock charges per token. With 10 agents and long conversations, costs can explode.
+
+**Solution**:
+- Cache language detection
+- Optimize prompt length
+- Monitor usage with alerts
+- Use streaming to show progress (better UX, same cost)
+
+### Production Deployment
+
+Environment management, database migrations, monitoring, all while maintaining zero downtime.
+
+**Solution**:
+- Docker containerization
+- CI/CD pipeline with GitHub Actions
+- Comprehensive logging
+- Blue-green deployment for model updates
+
+## The Codebase: 18,000+ Lines
+
+**backend.py** (~2,000 lines):
+- REST API with FastAPI
+- PostgreSQL database with SQLAlchemy 2.0
+- JWT authentication with Argon2 password hashing
+- 30+ endpoints across 6 modules
+
+**main.py** (~10,000 lines):
+- AI chatbot with 10 agents
+- LangGraph orchestration
+- State management
+- Agent collaboration protocol
+
+**app.py** (~200 lines):
+- Unified entry point
+- Environment management
+
+**Database**: 8 tables with complex relationships
+- users, authentication, machine_sensor_data
+- scheduled_maintenance, machine_data_backup
+- chat_thread, chat_message, simulation_history
+
+## MLOps Pipeline
+
+Complete MLOps setup with:
+- **MLflow + DagSHub**: Experiment tracking and model versioning
+- **Automated Retraining**: Triggered by performance degradation or data drift
+- **Drift Detection**: KS-test to detect distribution changes
+- **Model Monitoring**: Performance metrics tracking, feature importance analysis
+- **Blue-Green Deployment**: Zero-downtime model updates
+
+## Team Leadership
+
+**Role**: Team lead (ketua kelompok) in ASAH program
+
+**Responsibilities**:
+- Full backend development (FastAPI, PostgreSQL, authentication)
+- AI chatbot development (10 agents, LangGraph orchestration)
+- ML pipeline (XGBoost training, MLOps setup)
+- Partial frontend (chat UI component)
+- Team coordination (sprint planning, code review, deployment)
+
+**Team Size**: 5 members with different skill levels
+
+**Duration**: 5 months intensive (900+ hours learning + capstone)
+
+## Business Impact
+
+**For Engineers**:
+- Faster decisions (analyze sensor data from hours to minutes)
+- Proactive maintenance (predict failures 3-7 days ahead)
+- Natural language interface (no SQL or complex tools needed)
+
+**For Business**:
+- Reduce unplanned downtime (early detection with 95.45% recall)
+- Cost savings (optimize maintenance scheduling)
+- Improved safety (catch critical failures early)
+- Data-driven decisions (replace gut feeling with predictions)
+
+**ROI**: With 95.45% recall and $260K/hour downtime cost, the system can save millions annually.
+
+## Lessons Learned
+
+### Multi-Agent Systems are Complex
+
+Coordinating 10 agents is harder than it sounds. State management, error handling, and agent collaboration require careful design.
+
+### LangGraph is Powerful
+
+LangGraph made multi-agent orchestration manageable. The state machine approach with conditional routing is elegant.
+
+### Cost Monitoring is Critical
+
+AWS Bedrock costs can explode quickly. Monitor usage, cache results, and optimize prompts.
+
+### Bilingual Support is Tricky
+
+Language detection with context is important. Don't just detect per message - use conversation history.
+
+### MLOps is Essential
+
+Automated retraining, drift detection, and monitoring are not optional for production ML systems.
+
+### Team Coordination Matters
+
+As team lead, I learned that clear communication, code reviews, and sprint planning are as important as technical skills.
+
+## What I'd Do Differently
+
+If starting again:
+- Implement more comprehensive testing (unit tests, integration tests)
+- Add more sophisticated caching strategies
+- Implement rate limiting per user
+- Add more detailed logging and monitoring
+- Build a more robust error recovery system
+
+## Personal Reflection
+
+This project taught me that building production AI systems is:
+- 20% ML model
+- 30% software engineering
+- 30% system design
+- 20% team coordination
+
+The ML model is important, but it's just one piece of the puzzle.
+
+The real challenge is:
+- Building a system that works reliably
+- Handling edge cases gracefully
+- Making it usable for non-technical users
+- Deploying and maintaining it in production
+
+And most importantly: **shipping it**. A perfect system that never ships is worthless.
+
+---
+
+*For other projects, see [Customer Churn Prediction](/blog/customer-churn-prediction), [Sales Forecasting](/blog/sales-forecasting), and [Food Recommendation Chatbot](/blog/food-recommendation-chatbot).*

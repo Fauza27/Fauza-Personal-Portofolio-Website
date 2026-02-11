@@ -1,0 +1,94 @@
+---
+title: "Culinary AI: Smart Food Recommendation Chatbot"
+category: "AI Engineering & RAG"
+description: "Production-grade RAG chatbot dengan video transcription, multi-stage retrieval, dan real-time context awareness"
+tech: ["LangChain", "FastAPI", "Qdrant", "Next.js", "AWS Bedrock", "Whisper AI", "Docker"]
+year: "2025"
+demo: "https://food-recomendation-chatbot.vercel.app"
+github: "https://github.com/Fauza27/food-recommendation-chatbot"
+---
+
+## Technical Highlights
+
+**Full-Stack AI Engineering**: End-to-end development dari data pipeline (Instagram scraping, video transcription) hingga production deployment dengan Docker dan cloud infrastructure.
+
+**Advanced RAG Architecture**: Multi-stage retrieval system dengan semantic search, context-aware filtering, dan fallback mechanisms untuk ensure 100% response rate.
+
+**ML/AI Integration**: Whisper AI untuk video transcription (500+ videos), AWS Bedrock untuk LLM inference, dan Qdrant vector database untuk semantic search.
+
+**Production-Ready**: Automated data pipeline, cookie rotation untuk rate limit handling, error recovery, dan monitoring.
+
+## Skills Demonstrated
+
+### AI/ML Engineering
+- **RAG Implementation**: LangChain orchestration dengan custom retrieval logic
+- **Vector Database**: Qdrant setup, indexing strategy, dan query optimization
+- **LLM Integration**: AWS Bedrock (Claude 3.5 Sonnet) dengan streaming responses
+- **Audio Processing**: Whisper AI untuk transcribe 500+ Instagram videos
+- **Prompt Engineering**: Context-aware prompts dengan dynamic variables
+
+### Backend Development
+- **FastAPI**: Async endpoints, SSE streaming, error handling
+- **Data Pipeline**: Automated extraction dari 806 columns → 18 relevant features
+- **Rate Limit Handling**: Cookie rotation mechanism dengan exponential backoff
+- **Database Design**: Metadata schema untuk efficient filtering
+
+### Frontend Development
+- **Next.js 14**: App Router, Server Components, streaming UI
+- **TypeScript**: Type-safe development dengan Zod validation
+- **Real-time Updates**: SSE integration untuk streaming responses
+- **Rich UI**: Interactive cards dengan Instagram/Maps links
+
+### DevOps & Infrastructure
+- **Docker**: Containerization untuk consistent deployment
+- **Cloud Deployment**: Vercel (frontend) + Cloud Run (backend)
+- **Environment Management**: Multi-environment configuration
+- **Monitoring**: Logging, error tracking, performance metrics
+
+## Architecture & Design Decisions
+
+**Multi-Stage Retrieval**: Implemented fallback mechanism (strict filter → relaxed filter → general search) untuk ensure always ada hasil relevan. Ini critical untuk UX.
+
+**Context-Aware Filtering**: Automatic time-based categorization (sarapan/makan_siang/nongkrong/makan_malam) berdasarkan current time atau query keywords. No manual filter needed.
+
+**Rich Metadata**: Structured response dengan Instagram links, Google Maps links, menu, harga, jam operasional. Bukan cuma text recommendation.
+
+**Cookie Rotation**: Implemented smart rotation dengan 3+ cookie files untuk avoid Instagram rate limits saat download 500+ videos. Include random delays dan retry logic.
+
+**Streaming Response**: SSE implementation untuk better perceived performance. Response time turun dari 5-10s jadi under 2s (perceived).
+
+## Data Engineering
+
+**Challenge**: 637 Instagram posts dengan 806 columns, inconsistent format, info tersebar di caption/video/hashtags.
+
+**Solution**: 
+- Automated extraction dengan regex patterns (location, hours, menu)
+- Video transcription dengan Whisper AI (78% success rate)
+- Data validation dan cleaning pipeline
+- Structured metadata untuk efficient retrieval
+
+**Results**: 806 columns → 18 relevant features, 500+ videos transcribed, ready untuk production RAG system.
+
+## Impact & Metrics
+
+- **Response Time**: Under 2 seconds (perceived latency dengan streaming)
+- **Accuracy**: 100% grounded responses (no hallucination)
+- **Coverage**: 500+ tempat makan di Samarinda dengan rich metadata
+- **Transcription**: 78% video transcription success rate (500/637 videos)
+- **Extraction**: 70% location, 50% hours, 94% hashtags extraction success
+
+## Technical Challenges Solved
+
+**Instagram Rate Limits**: Implemented cookie rotation dengan 3+ accounts, random delays, dan retry logic untuk download 500+ videos tanpa permanent block.
+
+**Inconsistent Data**: Built robust extraction pipeline dengan regex patterns, fallback logic, dan manual validation untuk handle inconsistent Instagram captions.
+
+**Context Window Optimization**: Multi-stage retrieval untuk balance antara relevance dan coverage. Strict filter first, fallback to general search if needed.
+
+**Real-time Streaming**: SSE implementation dengan proper error handling, connection management, dan graceful degradation.
+
+**Production Deployment**: Docker containerization, environment management, monitoring setup, dan cost optimization untuk AWS Bedrock usage.
+
+**Live Demo**: [https://food-recomendation-chatbot.vercel.app](https://food-recomendation-chatbot.vercel.app)
+
+**Read Full Story**: [Blog Post](/blog/food-recommendation-chatbot)

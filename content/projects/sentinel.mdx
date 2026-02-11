@@ -1,0 +1,173 @@
+---
+title: "Sentinel: Predictive Maintenance Copilot"
+category: "AI Engineering & MLOps"
+description: "Production-grade multi-agent AI system dengan 10 specialized agents, 95.45% recall ML model, dan complete MLOps pipeline"
+tech: ["LangGraph", "XGBoost", "FastAPI", "React", "PostgreSQL", "AWS Bedrock", "MLflow", "Docker"]
+year: "2025"
+github: "https://github.com/AyamGanja/Sentinel"
+videos:
+  - title: "Project Overview & Architecture"
+    url: "https://youtu.be/QJuQIZmDAew?si=IlxA7Pdsm7nH6ERP"
+  - title: "AI Chatbot Demo"
+    url: "https://youtu.be/zh0kjq_TPZQ"
+---
+
+## Technical Highlights
+
+**Multi-Agent AI System**: Architected dan implemented 10 specialized AI agents dengan LangGraph orchestration, handling complex workflows dari database queries hingga automated model retraining.
+
+**Production ML Pipeline**: Complete MLOps setup dengan XGBoost model (95.45% recall), automated retraining, drift detection, dan model versioning menggunakan MLflow + DagSHub.
+
+**Full-Stack Development**: Led development sebagai ketua kelompok - backend (FastAPI, PostgreSQL), AI chatbot (18K+ lines), dan partial frontend (React chat UI).
+
+**Enterprise-Grade**: JWT authentication, role-based access, comprehensive error handling, monitoring, dan deployment ke Google Cloud Run dengan Docker.
+
+## Skills Demonstrated
+
+### AI/ML Engineering
+- **Multi-Agent Systems**: LangGraph state machine dengan 10 specialized agents
+- **LLM Integration**: AWS Bedrock (Claude 3.5 Sonnet) dengan streaming responses
+- **Vector Database**: Qdrant untuk knowledge base (SOPs, manuals, FAQs)
+- **Natural Language to SQL**: LLM-based query generation dengan temporal context parsing
+- **Prompt Engineering**: Complex prompts untuk agent collaboration dan reasoning transparency
+
+### Machine Learning & MLOps
+- **XGBoost**: 44 engineered features, hyperparameter tuning, 95.45% recall
+- **Feature Engineering**: Rolling averages, rate of change, interaction terms
+- **Model Versioning**: MLflow + DagSHub untuk experiment tracking
+- **Automated Retraining**: Trigger-based retraining (performance degradation, data drift)
+- **Drift Detection**: KS-test untuk detect distribution changes
+- **Model Monitoring**: Performance metrics tracking, feature importance analysis
+
+### Backend Development
+- **FastAPI**: 2,000+ lines REST API dengan async endpoints
+- **PostgreSQL**: Database design dengan SQLAlchemy 2.0, performance indexes
+- **Authentication**: JWT-based auth dengan Argon2 password hashing
+- **API Design**: RESTful endpoints untuk dashboard, machines, tickets, simulation
+- **Error Handling**: Comprehensive error handling dengan retry logic
+
+### AI Chatbot Development
+- **LangGraph Orchestration**: 10,000+ lines multi-agent system
+- **State Management**: Complex state machine dengan conditional routing
+- **Agent Collaboration**: Inter-agent communication protocol
+- **Bilingual Support**: Indonesian/English dengan context-aware detection
+- **Reasoning Transparency**: Show AI thinking process untuk build trust
+
+### Frontend Development
+- **React 19**: Modern UI dengan TypeScript
+- **Real-time Updates**: WebSocket integration untuk live data
+- **Chat Interface**: Built chat UI component untuk AI copilot
+- **State Management**: React hooks untuk complex state
+
+### DevOps & Infrastructure
+- **Docker**: Multi-stage builds untuk optimized images
+- **Google Cloud Run**: Serverless deployment dengan auto-scaling
+- **CI/CD**: GitHub Actions untuk automated testing dan deployment
+- **Monitoring**: Logging, metrics, alerts setup
+- **Database Migrations**: Alembic untuk version-controlled schema changes
+
+### Team Leadership
+- **Project Management**: Led 5-person team, sprint planning, code reviews
+- **Technical Decisions**: Architecture design, tech stack selection
+- **Documentation**: Comprehensive docs untuk onboarding dan maintenance
+- **Mentoring**: Pair programming, knowledge sharing sessions
+
+## The 10 AI Agents
+
+**Agent A (qdrant_search)**: Knowledge base search untuk SOPs dan manuals dengan semantic search.
+
+**Agent B (database_query)**: Natural language to SQL dengan temporal context parsing ("hari ini", "minggu lalu").
+
+**Agent C (predictive_maintenance)**: ML prediction dengan XGBoost (95.45% recall, 87.2% precision).
+
+**Agent D (web_search)**: Latest information dari internet menggunakan Tavily API.
+
+**Agent E (optimization_engine)**: Schedule optimization dengan priority scoring, budget constraints, technician availability.
+
+**Agent F (simulation_engine)**: What-if analysis untuk delay impact (cost increase, risk level).
+
+**Agent G (feedback_loop_analyzer)**: Model performance monitoring dengan drift detection (KS-test).
+
+**Agent H (intelligent_retrainer)**: Automated model retraining dengan comparison dan deployment.
+
+**Agent I (report_generator)**: PDF report generation dengan charts dan insights.
+
+**Agent J (ticket_creator)**: Natural language ticket creation dengan multi-turn conversation.
+
+## ML Model Performance
+
+**XGBoost V3**:
+- Recall: 95.45% (catch 95 dari 100 failures)
+- Precision: 87.2%
+- F1-Score: 91.2%
+- ROC-AUC: 96.8%
+
+**Why High Recall?** Dalam predictive maintenance, missing a failure bisa catastrophic (safety risk, $260K/hour downtime). Better have false positives than miss real failures.
+
+**Features**: 44 engineered features including:
+- Raw sensor values (temperature, RPM, torque, vibration, pressure)
+- Rolling averages (3, 7, 14 days)
+- Rate of change
+- Interaction terms (temp × RPM)
+- Statistical features (std, min, max)
+
+## Architecture Complexity
+
+**Codebase**: 18,000+ lines of production code
+- backend.py: ~2,000 lines (REST API, database, auth)
+- main.py: ~10,000 lines (AI chatbot, 10 agents, LangGraph)
+- app.py: ~200 lines (unified entry point)
+
+**Database**: 8 tables dengan complex relationships
+- users, authentication, machine_sensor_data
+- scheduled_maintenance, machine_data_backup
+- chat_thread, chat_message, simulation_history
+
+**API Endpoints**: 30+ endpoints across 6 modules
+- Authentication, Dashboard, Machines, Tickets, Prioritization, Simulation
+
+## Technical Challenges Solved
+
+**Multi-Agent Coordination**: 10 agents harus collaborate tanpa conflict. Solution: LangGraph state machine dengan conditional routing dan agent collaboration protocol.
+
+**State Management**: Complex state across agents dengan retry logic. Solution: TypedDict state schema dengan proper error handling.
+
+**Cost Optimization**: AWS Bedrock per-token pricing bisa mahal. Solution: Cache language detection, optimize prompt length, monitor usage dengan alerts.
+
+**Bilingual Support**: Indonesian/English dengan context-aware detection. Solution: LLM-based detection dengan conversation history context.
+
+**Production Deployment**: Environment management, database migrations, monitoring. Solution: Docker containerization, CI/CD pipeline, comprehensive logging.
+
+**Model Retraining**: Automated retraining tanpa downtime. Solution: Blue-green deployment strategy dengan model comparison sebelum switch.
+
+## Business Impact
+
+**For Engineers**:
+- Keputusan lebih cepat (analyze sensor data dari hours ke minutes)
+- Proactive maintenance (predict failures 3-7 days ahead)
+- Natural language interface (no need SQL atau complex tools)
+
+**For Business**:
+- Reduce unplanned downtime (early detection dengan 95.45% recall)
+- Cost savings (optimize maintenance scheduling)
+- Improved safety (catch critical failures early)
+- Data-driven decisions (replace gut feeling dengan predictions)
+
+**ROI**: Dengan 95.45% recall dan $260K/hour downtime cost, system bisa save millions annually.
+
+## Leadership & Collaboration
+
+**Role**: Ketua kelompok di ASAH program (Dicoding × Accenture)
+
+**Responsibilities**:
+- Full backend development (FastAPI, PostgreSQL, authentication)
+- AI chatbot development (10 agents, LangGraph orchestration)
+- ML pipeline (XGBoost training, MLOps setup)
+- Partial frontend (chat UI component)
+- Team coordination (sprint planning, code review, deployment)
+
+**Team Size**: 5 members dengan different skill levels
+
+**Duration**: 5 months intensive (900+ hours learning + capstone)
+
+**Read Full Story**: [Blog Post](/blog/sentinel-predictive-maintenance)

@@ -4,38 +4,25 @@ import { useRef } from 'react';
 import { motion, useScroll } from 'framer-motion';
 import { ArrowRight, ExternalLink } from 'lucide-react';
 import Link from 'next/link';
+import type { Project } from '@/lib/mdx';
 
-const projects = [
-  {
-    id: 'saas',
-    title: 'Enterprise SaaS Platform',
-    subtitle: 'Next.js • TypeScript • PostgreSQL',
-    description: 'A full-featured B2B SaaS application with multi-tenant architecture, real-time collaboration, and advanced analytics.',
-    gradient: 'from-purple-500/20 via-transparent to-blue-500/20',
-    accentColor: 'text-purple-400',
-    tags: ['Next.js', 'Prisma', 'tRPC', 'Stripe'],
-  },
-  {
-    id: 'cv',
-    title: 'Computer Vision System',
-    subtitle: 'Python • FastAPI • TensorFlow',
-    description: 'Real-time object detection and classification system processing 1000+ images per second with 99.2% accuracy.',
-    gradient: 'from-cyan-500/20 via-transparent to-green-500/20',
-    accentColor: 'text-cyan-400',
-    tags: ['Python', 'OpenCV', 'YOLO', 'Docker'],
-  },
-  {
-    id: 'rag',
-    title: 'RAG Knowledge Base',
-    subtitle: 'LangChain • OpenAI • Pinecone',
-    description: 'Intelligent document QA system with semantic search, citation tracking, and multi-modal understanding.',
-    gradient: 'from-magenta-500/20 via-transparent to-orange-500/20',
-    accentColor: 'text-accent',
-    tags: ['LangChain', 'GPT-4', 'Vector DB', 'RAG'],
-  },
-];
+interface ProjectGalleryProps {
+  projects: Project[];
+}
 
-export const ProjectGallery = () => {
+// Helper to get accent color based on category
+const getAccentColor = (category: string) => {
+  const colors: Record<string, string> = {
+    'AI & Full-Stack': 'text-purple-400',
+    'AI & LLM': 'text-green-400',
+    'Machine Learning': 'text-blue-400',
+    'Data Science': 'text-orange-400',
+    'AI Engineering': 'text-cyan-400',
+  };
+  return colors[category] || 'text-primary';
+};
+
+export const ProjectGallery = ({ projects }: ProjectGalleryProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
   
   const { scrollXProgress } = useScroll({
@@ -89,14 +76,14 @@ export const ProjectGallery = () => {
         
         {projects.map((project, index) => (
           <motion.div
-            key={project.id}
+            key={project.slug}
             className="flex-shrink-0 w-[300px] sm:w-[400px] md:w-[500px] snap-center"
             initial={{ opacity: 0, x: 50 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ delay: index * 0.1 }}
           >
-            <Link href={`/projects/${project.id}`}>
+            <Link href={`/projects/${project.slug}`}>
               <motion.div
                 className={`glass rounded-2xl sm:rounded-3xl p-6 sm:p-8 h-[320px] sm:h-[400px] flex flex-col justify-between relative overflow-hidden cursor-pointer group`}
                 whileHover={{ scale: 1.02, y: -5 }}
@@ -108,8 +95,8 @@ export const ProjectGallery = () => {
                 {/* Content */}
                 <div className="relative z-10">
                   <div className="flex items-center justify-between mb-3 sm:mb-4">
-                    <span className={`text-xs font-medium ${project.accentColor}`}>
-                      {project.subtitle}
+                    <span className={`text-xs font-medium ${getAccentColor(project.category)}`}>
+                      {project.category} • {project.year}
                     </span>
                     <motion.div
                       className="p-1.5 sm:p-2 glass rounded-lg opacity-0 group-hover:opacity-100 transition-opacity"
@@ -125,7 +112,7 @@ export const ProjectGallery = () => {
                 
                 <div className="relative z-10">
                   <div className="flex flex-wrap gap-1.5 sm:gap-2">
-                    {project.tags.map((tag) => (
+                    {project.tech.slice(0, 4).map((tag) => (
                       <span
                         key={tag}
                         className="px-2 sm:px-3 py-0.5 sm:py-1 text-xs glass rounded-full text-foreground/70"

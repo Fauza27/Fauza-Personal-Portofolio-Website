@@ -50,7 +50,7 @@ export const MDXComponents = {
       <div className="text-foreground/90 text-base sm:text-lg leading-[1.8] italic">
         {children}
       </div>
-      <div className="absolute top-2 left-2 text-primary/20 text-6xl font-serif leading-none">"</div>
+      <div className="absolute top-2 left-2 text-primary/20 text-6xl font-serif leading-none">&quot;</div>
     </blockquote>
   ),
   code: ({ children, className }: { children: ReactNode; className?: string }) => {

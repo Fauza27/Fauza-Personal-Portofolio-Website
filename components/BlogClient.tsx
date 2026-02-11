@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { Calendar, Clock, ArrowRight, BookOpen, TrendingUp, Sparkles } from 'lucide-react';
+import { Calendar, Clock, ArrowRight, Sparkles } from 'lucide-react';
 import Link from 'next/link';
 import type { BlogPost } from '@/lib/mdx';
 
@@ -32,16 +32,6 @@ export function BlogClient({ posts }: BlogClientProps) {
           animate={{ opacity: 1, y: 0 }}
           className="text-center max-w-3xl mx-auto"
         >
-          <motion.div
-            className="inline-flex items-center gap-2 px-4 py-2 glass rounded-full text-sm text-primary mb-6"
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.2 }}
-          >
-            <BookOpen size={16} />
-            <span>Latest Insights</span>
-          </motion.div>
-          
           <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold mb-4 sm:mb-6">
             <span className="text-foreground">Thoughts on</span>
             <br />

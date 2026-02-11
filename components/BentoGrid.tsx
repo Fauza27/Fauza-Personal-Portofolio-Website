@@ -46,24 +46,15 @@ export const BentoGrid = () => {
         <div className="absolute inset-0 bg-linear-to-br from-primary/20 via-transparent to-accent/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
         
         <div className="relative z-10">
-          <motion.div
-            className="inline-flex items-center gap-2 px-3 py-1 glass rounded-full text-xs text-muted-foreground mb-4 sm:mb-6"
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.5 }}
-          >
-            <span className="w-2 h-2 rounded-full bg-success pulse-status" />
-            Available for opportunities
-          </motion.div>
           
           <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mb-3 sm:mb-4">
-            <span className="text-gradient">Architecting</span>
+            <span className="text-gradient">Building</span>
             <br />
-            <span className="text-foreground">Intelligence.</span>
+            <span className="text-foreground">Real-World AI</span>
           </h1>
           
           <p className="text-base sm:text-lg text-muted-foreground max-w-md">
-            Muhammad Fauza — Fullstack & AI Engineer building the future of intelligent systems.
+            I’m Muhammad Fauza, an AI Engineer who builds production-ready applications by integrating machine learning, LLMs, and intelligent systems into full-stack software.
           </p>
         </div>
         
@@ -116,12 +107,12 @@ export const BentoGrid = () => {
           
           <div className="text-center">
             <p className="text-sm font-medium text-foreground mb-1">Muhammad Fauza</p>
-            <p className="text-xs text-muted-foreground">Fullstack & AI Engineer</p>
+            <p className="text-xs text-muted-foreground">AI Software Engineer</p>
           </div>
         </div>
       </motion.div>
 
-      {/* Current Focus Card */}
+      {/* Current what i build Card */}
       <motion.div
         className="col-span-1 row-span-1 glass rounded-2xl sm:rounded-3xl p-5 sm:p-6 flex flex-col justify-between min-h-[120px] relative overflow-hidden group"
         variants={itemVariants}
@@ -131,11 +122,11 @@ export const BentoGrid = () => {
         <div className="relative z-10">
           <div className="flex items-center gap-2 mb-3">
             <Code2 size={16} className="text-primary" />
-            <span className="text-xs text-muted-foreground uppercase tracking-wider">Current Focus</span>
+            <span className="text-xs text-muted-foreground uppercase tracking-wider">What I Build</span>
           </div>
           <div>
-            <p className="text-base sm:text-lg font-medium text-foreground">Generative AI</p>
-            <p className="text-sm text-muted-foreground">LLMs & RAG Systems</p>
+            <p className="text-base sm:text-lg font-medium text-foreground">AI-powered full-stack applications</p>
+            <p className="text-sm text-muted-foreground">LLMs, RAG & AI Systems</p>
           </div>
         </div>
       </motion.div>
@@ -154,7 +145,7 @@ export const BentoGrid = () => {
           </div>
           <div>
             <p className="text-base sm:text-lg font-medium text-foreground">Computer Science</p>
-            <p className="text-sm text-muted-foreground">AI & Software Eng</p>
+            <p className="text-sm text-muted-foreground">3.73 / 4.00 GPA</p>
           </div>
         </div>
       </motion.div>
@@ -170,8 +161,8 @@ export const BentoGrid = () => {
           <div className="flex items-center justify-center gap-2 mb-2">
             <Rocket size={18} className="text-primary" />
           </div>
-          <p className="text-3xl sm:text-4xl font-bold text-gradient">10+</p>
-          <p className="text-xs sm:text-sm text-muted-foreground">Projects Built</p>
+          <p className="text-3xl sm:text-4xl font-bold text-gradient">2+</p>
+          <p className="text-xs sm:text-sm text-muted-foreground">End-to-End AI Projects</p>
         </div>
       </motion.div>
 

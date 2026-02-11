@@ -73,8 +73,8 @@ export function TableOfContents() {
   if (headings.length === 0) return null;
 
   return (
-    <nav className="sticky top-24 hidden xl:block w-64">
-      <div className="glass rounded-2xl p-6 max-h-[calc(100vh-120px)] overflow-y-auto">
+    <nav className="sticky top-36 hidden xl:block w-64">
+      <div className="glass rounded-2xl p-6 max-h-[calc(100vh-180px)] overflow-y-auto">
         <h4 className="text-sm font-bold text-foreground uppercase tracking-wider mb-4">
           On This Page
         </h4>
@@ -108,45 +108,6 @@ export function TableOfContents() {
           ))}
         </ul>
       </div>
-
-      {/* Reading Progress */}
-      <div className="glass rounded-2xl p-4 mt-4">
-        <ReadingProgress />
-      </div>
     </nav>
-  );
-}
-
-function ReadingProgress() {
-  const [progress, setProgress] = useState(0);
-
-  useEffect(() => {
-    const updateProgress = () => {
-      const scrollTop = window.pageYOffset;
-      const docHeight = document.documentElement.scrollHeight - window.innerHeight;
-      const scrollPercent = (scrollTop / docHeight) * 100;
-      setProgress(Math.min(scrollPercent, 100));
-    };
-
-    window.addEventListener('scroll', updateProgress);
-    updateProgress();
-
-    return () => window.removeEventListener('scroll', updateProgress);
-  }, []);
-
-  return (
-    <div>
-      <div className="flex items-center justify-between mb-2">
-        <span className="text-xs text-muted-foreground">Reading Progress</span>
-        <span className="text-xs font-medium text-primary">{Math.round(progress)}%</span>
-      </div>
-      <div className="h-2 bg-white/5 rounded-full overflow-hidden">
-        <motion.div
-          className="h-full bg-linear-to-r from-primary to-accent rounded-full"
-          style={{ width: `${progress}%` }}
-          transition={{ duration: 0.1 }}
-        />
-      </div>
-    </div>
   );
 }

@@ -4,35 +4,53 @@ import Image from 'next/image';
 
 const skills = [
   { category: 'Frontend', items: ['React', 'Next.js', 'TypeScript', 'Tailwind CSS', 'Framer Motion'] },
-  { category: 'Backend', items: ['Node.js', 'Python', 'FastAPI', 'PostgreSQL', 'Redis'] },
-  { category: 'AI/ML', items: ['LangChain', 'OpenAI', 'TensorFlow', 'PyTorch', 'Pinecone'] },
-  { category: 'DevOps', items: ['Docker', 'Kubernetes', 'AWS', 'Vercel', 'GitHub Actions'] },
+  { category: 'Backend', items: ['Node.js', 'Python', 'FastAPI', 'PostgreSQL'] },
+  { category: 'AI/ML', items: ['LangChain', 'OpenAI', 'Anthropic', 'TensorFlow', 'PyTorch', 'Qdrant'] },
+  { category: 'DevOps', items: ['Docker', 'AWS', 'Vercel', 'GitHub Actions'] },
 ];
 
 const experience = [
-  {
-    role: 'Senior AI Engineer',
-    company: 'Tech Innovation Lab',
-    period: '2023 - Present',
-    description: 'Leading AI integration initiatives, building RAG systems and ML pipelines for enterprise clients.',
-  },
-  {
-    role: 'Fullstack Developer',
-    company: 'SaaS Startup',
-    period: '2021 - 2023',
-    description: 'Built and scaled a B2B SaaS platform from MVP to 10,000+ active users.',
-  },
-  {
-    role: 'Software Engineer',
-    company: 'Digital Agency',
-    period: '2019 - 2021',
-    description: 'Developed high-performance web applications for Fortune 500 clients.',
-  },
-];
+    {
+        role: 'Student Mentor',
+        company: 'Digital Talent Scholarship Program with KOMDIGI',
+        period: 'Okt 2024 - Des 2024',
+        description: 'Mentored and guided 80 students in the Google Cloud Skill Boost program, achieving a 90% completion rate by providing technical assistance and resolving blockers.'
+    },
+    {
+        role: 'Data Scientist Facilitator',
+        company: 'Indosat Ooredoo Hutchison',
+        period: 'Jan 2025 - Apr 2025',
+        description: 'Assisted a group of 25 participants in completing the program on time by providing technical guidance, mentorship, and progress monitoring.'
+    },
+    {
+        role: 'Laboratory Assistant',
+        company: 'STMIK Widya Cipta Dharma',
+        period: 'Mar 2025 - Present',
+        description: 'Supported and supervised hands-on programming labs for Informatics Engineering students, assisted lecturers during practical sessions, graded assignments, and maintained lab software and hardware environments to ensure smooth learning operations.'
+    },
+    {
+        role: 'Google cloud Arcade Facilitator',
+        company: 'Google Cloud',
+        period: 'Jul 2025 - Sep 2025',
+        description: 'Assisted 25+ participants in a gamified cloud education program. Facilitated learning in Google Cloud technologies and AI/ML, supported participants in completing hands-on labs and earning badges, and drove engagement through coaching, progress tracking, and community outreach initiatives.'
+    },
+    {
+        role: 'External Code Reviewer (Dicoding Elite)',
+        company: 'Dicoding Indonesia',
+        period: 'Nov 2025 - Now',
+        description: 'Review and analyze student submissions for the Machine Learning (ML) learning path by providing detailed feedback on code structure and usability to improve code quality.'
+    },
+    {
+        role: 'Data Scientist Facilitator ',
+        company: 'Indosat Ooredoo Hutchison',
+        period: 'Jan 2026 - Mar 2026',
+        description: 'Trusted to serve as a facilitator for two cohorts of a data science program, mentoring 50+ participants, providing technical guidance, and ensuring timely program completion across multiple batches.'
+    },
+]
 
 export const metadata = {
   title: 'About - Muhammad Fauza',
-  description: 'Learn more about Muhammad Fauza - Fullstack & AI Engineer',
+  description: 'Learn more about Muhammad Fauza - AI Software Engineer',
 };
 
 export default function About() {
@@ -43,10 +61,10 @@ export default function About() {
         <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 mb-12 sm:mb-20">
           <div>
             <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-foreground mb-4 sm:mb-6">
-              Building the future with <span className="text-gradient">code & AI</span>
+              Building <br></br><span className="text-gradient">AI-Powered</span> Software 
             </h1>
             <p className="text-base sm:text-lg text-muted-foreground mb-4 sm:mb-6">
-              I&apos;m Muhammad Fauza, a fullstack developer and AI engineer passionate about creating intelligent systems that solve real problems. With 5+ years of experience, I bridge the gap between cutting-edge AI and production-ready software.
+              I’m Muhammad Fauza, an AI Software Engineer focused on building  production-ready applications that integrate machine learning,  LLMs, and data-driven systems into real-world software. My work sits at the intersection of AI and full-stack engineering, with an emphasis on reliability, scalability, and practical impact. 
             </p>
             <div className="flex flex-col sm:flex-row flex-wrap gap-3 sm:gap-4">
               <div className="flex items-center gap-2 text-sm sm:text-base text-muted-foreground">
@@ -78,11 +96,11 @@ export default function About() {
                 </div>
               </div>
               <h2 className="text-xl sm:text-2xl font-bold text-foreground mb-2">Muhammad Fauza</h2>
-              <p className="text-sm sm:text-base text-muted-foreground mb-3 sm:mb-4">Fullstack & AI Engineer</p>
+              <p className="text-sm sm:text-base text-muted-foreground mb-3 sm:mb-4">AI Software Engineer</p>
               <div className="flex flex-wrap justify-center gap-2">
-                <span className="px-2.5 sm:px-3 py-1 text-xs glass rounded-full text-foreground/70">Web Dev</span>
                 <span className="px-2.5 sm:px-3 py-1 text-xs glass rounded-full text-foreground/70">AI/ML</span>
                 <span className="px-2.5 sm:px-3 py-1 text-xs glass rounded-full text-foreground/70">Software Eng</span>
+                <span className="px-2.5 sm:px-3 py-1 text-xs glass rounded-full text-foreground/70">Web Dev</span>
               </div>
             </div>
           </div>
@@ -147,8 +165,8 @@ export default function About() {
           
           <div className="glass rounded-xl sm:rounded-2xl p-4 sm:p-6">
             <h3 className="text-lg sm:text-xl font-bold text-foreground mb-2">Bachelor of Computer Science</h3>
-            <p className="text-primary text-sm sm:text-base mb-2">State University</p>
-            <p className="text-muted-foreground text-xs sm:text-sm">Specialized in Artificial Intelligence and Software Engineering</p>
+            <p className="text-primary text-sm sm:text-base mb-2">Sekolah Tinggi Manajemen Informatika dan Komputer Widya Cipta Dharma</p>
+            <p className="text-muted-foreground text-xs sm:text-sm">3.73 / 4.00 GPA</p>
           </div>
         </section>
       </main>

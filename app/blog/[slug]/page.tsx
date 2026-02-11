@@ -7,6 +7,8 @@ import { MDXRemote } from 'next-mdx-remote/rsc';
 import { MDXComponents } from '@/components/MDXComponents';
 import { TableOfContents } from '@/components/TableOfContents';
 import { FloatingBackButton } from '@/components/FloatingBackButton';
+import { ReadingProgress } from '@/components/ReadingProgress';
+import { BlogNavigation } from '@/components/BlogNavigation';
 
 export async function generateStaticParams() {
   const posts = await getBlogPosts();
@@ -39,10 +41,16 @@ export default async function BlogPost({ params }: { params: Promise<{ slug: str
     notFound();
   }
 
+  // Fetch all blog posts for navigation
+  const allPosts = await getBlogPosts();
+
   return (
     <ClientLayout>
       {/* Floating Back Button */}
       <FloatingBackButton href="/blog" label="Back to Blog" />
+
+      {/* Reading Progress Bar */}
+      <ReadingProgress />
 
       <main className="pt-20 sm:pt-24 pb-24 sm:pb-32">
         {/* Container with Sidebar */}
@@ -153,8 +161,8 @@ export default async function BlogPost({ params }: { params: Promise<{ slug: str
               </div>
             </div>
 
-            {/* Right Spacer for Balance */}
-            <div className="hidden xl:block w-64 shrink-0" />
+            {/* Right Sidebar - Blog Navigation */}
+            <BlogNavigation currentSlug={slug} posts={allPosts} />
           </div>
         </div>
       </main>

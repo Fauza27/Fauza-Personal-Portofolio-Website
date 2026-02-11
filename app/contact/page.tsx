@@ -1,5 +1,5 @@
 import { ClientLayout } from '@/components/ClientLayout';
-import { Mail, MapPin, Send, Github, Linkedin, Twitter } from 'lucide-react';
+import { Mail, MapPin, Send, Github, Linkedin } from 'lucide-react';
 
 export const metadata = {
   title: 'Contact - Muhammad Fauza',
@@ -27,8 +27,8 @@ export default function Contact() {
                 </div>
                 <div>
                   <h3 className="font-medium text-foreground mb-1">Email</h3>
-                  <a href="mailto:hello@muhammadfauza.com" className="text-muted-foreground hover:text-primary transition-colors">
-                    hello@muhammadfauza.com
+                  <a href="mailto:muhammadfauza27@gmail.com" className="text-muted-foreground hover:text-primary transition-colors">
+                    muhammadfauza27@gmail.com
                   </a>
                 </div>
               </div>
@@ -48,7 +48,7 @@ export default function Contact() {
               <h3 className="font-medium text-foreground mb-4">Follow Me</h3>
               <div className="flex gap-3">
                 <a
-                  href="https://github.com"
+                  href="https://github.com/Fauza27"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="p-3 glass rounded-xl text-foreground/70 hover:text-foreground hover:scale-110 transition-all"
@@ -56,20 +56,12 @@ export default function Contact() {
                   <Github size={20} />
                 </a>
                 <a
-                  href="https://linkedin.com"
+                  href="https://www.linkedin.com/in/muhammad-fauza/"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="p-3 glass rounded-xl text-foreground/70 hover:text-foreground hover:scale-110 transition-all"
                 >
                   <Linkedin size={20} />
-                </a>
-                <a
-                  href="https://twitter.com"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="p-3 glass rounded-xl text-foreground/70 hover:text-foreground hover:scale-110 transition-all"
-                >
-                  <Twitter size={20} />
                 </a>
               </div>
             </div>

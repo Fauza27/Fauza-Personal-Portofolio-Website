@@ -6,13 +6,24 @@ import { Providers } from "./providers";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Muhammad Fauza - Fullstack & AI Engineer",
-  description: "Portfolio of Muhammad Fauza - Building the future with code & AI. Fullstack developer and AI engineer passionate about creating intelligent systems.",
-  keywords: ["Muhammad Fauza", "Fullstack Developer", "AI Engineer", "Web Development", "Machine Learning", "Portfolio"],
+  title: "Muhammad Fauza - AI Software Engineer",
+  description:
+    "Portfolio of Muhammad Fauza, an AI Engineer building production-ready full-stack applications with machine learning and intelligent systems.",
+  keywords: [
+    "Muhammad Fauza",
+    "AI Engineer",
+    "AI Software Engineer",
+    "Machine Learning Engineer",
+    "Full Stack Engineer",
+    "AI Applications",
+    "LLM",
+    "Computer Vision",
+    "Portfolio",
+  ],
   authors: [{ name: "Muhammad Fauza" }],
   openGraph: {
-    title: "Muhammad Fauza - Fullstack & AI Engineer",
-    description: "Building the future with code & AI",
+    title: "Muhammad Fauza - AI Engineer (Full-Stack Applications)",
+    description: "Building AI-powered applications from model to production",
     type: "website",
   },
 };

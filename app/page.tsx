@@ -1,11 +1,14 @@
 import { BentoGrid } from '@/components/BentoGrid';
 import { ProjectGallery } from '@/components/ProjectGallery';
 import { ClientLayout } from '@/components/ClientLayout';
-import { ArrowRight, Github, Linkedin, Twitter } from 'lucide-react';
+import { ArrowRight, Github, Linkedin } from 'lucide-react';
 import Link from 'next/link';
 import { SITE_CONFIG } from '@/lib/config';
+import { getProjects } from '@/lib/mdx';
 
-export default function Home() {
+export default async function Home() {
+  const projects = await getProjects();
+
   return (
     <ClientLayout>
       <main id="main-content" className="pt-16 sm:pt-20 pb-24 sm:pb-32">
@@ -15,7 +18,7 @@ export default function Home() {
         </section>
 
         {/* Project Gallery */}
-        <ProjectGallery />
+        <ProjectGallery projects={projects} />
 
         {/* Connect Section */}
         <ConnectSection />
@@ -28,7 +31,7 @@ function ConnectSection() {
   return (
     <section className="max-w-6xl mx-auto px-4 sm:px-6 py-12 sm:py-20">
       <div className="glass rounded-2xl sm:rounded-3xl p-6 sm:p-8 md:p-12 text-center relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-accent/10" />
+        <div className="absolute inset-0 bg-linear-to-br from-primary/10 via-transparent to-accent/10" />
         
         <div className="relative z-10">
           <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground mb-3 sm:mb-4">
@@ -64,15 +67,6 @@ function ConnectSection() {
                 aria-label="LinkedIn"
               >
                 <Linkedin size={18} className="sm:w-5 sm:h-5" />
-              </a>
-              <a
-                href={SITE_CONFIG.social.twitter}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="p-2.5 sm:p-3 glass rounded-xl text-foreground/70 hover:text-foreground transition-colors"
-                aria-label="Twitter"
-              >
-                <Twitter size={18} className="sm:w-5 sm:h-5" />
               </a>
             </div>
           </div>

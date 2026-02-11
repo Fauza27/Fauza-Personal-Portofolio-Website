@@ -27,6 +27,11 @@ const projectFrontmatterSchema = z.object({
   gradient: z.string().default('from-purple-500/20 to-blue-500/20'),
   github: z.string().url().optional(),
   demo: z.string().url().optional(),
+  video: z.string().url().optional(),
+  videos: z.array(z.object({
+    title: z.string(),
+    url: z.string().url(),
+  })).optional(),
 });
 
 export interface BlogPost {
@@ -51,17 +56,33 @@ export interface Project {
   content: string;
   github?: string;
   demo?: string;
+  video?: string;
+  videos?: Array<{
+    title: string;
+    url: string;
+  }>;
 }
 
 export const getBlogPosts = unstable_cache(
   async (): Promise<BlogPost[]> => {
     const blogDir = path.join(contentDirectory, 'blog');
     
+    if (process.env.NODE_ENV === 'development') {
+      console.log('Blog directory:', blogDir);
+    }
+    
     if (!fs.existsSync(blogDir)) {
+      if (process.env.NODE_ENV === 'development') {
+        console.log('Blog directory does not exist');
+      }
       return [];
     }
 
     const files = fs.readdirSync(blogDir);
+    if (process.env.NODE_ENV === 'development') {
+      console.log('Found blog files:', files);
+    }
+    
     const posts = files
       .filter((file) => file.endsWith('.mdx'))
       .map((file) => {
@@ -69,6 +90,10 @@ export const getBlogPosts = unstable_cache(
           const filePath = path.join(blogDir, file);
           const fileContent = fs.readFileSync(filePath, 'utf8');
           const { data, content } = matter(fileContent);
+          
+          if (process.env.NODE_ENV === 'development') {
+            console.log(`Processing ${file}, frontmatter:`, data);
+          }
           
           // Validate frontmatter
           const validatedData = blogPostFrontmatterSchema.parse(data);
@@ -86,6 +111,9 @@ export const getBlogPosts = unstable_cache(
       .filter((post): post is BlogPost => post !== null)
       .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 
+    if (process.env.NODE_ENV === 'development') {
+      console.log('Total blog posts loaded:', posts.length);
+    }
     return posts;
   },
   ['blog-posts'],
@@ -125,11 +153,22 @@ export const getProjects = unstable_cache(
   async (): Promise<Project[]> => {
     const projectsDir = path.join(contentDirectory, 'projects');
     
+    if (process.env.NODE_ENV === 'development') {
+      console.log('Projects directory:', projectsDir);
+    }
+    
     if (!fs.existsSync(projectsDir)) {
+      if (process.env.NODE_ENV === 'development') {
+        console.log('Projects directory does not exist');
+      }
       return [];
     }
 
     const files = fs.readdirSync(projectsDir);
+    if (process.env.NODE_ENV === 'development') {
+      console.log('Found project files:', files);
+    }
+    
     const projects = files
       .filter((file) => file.endsWith('.mdx'))
       .map((file) => {
@@ -137,6 +176,10 @@ export const getProjects = unstable_cache(
           const filePath = path.join(projectsDir, file);
           const fileContent = fs.readFileSync(filePath, 'utf8');
           const { data, content } = matter(fileContent);
+          
+          if (process.env.NODE_ENV === 'development') {
+            console.log(`Processing ${file}, frontmatter:`, data);
+          }
           
           // Validate frontmatter
           const validatedData = projectFrontmatterSchema.parse(data);
@@ -151,8 +194,12 @@ export const getProjects = unstable_cache(
           return null;
         }
       })
-      .filter((project): project is Project => project !== null);
+      .filter((project): project is Project => project !== null)
+      .sort((a, b) => parseInt(b.year) - parseInt(a.year)); // Sort by year, newest first
 
+    if (process.env.NODE_ENV === 'development') {
+      console.log('Total projects loaded:', projects.length);
+    }
     return projects;
   },
   ['projects'],

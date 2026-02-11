@@ -7,6 +7,9 @@ import { MDXRemote } from 'next-mdx-remote/rsc';
 import { MDXComponents } from '@/components/MDXComponents';
 import { TableOfContents } from '@/components/TableOfContents';
 import { FloatingBackButton } from '@/components/FloatingBackButton';
+import { ProjectNavigation } from '@/components/ProjectNavigation';
+import { ReadingProgress } from '@/components/ReadingProgress';
+import { YouTubeEmbed } from '@/components/YouTubeEmbed';
 
 export async function generateStaticParams() {
   const projects = await getProjects();
@@ -39,10 +42,16 @@ export default async function ProjectDetail({ params }: { params: Promise<{ slug
     notFound();
   }
 
+  // Fetch all projects for navigation
+  const allProjects = await getProjects();
+
   return (
     <ClientLayout>
       {/* Floating Back Button */}
       <FloatingBackButton href="/projects" label="Back to Projects" />
+
+      {/* Reading Progress Bar */}
+      <ReadingProgress />
 
       <main className="pt-20 sm:pt-24 pb-24 sm:pb-32">
         {/* Container with Sidebar */}
@@ -100,7 +109,7 @@ export default async function ProjectDetail({ params }: { params: Promise<{ slug
 
                     {/* Action Buttons */}
                     <div className="flex flex-wrap gap-3 sm:gap-4">
-                      {project.github && (
+                      {project.github ? (
                         <a
                           href={project.github}
                           target="_blank"
@@ -110,6 +119,20 @@ export default async function ProjectDetail({ params }: { params: Promise<{ slug
                           <Github size={18} />
                           View Code
                         </a>
+                      ) : (
+                        <div className="relative group">
+                          <button
+                            disabled
+                            className="flex items-center gap-2 px-5 sm:px-6 py-3 glass rounded-xl text-foreground/40 cursor-not-allowed font-medium"
+                          >
+                            <Github size={18} />
+                            View Code
+                          </button>
+                          <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-2 bg-black/90 text-white text-sm rounded-lg opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap">
+                            Closed Source
+                            <div className="absolute top-full left-1/2 -translate-x-1/2 -mt-1 border-4 border-transparent border-t-black/90" />
+                          </div>
+                        </div>
                       )}
                       {project.demo && (
                         <a
@@ -129,6 +152,35 @@ export default async function ProjectDetail({ params }: { params: Promise<{ slug
 
               {/* Project Content */}
               <div className="glass rounded-2xl sm:rounded-3xl p-6 sm:p-8 md:p-12 mb-8">
+                {/* Video Section - Multiple Videos */}
+                {project.videos && project.videos.length > 0 && (
+                  <div className="mb-8 sm:mb-12">
+                    <h2 className="text-2xl sm:text-3xl font-bold text-foreground mb-6 sm:mb-8">
+                      Project Demos
+                    </h2>
+                    <div className="space-y-8">
+                      {project.videos.map((video, index) => (
+                        <div key={index}>
+                          <h3 className="text-lg sm:text-xl font-semibold text-foreground mb-3 sm:mb-4">
+                            {video.title}
+                          </h3>
+                          <YouTubeEmbed url={video.url} title={video.title} />
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Video Section - Single Video (backward compatibility) */}
+                {!project.videos && project.video && (
+                  <div className="mb-8 sm:mb-12">
+                    <h2 className="text-2xl sm:text-3xl font-bold text-foreground mb-4 sm:mb-6">
+                      Project Demo
+                    </h2>
+                    <YouTubeEmbed url={project.video} title={`${project.title} Demo`} />
+                  </div>
+                )}
+
                 <div className="prose-custom">
                   <MDXRemote source={project.content} components={MDXComponents} />
                 </div>
@@ -150,8 +202,8 @@ export default async function ProjectDetail({ params }: { params: Promise<{ slug
               </div>
             </div>
 
-            {/* Right Spacer for Balance */}
-            <div className="hidden xl:block w-64 shrink-0" />
+            {/* Right Sidebar - Project Navigation */}
+            <ProjectNavigation currentSlug={slug} projects={allProjects} />
           </div>
         </div>
       </main>

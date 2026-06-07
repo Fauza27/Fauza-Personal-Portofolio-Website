@@ -53,11 +53,12 @@ export default function Error({
             Try Again
           </button>
           
-          <Link href="/">
-            <button className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-3 glass rounded-xl text-foreground/80 hover:text-foreground transition-colors">
-              <Home size={18} />
-              Go Home
-            </button>
+          <Link
+            href="/"
+            className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-3 glass rounded-xl text-foreground/80 hover:text-foreground transition-colors"
+          >
+            <Home size={18} />
+            Go Home
           </Link>
         </div>
       </div>

@@ -1,14 +1,16 @@
 import { ClientLayout } from '@/components/ClientLayout';
 import { getBlogPost, getBlogPosts } from '@/lib/mdx';
 import { notFound } from 'next/navigation';
-import { Calendar, Clock, User, Share2 } from 'lucide-react';
+import { Calendar, Clock, User, Share2, ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 import { MDXRemote } from 'next-mdx-remote/rsc';
+import remarkGfm from 'remark-gfm';
 import { MDXComponents } from '@/components/MDXComponents';
 import { TableOfContents } from '@/components/TableOfContents';
 import { FloatingBackButton } from '@/components/FloatingBackButton';
 import { ReadingProgress } from '@/components/ReadingProgress';
 import { BlogNavigation } from '@/components/BlogNavigation';
+import { ShareButton } from '@/components/ShareButton';
 
 export async function generateStaticParams() {
   const posts = await getBlogPosts();
@@ -52,12 +54,19 @@ export default async function BlogPost({ params }: { params: Promise<{ slug: str
       {/* Reading Progress Bar */}
       <ReadingProgress />
 
-      <main className="pt-20 sm:pt-24 pb-24 sm:pb-32">
+      <main className="pt-20 sm:pt-24 pb-32 sm:pb-48">
         {/* Container with Sidebar */}
         <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex gap-8 justify-center">
             {/* Left Sidebar - Table of Contents */}
-            <aside className="hidden xl:block shrink-0">
+            <aside className="hidden xl:flex flex-col gap-6 shrink-0 sticky top-24 h-fit">
+              <Link
+                href="/blog"
+                className="flex items-center gap-2 px-4 py-2 glass rounded-xl text-foreground/80 hover:text-foreground hover:bg-white/10 transition-all w-fit group"
+              >
+                <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" />
+                <span className="text-sm font-medium">Back to Blog</span>
+              </Link>
               <TableOfContents />
             </aside>
 
@@ -107,10 +116,7 @@ export default async function BlogPost({ params }: { params: Promise<{ slug: str
 
                   {/* Share Button */}
                   <div className="flex items-center gap-3">
-                    <button className="flex items-center gap-2 px-4 py-2 glass rounded-lg text-foreground/70 hover:text-foreground hover:bg-white/10 transition-colors text-sm">
-                      <Share2 size={16} />
-                      Share Article
-                    </button>
+                    <ShareButton title={post.title} />
                   </div>
                 </div>
               </article>
@@ -118,7 +124,11 @@ export default async function BlogPost({ params }: { params: Promise<{ slug: str
               {/* Article Content */}
               <div className="glass rounded-2xl sm:rounded-3xl p-6 sm:p-8 md:p-12 mb-8">
                 <div className="prose-custom">
-                  <MDXRemote source={post.content} components={MDXComponents} />
+                  <MDXRemote 
+                    source={post.content} 
+                    components={MDXComponents} 
+                    options={{ mdxOptions: { remarkPlugins: [remarkGfm] } }}
+                  />
                 </div>
               </div>
 
@@ -136,10 +146,11 @@ export default async function BlogPost({ params }: { params: Promise<{ slug: str
                       Fullstack & AI Engineer passionate about building intelligent systems. 
                       Sharing insights on web development, AI, and software engineering.
                     </p>
-                    <Link href="/about">
-                      <button className="text-primary hover:text-primary/80 transition-colors text-sm font-medium">
-                        Learn More →
-                      </button>
+                    <Link
+                      href="/about"
+                      className="text-primary hover:text-primary/80 transition-colors text-sm font-medium"
+                    >
+                      Learn More →
                     </Link>
                   </div>
                 </div>
@@ -153,10 +164,11 @@ export default async function BlogPost({ params }: { params: Promise<{ slug: str
                 <p className="text-muted-foreground mb-6">
                   Let's connect and discuss your next project
                 </p>
-                <Link href="/contact">
-                  <button className="px-6 py-3 bg-primary text-primary-foreground rounded-xl font-medium hover:bg-primary/90 transition-colors">
-                    Get in Touch
-                  </button>
+                <Link
+                  href="/contact"
+                  className="inline-block px-6 py-3 bg-primary text-primary-foreground rounded-xl font-medium hover:bg-primary/90 transition-colors"
+                >
+                  Get in Touch
                 </Link>
               </div>
             </div>

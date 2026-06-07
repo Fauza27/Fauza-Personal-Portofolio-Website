@@ -1,9 +1,10 @@
 import { ClientLayout } from '@/components/ClientLayout';
 import { getProject, getProjects } from '@/lib/mdx';
 import { notFound } from 'next/navigation';
-import { Github, ExternalLink, Calendar, TrendingUp } from 'lucide-react';
+import { Github, ExternalLink, Calendar, TrendingUp, ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 import { MDXRemote } from 'next-mdx-remote/rsc';
+import remarkGfm from 'remark-gfm';
 import { MDXComponents } from '@/components/MDXComponents';
 import { TableOfContents } from '@/components/TableOfContents';
 import { FloatingBackButton } from '@/components/FloatingBackButton';
@@ -53,12 +54,19 @@ export default async function ProjectDetail({ params }: { params: Promise<{ slug
       {/* Reading Progress Bar */}
       <ReadingProgress />
 
-      <main className="pt-20 sm:pt-24 pb-24 sm:pb-32">
+      <main className="pt-20 sm:pt-24 pb-32 sm:pb-48">
         {/* Container with Sidebar */}
         <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex gap-8 justify-center">
             {/* Left Sidebar - Table of Contents */}
-            <aside className="hidden xl:block shrink-0">
+            <aside className="hidden xl:flex flex-col gap-6 shrink-0 sticky top-24 h-fit">
+              <Link
+                href="/projects"
+                className="flex items-center gap-2 px-4 py-2 glass rounded-xl text-foreground/80 hover:text-foreground hover:bg-white/10 transition-all w-fit group"
+              >
+                <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" />
+                <span className="text-sm font-medium">Back to Projects</span>
+              </Link>
               <TableOfContents />
             </aside>
 
@@ -66,7 +74,7 @@ export default async function ProjectDetail({ params }: { params: Promise<{ slug
             <div className="w-full max-w-4xl">
               {/* Project Header */}
               <div className="mb-8 sm:mb-12">
-                <div className={`glass rounded-2xl sm:rounded-3xl p-6 sm:p-8 md:p-12 relative overflow-hidden`}>
+                <div className="glass rounded-2xl sm:rounded-3xl p-6 sm:p-8 md:p-12 relative overflow-hidden">
                   <div className={`absolute inset-0 bg-linear-to-br ${project.gradient} opacity-20`} />
                   
                   <div className="relative z-10">
@@ -159,8 +167,8 @@ export default async function ProjectDetail({ params }: { params: Promise<{ slug
                       Project Demos
                     </h2>
                     <div className="space-y-8">
-                      {project.videos.map((video, index) => (
-                        <div key={index}>
+                      {project.videos.map((video) => (
+                        <div key={video.url}>
                           <h3 className="text-lg sm:text-xl font-semibold text-foreground mb-3 sm:mb-4">
                             {video.title}
                           </h3>
@@ -182,7 +190,11 @@ export default async function ProjectDetail({ params }: { params: Promise<{ slug
                 )}
 
                 <div className="prose-custom">
-                  <MDXRemote source={project.content} components={MDXComponents} />
+                  <MDXRemote 
+                    source={project.content} 
+                    components={MDXComponents} 
+                    options={{ mdxOptions: { remarkPlugins: [remarkGfm] } }}
+                  />
                 </div>
               </div>
 
@@ -194,10 +206,11 @@ export default async function ProjectDetail({ params }: { params: Promise<{ slug
                 <p className="text-muted-foreground mb-6">
                   Let's discuss how I can help with your next project
                 </p>
-                <Link href="/contact">
-                  <button className="px-6 py-3 bg-primary text-primary-foreground rounded-xl font-medium hover:bg-primary/90 transition-colors">
-                    Get in Touch
-                  </button>
+                <Link
+                  href="/contact"
+                  className="inline-block px-6 py-3 bg-primary text-primary-foreground rounded-xl font-medium hover:bg-primary/90 transition-colors"
+                >
+                  Get in Touch
                 </Link>
               </div>
             </div>

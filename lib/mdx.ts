@@ -66,43 +66,14 @@ export interface Project {
 export const getBlogPosts = unstable_cache(
   async (): Promise<BlogPost[]> => {
     const blogDir = path.join(contentDirectory, 'blog');
-    
-    if (process.env.NODE_ENV === 'development') {
-      console.log('Blog directory:', blogDir);
-    }
-    
-    if (!fs.existsSync(blogDir)) {
-      if (process.env.NODE_ENV === 'development') {
-        console.log('Blog directory does not exist');
-      }
-      return [];
-    }
+    if (!fs.existsSync(blogDir)) return [];
 
-    const files = fs.readdirSync(blogDir);
-    if (process.env.NODE_ENV === 'development') {
-      console.log('Found blog files:', files);
-    }
-    
-    const posts = files
+    const posts = fs.readdirSync(blogDir)
       .filter((file) => file.endsWith('.mdx'))
       .map((file) => {
         try {
-          const filePath = path.join(blogDir, file);
-          const fileContent = fs.readFileSync(filePath, 'utf8');
-          const { data, content } = matter(fileContent);
-          
-          if (process.env.NODE_ENV === 'development') {
-            console.log(`Processing ${file}, frontmatter:`, data);
-          }
-          
-          // Validate frontmatter
-          const validatedData = blogPostFrontmatterSchema.parse(data);
-          
-          return {
-            slug: file.replace('.mdx', ''),
-            ...validatedData,
-            content,
-          };
+          const { data, content } = matter(fs.readFileSync(path.join(blogDir, file), 'utf8'));
+          return { slug: path.basename(file, '.mdx'), ...blogPostFrontmatterSchema.parse(data), content };
         } catch (error) {
           console.error(`Error processing blog post ${file}:`, error);
           return null;
@@ -111,16 +82,10 @@ export const getBlogPosts = unstable_cache(
       .filter((post): post is BlogPost => post !== null)
       .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 
-    if (process.env.NODE_ENV === 'development') {
-      console.log('Total blog posts loaded:', posts.length);
-    }
     return posts;
   },
   ['blog-posts'],
-  {
-    revalidate: 3600, // Revalidate every hour
-    tags: ['blog'],
-  }
+  { revalidate: 3600, tags: ['blog'] }
 );
 
 export async function getBlogPost(slug: string): Promise<BlogPost | null> {
@@ -152,61 +117,26 @@ export async function getBlogPost(slug: string): Promise<BlogPost | null> {
 export const getProjects = unstable_cache(
   async (): Promise<Project[]> => {
     const projectsDir = path.join(contentDirectory, 'projects');
-    
-    if (process.env.NODE_ENV === 'development') {
-      console.log('Projects directory:', projectsDir);
-    }
-    
-    if (!fs.existsSync(projectsDir)) {
-      if (process.env.NODE_ENV === 'development') {
-        console.log('Projects directory does not exist');
-      }
-      return [];
-    }
+    if (!fs.existsSync(projectsDir)) return [];
 
-    const files = fs.readdirSync(projectsDir);
-    if (process.env.NODE_ENV === 'development') {
-      console.log('Found project files:', files);
-    }
-    
-    const projects = files
+    const projects = fs.readdirSync(projectsDir)
       .filter((file) => file.endsWith('.mdx'))
       .map((file) => {
         try {
-          const filePath = path.join(projectsDir, file);
-          const fileContent = fs.readFileSync(filePath, 'utf8');
-          const { data, content } = matter(fileContent);
-          
-          if (process.env.NODE_ENV === 'development') {
-            console.log(`Processing ${file}, frontmatter:`, data);
-          }
-          
-          // Validate frontmatter
-          const validatedData = projectFrontmatterSchema.parse(data);
-          
-          return {
-            slug: file.replace('.mdx', ''),
-            ...validatedData,
-            content,
-          };
+          const { data, content } = matter(fs.readFileSync(path.join(projectsDir, file), 'utf8'));
+          return { slug: path.basename(file, '.mdx'), ...projectFrontmatterSchema.parse(data), content };
         } catch (error) {
           console.error(`Error processing project ${file}:`, error);
           return null;
         }
       })
       .filter((project): project is Project => project !== null)
-      .sort((a, b) => parseInt(b.year) - parseInt(a.year)); // Sort by year, newest first
+      .sort((a, b) => parseInt(b.year) - parseInt(a.year));
 
-    if (process.env.NODE_ENV === 'development') {
-      console.log('Total projects loaded:', projects.length);
-    }
     return projects;
   },
   ['projects'],
-  {
-    revalidate: 3600, // Revalidate every hour
-    tags: ['projects'],
-  }
+  { revalidate: 3600, tags: ['projects'] }
 );
 
 export async function getProject(slug: string): Promise<Project | null> {

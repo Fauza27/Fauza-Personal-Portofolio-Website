@@ -1,188 +1,213 @@
 ---
-title: "From Food Confusion to AI Chatbot"
+title: "Unlocking Social Media: How I Turned 637 Instagram Videos into an AI Search Engine"
 date: "2025-11-03"
-excerpt: "Journey of building a context-aware RAG chatbot for food recommendations, while reviving 500+ Instagram reviews buried by algorithms"
+excerpt: "How I discovered that the hardest part of building an AI chatbot isn't the AI—it's turning 637 messy Instagram videos into clean, structured data that the AI can actually use."
 author: "Muhammad Fauza"
-tags: ["AI", "LangChain", "RAG", "FastAPI", "Next.js", "Vector Database", "Chatbot"]
-readTime: "12 min read"
+tags: ["AI", "RAG", "LangChain", "Data Engineering", "FastAPI", "Next.js", "Vector Database"]
+readTime: "14 min read"
 featured: true
 ---
 
-## The Problem: Decision Paralysis
+We generate more content today than at any point in human history. But generating content is only half the battle. Finding it when you actually need it is a completely different problem.
 
-It started simple: being confused about what to eat.
-
-A classic problem, but it happens almost every day. Especially when you have to think about:
-- What time is it now?
-- What's my budget?
-- Do I want a full meal or just a snack?
-- Am I in the mood for healthy or "cheat day"?
-
-From there came the question: "Why not build a system that can help with this?"
-
-Not just a chatbot that answers randomly, but a system that truly understands context and makes decisions based on data.
-
-## Why Not Just a Regular Chatbot?
-
-Many AI chatbots can answer questions about food. The problem is, the answers are often made up.
-
-If asked:
-"Recommend lunch under 30k in Samarinda"
-
-A pure LLM might answer confidently, but the data source is unclear.
-
-At this point I realized: if I want relevant results, the LLM needs to be given the right context.
-
-This is where I started using the Retrieval-Augmented Generation (RAG) approach.
-
-## Architecture: How This System Works
-
-In broad strokes, the flow is like this:
-
-1. User sends a question via UI chat
-2. Backend receives and processes the query
-3. System performs semantic search to vector database
-4. Relevant data is inserted into the prompt
-5. LLM generates an answer based on that context
-6. Response is sent to frontend via streaming
-
-This approach makes answers:
-- More accurate
-- Traceable to sources
-- Much more sensible for real use cases
-
-## Building the RAG Pipeline (and Its Challenges)
-
-Conceptually RAG looks simple. But when implemented, there are many technical decisions that must be made.
-
-Some things I learned:
-
-### Data is More Important Than the Model
-
-No matter how good the model is, it will still produce bad output if:
-- The retrieval data is wrong
-- The embeddings are not representative
-- The data chunking is arbitrary
-
-I spent quite a bit of time just to:
-- Experiment with chunk sizes
-- Overlap strategies
-- And how to structure metadata
-
-### Context Window is Expensive
-
-Adding too much context to the prompt is safe, but:
-- Latency increases
-- Token costs rise
-- And sometimes it actually makes answers blurry
-
-The solution isn't "add everything", but choose the most relevant context.
-
-### Streaming is Important for UX
-
-Without streaming, the chatbot feels "silent" for a few seconds. With streaming response:
-- Users feel the system is working
-- The chat experience feels much more natural
-
-I used Server-Sent Events (SSE) to send tokens gradually to the frontend.
-
-## Data Pipeline: From Instagram to Structured Knowledge
-
-**Challenge**: 637 Instagram posts with 806 columns, inconsistent format, info scattered across captions/videos/hashtags.
-
-**Solution**:
-- Automated extraction with regex patterns (location, hours, menu)
-- Video transcription with Whisper AI (78% success rate on 500+ videos)
-- Data validation and cleaning pipeline
-- Structured metadata for efficient retrieval
-
-**Results**: 806 columns → 18 relevant features, 500+ videos transcribed, ready for production RAG system.
-
-### Cookie Rotation for Rate Limits
-
-Instagram has strict rate limits. Downloading 500+ videos would get blocked quickly.
-
-**Solution**: Implemented smart cookie rotation with 3+ accounts, random delays, and retry logic. This allowed me to download all videos without permanent blocks.
-
-## Tech Stack Used
-
-### Backend
-- FastAPI
-- LangChain for RAG orchestration
-- Vector Database (Qdrant)
-- Multiple LLM providers (AWS Bedrock - Claude 3.5 Sonnet)
-- Docker for environment consistency
-
-### Frontend
-- Next.js 14 (App Router)
-- TypeScript
-- Tailwind CSS
-- Deployed on Vercel
-
-## What I Deliberately Didn't Pursue
-
-In this project, I didn't focus on:
-- Training models from scratch
-- Large-scale fine-tuning
-- Extreme optimization in the early stages
-
-The simple reason: my main goal was to build an AI system that could be used, not just a demo.
-
-## Multi-Stage Retrieval Strategy
-
-Implemented a fallback mechanism to ensure always relevant results:
-
-1. **Strict filter**: Time-based + location + budget
-2. **Relaxed filter**: Remove budget constraint
-3. **General search**: Semantic search only
-
-This ensures 100% response rate while maintaining relevance.
-
-## Context-Aware Filtering
-
-Automatic time-based categorization:
-- Morning (06:00-10:00): Breakfast recommendations
-- Lunch (11:00-14:00): Full meals
-- Afternoon (15:00-17:00): Snacks and coffee
-- Dinner (18:00-21:00): Dinner options
-- Late night (21:00+): Late-night spots
-
-No manual filters needed - the system understands context from the query and current time.
-
-## Rich Metadata Response
-
-Each recommendation includes:
-- Instagram link to original post
-- Google Maps link for navigation
-- Menu items and prices
-- Operating hours
-- Location details
-
-Not just text recommendations - actionable information.
-
-## Impact & Metrics
-
-- **Response Time**: Under 2 seconds (perceived latency with streaming)
-- **Accuracy**: 100% grounded responses (no hallucination)
-- **Coverage**: 500+ food places in Samarinda with rich metadata
-- **Transcription**: 78% video transcription success rate (500/637 videos)
-- **Extraction**: 70% location, 50% hours, 94% hashtags extraction success
-
-## Personal Reflection
-
-This project taught me that building AI is:
-- Not just about models
-- But about architecture, trade-offs, and UX
-
-And often, the most important decisions are actually outside the model itself.
-
-If this system is developed further someday, I want to:
-- Enrich data sources
-- Improve personalization
-- And add a feedback loop from users
-
-**Live Demo**: [https://food-recomendation-chatbot.vercel.app](https://food-recomendation-chatbot.vercel.app)
+This became painfully obvious to me every time I tried to figure out what to eat for dinner in my hometown of Samarinda.
 
 ---
 
-*For other projects, see [Customer Churn Prediction](/blog/customer-churn-prediction), [Sales Forecasting](/blog/sales-forecasting), and [Sentinel Predictive Maintenance](/blog/sentinel-predictive-maintenance).*
+## The Problem: Trapped Information
+
+My brother is a food vlogger. Over the years, he has reviewed hundreds of local restaurants and shared them on Instagram. His videos contain incredible details: price ranges, atmosphere, specific dish recommendations, operational hours, and honest opinions about what's worth ordering.
+
+But Instagram is built for a timeline, not an archive.
+
+If I suddenly craved a specific type of soto late at night, finding his recommendation meant manually scrolling through months of old posts, watching videos one by one, and hoping I stumbled across the right one. And it wasn't just me—his followers regularly sent DMs asking *"Where was that bakso place you reviewed last month?"*
+
+The information existed. It was detailed, valuable, and created by someone who genuinely cared about food. But it was **trapped inside a format that was impossible to search.**
+
+I decided to fix this.
+
+---
+
+## The Plan: Not Just a Chatbot
+
+The obvious approach would be to build a chatbot that answers food questions using an LLM. But I quickly realized that a pure LLM chatbot would hallucinate restaurant names, invent prices, and recommend places that don't exist.
+
+If someone asked *"Recommend 3 affordable bakso places open right now,"* a pure GPT-4 response would sound confident but be completely fabricated. The model has no ground truth about restaurants in Samarinda.
+
+I needed a **Retrieval-Augmented Generation (RAG)** approach: give the LLM real data to work with, so its answers are grounded in facts, not imagination.
+
+But that meant I first needed the data. And getting that data was the hardest part of the entire project.
+
+---
+
+## The Data Pipeline: Where 80% of the Work Happened
+
+Most people think building an AI application means writing prompts and calling APIs. For this project, 80% of the engineering effort went into the **data pipeline**—a 4-step ETL process that turned 637 messy Instagram posts into a clean, structured knowledge base.
+
+### Step 1: Video Transcription (The Rate Limit Problem)
+
+The first challenge was downloading 637 Instagram videos. Instagram has aggressive rate limits—download too many videos too quickly and your account gets blocked.
+
+I implemented a **cookie rotation system** with 3+ account cookies, random delays between requests, and exponential backoff retry logic. This allowed me to download all 637 videos without permanent blocks—but it took patience. Every download session felt like a negotiation with Instagram's anti-scraping systems.
+
+Once downloaded, each video was sent to **Azure Speech API** with Indonesian language support for transcription. Out of 637 videos, 500 were successfully transcribed—a 78% success rate. The remaining 22% were music-only clips, ambient noise, or audio too noisy for reliable transcription.
+
+### Step 2: Transcript Cleaning (Garbage In, Garbage Out)
+
+Raw transcriptions from speech-to-text models are messy. They're full of:
+
+* Misheard words ("bakso" transcribed as "baku satu")
+* Missing punctuation and broken sentences
+* Filler words and verbal tics
+* Overlapping speech from multiple people
+
+I used GPT-4o-mini to clean each transcript—fixing typos, restructuring broken sentences, and removing filler content while preserving the original meaning. This step was critical because bad transcriptions would poison every downstream process.
+
+### Step 3: Entity Extraction (The Standardization Challenge)
+
+The cleaned transcripts then needed to be parsed into structured data. I used GPT-4o-mini to extract:
+
+* **Restaurant name** — often mentioned casually ("kita hari ini di warung Pak Ahmad")
+* **Food category** — standardized into 227 categories
+* **Price range** — normalized to "XK - YK" format (e.g., "15K - 25K")
+* **Menu items** — specific dishes mentioned
+* **Facilities** — WiFi, parking, AC, etc.
+* **Operational hours** — often mentioned as "buka dari jam 7 sampai jam 10 malam"
+* **Location** — address or area description
+
+The standardization of food categories was surprisingly difficult. My brother might say "mi bakso" in one video and "bakso campur" in another—both referring to similar foods but using different terms. I built a taxonomy of 227 standardized categories so the search system could understand that queries for "bakso" should also match "mi bakso", "bakso urat", and "bakso beranak."
+
+### Step 4: Geolocation Enrichment
+
+Extracted locations were enriched with **Google Places API** to add precise Google Maps links, coordinates, and verified addresses. This was the final piece—transforming text-based location descriptions into one-tap navigation links.
+
+### The Pipeline Orchestrator
+
+I built a `run_pipeline.py` orchestrator that could run all four steps sequentially, or any individual step independently:
+
+```bash
+python run_pipeline.py              # Run all steps
+python run_pipeline.py --step 3     # Run only extraction
+python run_pipeline.py --skip 1,2   # Skip transcription and cleaning
+```
+
+Each step checked for required credentials (Azure Speech Key, OpenAI API Key, Google Maps API Key) before executing, and the pipeline could be resumed from any failure point.
+
+---
+
+## Building the RAG Engine
+
+With clean, structured data in hand, I built the retrieval-augmented generation service. But I quickly learned that naive RAG—just embedding documents and doing a single vector search—produces mediocre results. Real-world RAG requires multiple layers of intelligence.
+
+### The Multi-Stage Retrieval Problem
+
+The first version of my retrieval system used a simple approach: embed the user's query, search Qdrant for the top 10 similar documents, and pass them to the LLM. It worked... sometimes.
+
+The problem was category specificity. When someone asked for *"bakso places"*, a pure semantic search would return bakso restaurants, but also mie ayam places, soto places, and random food stalls that happened to mention bakso once. The results were relevant-*ish* but not precise.
+
+I redesigned the retrieval into a **multi-stage fallback system**:
+
+1. **Category pre-filter:** If the query mentions a known food category (mapped from 25+ keyword patterns), the Qdrant search is pre-filtered by `kategori_makanan` metadata. This dramatically improves precision for specific food queries.
+
+2. **Score threshold:** Results below a minimum relevance score of 0.25 are filtered out. This threshold was calibrated by analyzing real query-result score distributions—bakso queries typically scored 0.55-0.62, while irrelevant results scored 0.05-0.15.
+
+3. **Post-filter fallback:** If pre-filtering returns fewer than 3 results (because the category is sparse), the system runs an unfiltered search with 2x candidates and applies category matching as a post-filter. This catches edge cases where the Qdrant metadata doesn't exactly match the filter condition.
+
+4. **Scoreless fallback:** If absolutely no results pass the score threshold, the system takes the top 10 results without score filtering—ensuring the user always gets *something*.
+
+This cascading approach guarantees a 100% response rate while maintaining relevance.
+
+### The Gibberish Problem
+
+Not all Instagram videos are restaurant reviews. Some are music clips, religious greetings, random vlogs, or audio recordings with no food content. Despite the ETL pipeline, some of these slipped through into the vector database.
+
+I built a `_is_gibberish_ringkasan()` heuristic that filters out non-food content at retrieval time:
+
+* Minimum word count threshold (8 words) for summaries
+* Blacklisted phrases like *"assalamualaikum warahmatullahi"* (opening greetings from non-food videos)
+* An `is_culinary_content` flag set during the ETL process
+
+This was a lesson in data quality: no matter how good your pipeline is, some garbage will always leak through. You need defense-in-depth at every layer.
+
+### Context-Aware Time Intelligence
+
+A restaurant recommendation at 7 AM is completely different from one at 10 PM. The system automatically detects time context from the user's query and the current time:
+
+* *"sarapan pagi"* → Breakfast category (06:00-10:00)
+* *"makan siang"* → Lunch category (11:00-14:00)
+* *"nongkrong"* → Afternoon snacks/coffee (15:00-17:00)
+* *"makan malam"* → Dinner options (18:00-21:00)
+
+Even more interesting: the system supports **future time references.** When someone says *"tempat sarapan besok pagi"* (breakfast places tomorrow morning), the `parse_future_time()` function extracts the target datetime and evaluates restaurant operational hours against that future time—not the current time.
+
+Restaurants that are open at the target time are sorted to the top of the results.
+
+---
+
+## Streaming: The UX That Makes It Feel Alive
+
+Without streaming, the chatbot would go silent for 3-5 seconds while the LLM generated a complete response. That silence feels like the system is broken.
+
+I implemented **Server-Sent Events (SSE)** streaming through FastAPI. The `generate_response_stream()` method yields tokens as they're generated by the LLM:
+
+1. **Tokens stream first:** Users see text appearing word by word. Perceived latency drops from 5 seconds to under 2 seconds.
+2. **Restaurant cards arrive after:** Once the LLM finishes, a single SSE event sends the structured `RestaurantCard` objects.
+3. **Done signal:** A final event closes the connection cleanly.
+
+Each restaurant card includes actionable data: the original Instagram link (for watching the actual review), a Google Maps link (for one-tap navigation), menu items, prices, facilities, and real-time open/closed status.
+
+---
+
+## The Critical Fix: Consistency Between Text and Cards
+
+One subtle but critical bug I encountered: the LLM might mention restaurants in its text response that didn't appear in the restaurant cards, or vice versa.
+
+The root cause was that the LLM received one pool of candidates (from the system prompt context), while the cards were generated from a differently filtered pool.
+
+The fix was simple but non-obvious: **use the EXACT same candidate pool for both the LLM context and the card generation.** I take `annotated[:requested_count]` once, build the LLM prompt from this pool, and generate cards from this exact same list. The code comments explicitly mark this as `CRITICAL FIX` to prevent future regression.
+
+---
+
+## Conversation History: Making Multi-Turn Work
+
+A single-turn chatbot is easy. Multi-turn conversations where context carries over between questions is hard.
+
+When a user says *"yang lebih murah"* (something cheaper) after getting bakso recommendations, the RAG system needs to understand that "cheaper" refers to bakso places specifically.
+
+I implemented **query compression**: the `_compress_query_with_history()` method sends the last 4 conversation exchanges to GPT-4o-mini and asks it to produce a standalone search query. The compressed query is then used for vector search instead of the raw user input.
+
+Example:
+- **Turn 1:** *"Recommend bakso places"*
+- **Turn 2:** *"yang lebih murah"* → Compressed to: *"Rekomendasi tempat bakso murah di Samarinda"*
+
+This ensures the vector search always retrieves contextually relevant results, even when the user's input is ambiguous without conversation history.
+
+---
+
+## What This Project Changed About My Thinking
+
+### Before
+
+I thought innovation meant creating something entirely new—new models, new algorithms, new data. I thought the AI model was the most important part of an AI application. I thought data engineering was a boring prerequisite.
+
+### After
+
+This project completely changed my perspective.
+
+**Innovation through accessibility.** I didn't create any new information. Every restaurant review already existed on Instagram. The innovation was making that information *findable*—transforming an unsearchable timeline into a conversational search engine. Sometimes the most valuable thing you can do is take existing, trapped information and simply make it easier to access.
+
+**The data pipeline is the product.** The chatbot UI took days. The RAG service took a week. The data pipeline—downloading videos, transcribing audio, cleaning transcripts, extracting entities, standardizing categories, enriching locations—took weeks. In AI systems, the model is rarely the bottleneck. Data quality is.
+
+**Defense-in-depth for data quality.** No matter how good your ETL pipeline is, garbage leaks through. You need multiple filtering layers: at ingestion time, at retrieval time, and at display time. The gibberish detector, the relevance score threshold, the CDN URL sanitizer, the deduplication logic—each one catches things the others miss.
+
+**Real-world search is not one-shot.** A single vector search query is not enough for production use. Multi-stage retrieval with pre-filtering, post-filtering, and fallback strategies is essential for maintaining both precision and coverage.
+
+There is an enormous amount of value hidden in plain sight—trapped in social media posts, buried in old videos, lost in unsearchable formats. Sometimes the best AI application isn't one that generates new content. It's one that **unlocks the content that already exists.**
+
+---
+
+**Live Demo:** [food-recomendation-chatbot.vercel.app](https://food-recomendation-chatbot.vercel.app)
+
+---
+
+*For other projects, see [Chatbot KKP PI](/blog/chatbot-kkp-pi), [My-Jarvis-Gua](/blog/my-jarvis-gua), and [VoiceInvoice](/blog/voiceinvoice).*

@@ -1,8 +1,8 @@
 ---
-title: "Sentinel: Predictive Maintenance Copilot"
+title: "Sentinel: AI-Powered Predictive Maintenance Copilot"
 category: "AI Engineering & MLOps"
-description: "Production-grade multi-agent AI system dengan 10 specialized agents, 95.45% recall ML model, dan complete MLOps pipeline"
-tech: ["LangGraph", "XGBoost", "FastAPI", "React", "PostgreSQL", "AWS Bedrock", "MLflow", "Docker"]
+description: "A production-grade multi-agent AI platform combining 10 specialized LangGraph agents, XGBoost failure prediction (95.45% recall), What-If simulation, and a real-time dashboard—built to help industrial maintenance teams prevent equipment failures before they happen."
+tech: ["LangGraph", "XGBoost", "FastAPI", "React", "PostgreSQL", "AWS Bedrock", "Qdrant", "MLflow", "SHAP", "Docker"]
 year: "2025"
 github: "https://github.com/AyamGanja/Sentinel"
 videos:
@@ -10,164 +10,334 @@ videos:
     url: "https://youtu.be/QJuQIZmDAew?si=IlxA7Pdsm7nH6ERP"
   - title: "AI Chatbot Demo"
     url: "https://youtu.be/zh0kjq_TPZQ"
+gradient: "from-blue-500/20 via-indigo-500/20 to-violet-500/20"
 ---
 
-## Technical Highlights
+## Project Summary & Role
 
-**Multi-Agent AI System**: Architected dan implemented 10 specialized AI agents dengan LangGraph orchestration, handling complex workflows dari database queries hingga automated model retraining.
+**Sentinel** is a full-stack predictive maintenance platform that helps industrial O&M teams move from reactive to proactive decision-making. It combines machine learning failure prediction (95.45% recall), 10 specialized AI agents orchestrated by LangGraph, What-If delay simulation, and a real-time monitoring dashboard into a single integrated experience.
 
-**Production ML Pipeline**: Complete MLOps setup dengan XGBoost model (95.45% recall), automated retraining, drift detection, dan model versioning menggunakan MLflow + DagSHub.
+**My Role:** Team Lead, Product Manager, AI Engineer (*Group project — Team of 5*). Designed the system architecture, developed the multi-agent AI system and ML pipeline, built the FastAPI backend, and coordinated integration between AI, backend, and frontend components.
 
-**Full-Stack Development**: Led development sebagai ketua kelompok - backend (FastAPI, PostgreSQL), AI chatbot (18K+ lines), dan partial frontend (React chat UI).
+---
 
-**Enterprise-Grade**: JWT authentication, role-based access, comprehensive error handling, monitoring, dan deployment ke Google Cloud Run dengan Docker.
+## Why We Built This
 
-## Skills Demonstrated
+During our capstone project (Dicoding × Accenture ASAH Program), our team explored how AI could help industries move from reactive maintenance to proactive decision-making.
 
-### AI/ML Engineering
-- **Multi-Agent Systems**: LangGraph state machine dengan 10 specialized agents
-- **LLM Integration**: AWS Bedrock (Claude 3.5 Sonnet) dengan streaming responses
-- **Vector Database**: Qdrant untuk knowledge base (SOPs, manuals, FAQs)
-- **Natural Language to SQL**: LLM-based query generation dengan temporal context parsing
-- **Prompt Engineering**: Complex prompts untuk agent collaboration dan reasoning transparency
+Unexpected equipment failures in manufacturing are costly. A single unplanned downtime event can cost $260K per hour in lost production, create safety risks for workers, and trigger cascade failures across interconnected systems. Traditional maintenance approaches—either fixing things after they break (reactive) or replacing parts on a fixed schedule (preventive)—are both inefficient.
 
-### Machine Learning & MLOps
-- **XGBoost**: 44 engineered features, hyperparameter tuning, 95.45% recall
-- **Feature Engineering**: Rolling averages, rate of change, interaction terms
-- **Model Versioning**: MLflow + DagSHub untuk experiment tracking
-- **Automated Retraining**: Trigger-based retraining (performance degradation, data drift)
-- **Drift Detection**: KS-test untuk detect distribution changes
-- **Model Monitoring**: Performance metrics tracking, feature importance analysis
+We wanted to investigate whether machine learning and AI agents could give maintenance teams a fundamentally better tool: one that predicts failures before they happen, explains why they're predicted, and helps engineers take the right action at the right time.
 
-### Backend Development
-- **FastAPI**: 2,000+ lines REST API dengan async endpoints
-- **PostgreSQL**: Database design dengan SQLAlchemy 2.0, performance indexes
-- **Authentication**: JWT-based auth dengan Argon2 password hashing
-- **API Design**: RESTful endpoints untuk dashboard, machines, tickets, simulation
-- **Error Handling**: Comprehensive error handling dengan retry logic
+---
 
-### AI Chatbot Development
-- **LangGraph Orchestration**: 10,000+ lines multi-agent system
-- **State Management**: Complex state machine dengan conditional routing
-- **Agent Collaboration**: Inter-agent communication protocol
-- **Bilingual Support**: Indonesian/English dengan context-aware detection
-- **Reasoning Transparency**: Show AI thinking process untuk build trust
+## System Architecture
 
-### Frontend Development
-- **React 19**: Modern UI dengan TypeScript
-- **Real-time Updates**: WebSocket integration untuk live data
-- **Chat Interface**: Built chat UI component untuk AI copilot
-- **State Management**: React hooks untuk complex state
+The platform has three layers: a React dashboard for visualization, a modular FastAPI backend for API and business logic, and a multi-agent AI system for intelligent decision-making.
 
-### DevOps & Infrastructure
-- **Docker**: Multi-stage builds untuk optimized images
-- **Google Cloud Run**: Serverless deployment dengan auto-scaling
-- **CI/CD**: GitHub Actions untuk automated testing dan deployment
-- **Monitoring**: Logging, metrics, alerts setup
-- **Database Migrations**: Alembic untuk version-controlled schema changes
+```mermaid
+flowchart TD
+    subgraph Frontend ["🌐 React + TypeScript (Vite)"]
+        Dash["📊 Dashboard\n(Real-time monitoring)"]
+        Chat["💬 AI Chatbot\n(SSE streaming)"]
+        Twin["🏭 Digital Twin\n(3D visualization)"]
+        Maint["📅 Maintenance Priority\n(Schedule optimization)"]
+    end
 
-### Team Leadership
-- **Project Management**: Led 5-person team, sprint planning, code reviews
-- **Technical Decisions**: Architecture design, tech stack selection
-- **Documentation**: Comprehensive docs untuk onboarding dan maintenance
-- **Mentoring**: Pair programming, knowledge sharing sessions
+    subgraph Backend ["🖥️ FastAPI Backend (Modular Clean Architecture)"]
+        API["REST API\n(app/api/)"]
+        Svc["Services Layer\n(app/services/)"]
+        ML["ML Module\n(app/ml/)"]
+        Agents["LangGraph Agents\n(app/agents/)"]
+    end
 
-## The 10 AI Agents
+    subgraph Data ["💾 Data & AI Layer"]
+        PG["PostgreSQL\n(Sensor data, tickets,\nchat history)"]
+        QD["Qdrant\n(SOPs, manuals, FAQs)"]
+        LLM["OpenAI / AWS Bedrock\n(Claude 3.5 Sonnet)"]
+        MLF["MLflow + DagsHub\n(Model registry)"]
+    end
 
-**Agent A (qdrant_search)**: Knowledge base search untuk SOPs dan manuals dengan semantic search.
+    Frontend --> Backend
+    API --> Svc
+    Svc --> ML
+    Svc --> PG
+    Agents --> QD
+    Agents --> LLM
+    Agents --> ML
+    ML --> MLF
+```
 
-**Agent B (database_query)**: Natural language to SQL dengan temporal context parsing ("hari ini", "minggu lalu").
+---
 
-**Agent C (predictive_maintenance)**: ML prediction dengan XGBoost (95.45% recall, 87.2% precision).
+## The 8-Node LangGraph Pipeline
 
-**Agent D (web_search)**: Latest information dari internet menggunakan Tavily API.
+The AI chatbot is powered by a LangGraph state machine with 8 sequential nodes and conditional routing. Each node is a pure function that takes state in and returns state out.
 
-**Agent E (optimization_engine)**: Schedule optimization dengan priority scoring, budget constraints, technician availability.
+```mermaid
+flowchart TD
+    User(["👤 User Input"]) --> N1
 
-**Agent F (simulation_engine)**: What-if analysis untuk delay impact (cost increase, risk level).
+    N1["1. Prompt Refiner\n• Detect language (ID/EN)\n• Extract product_id\n• Detect urgency\n• Short-circuit greetings"]
+    N1 --> N2
 
-**Agent G (feedback_loop_analyzer)**: Model performance monitoring dengan drift detection (KS-test).
+    N2["2. Goal Decomposer\n• Detect complex multi-step goals\n• Decompose into ordered sub-tasks\n• Map required tools per sub-task"]
+    N2 --> N3
 
-**Agent H (intelligent_retrainer)**: Automated model retraining dengan comparison dan deployment.
+    N3["3. Intent Classifier\n• simple_query | complex_task\n• confirmation_needed\n• clarification_needed\n• conversational"]
 
-**Agent I (report_generator)**: PDF report generation dengan charts dan insights.
+    N3 -->|conversational| N8
+    N3 -->|needs tools| N4
 
-**Agent J (ticket_creator)**: Natural language ticket creation dengan multi-turn conversation.
+    N4["4. Tool Selector\n• LLM-based tool selection\n• Context-aware (urgency, machine data)\n• Enforce dependency rules\n• Max 3 tools per query"]
+    N4 --> N5
 
-## ML Model Performance
+    N5["5. Tool Executor\n• Execute tools sequentially\n• Pass results between tools\n• Error handling + retry logic"]
 
-**XGBoost V3**:
-- Recall: 95.45% (catch 95 dari 100 failures)
-- Precision: 87.2%
-- F1-Score: 91.2%
-- ROC-AUC: 96.8%
+    N5 -->|success| N6
+    N5 -->|critical error, retry < 2| N4
 
-**Why High Recall?** Dalam predictive maintenance, missing a failure bisa catastrophic (safety risk, $260K/hour downtime). Better have false positives than miss real failures.
+    N6["6. Agent Collaborator\n• Cross-validate predictions\n• Consult between agents\n• Calculate confidence score"]
+    N6 --> N7
 
-**Features**: 44 engineered features including:
-- Raw sensor values (temperature, RPM, torque, vibration, pressure)
-- Rolling averages (3, 7, 14 days)
-- Rate of change
-- Interaction terms (temp × RPM)
-- Statistical features (std, min, max)
+    N7["7. Result Validator\n• Check completeness\n• Confidence threshold\n• Sub-task continuation\n• Human-in-loop routing"]
 
-## Architecture Complexity
+    N7 -->|complete| N8
+    N7 -->|needs confirmation| HIL["Human In Loop\n(Confirm/Reject/Clarify)"]
+    N7 -->|more sub-tasks| N4
+    N7 -->|low confidence| N4
 
-**Codebase**: 18,000+ lines of production code
-- backend.py: ~2,000 lines (REST API, database, auth)
-- main.py: ~10,000 lines (AI chatbot, 10 agents, LangGraph)
-- app.py: ~200 lines (unified entry point)
+    HIL -->|confirmed| N5
+    HIL -->|rejected/clarify| N8
 
-**Database**: 8 tables dengan complex relationships
-- users, authentication, machine_sensor_data
-- scheduled_maintenance, machine_data_backup
-- chat_thread, chat_message, simulation_history
+    N8["8. Answer Generator\n• Compile final answer\n• Format in user's language\n• Include reasoning transparency\n• Confidence label"]
+    N8 --> Out(["💬 SSE Streaming Response"])
+```
 
-**API Endpoints**: 30+ endpoints across 6 modules
-- Authentication, Dashboard, Machines, Tickets, Prioritization, Simulation
+### The AgentState: Shared Memory
 
-## Technical Challenges Solved
+All 8 nodes share a single `AgentState` TypedDict with 30+ fields, including:
 
-**Multi-Agent Coordination**: 10 agents harus collaborate tanpa conflict. Solution: LangGraph state machine dengan conditional routing dan agent collaboration protocol.
+- **Conversation context:** messages, thread_id, user auth
+- **Language support:** detected_language (ID/EN), language templates
+- **Intent & complexity:** intent classification, sub-task decomposition, current sub-task index
+- **Tool execution:** selected_tools, tool_results, previous results summary
+- **Reasoning transparency:** reasoning_steps (shown to user as "thinking process")
+- **Confidence & self-correction:** confidence_score, uncertainty_reasons, retry_count
+- **Human-in-loop:** user_confirmed, confirmation_attempts (max 3 to prevent infinite loops)
 
-**State Management**: Complex state across agents dengan retry logic. Solution: TypedDict state schema dengan proper error handling.
+---
 
-**Cost Optimization**: AWS Bedrock per-token pricing bisa mahal. Solution: Cache language detection, optimize prompt length, monitor usage dengan alerts.
+## The 10 Specialized AI Agents
 
-**Bilingual Support**: Indonesian/English dengan context-aware detection. Solution: LLM-based detection dengan conversation history context.
+Each agent is a tool that can be selected and executed by the LangGraph pipeline. The `TOOL_MAP` centralizes all tool registrations.
 
-**Production Deployment**: Environment management, database migrations, monitoring. Solution: Docker containerization, CI/CD pipeline, comprehensive logging.
+```mermaid
+flowchart LR
+    subgraph Tools ["🛠️ 10 AI Agents (TOOL_MAP)"]
+        A["🔍 Knowledge Base\n(Qdrant semantic search)"]
+        B["🗄️ Database Query\n(NL → SQL)"]
+        C["🔮 ML Prediction\n(XGBoost + 44 features)"]
+        D["🌐 Web Search\n(Tavily API)"]
+        E["📅 Schedule Optimizer\n(Priority scoring)"]
+        F["🧪 What-If Simulation\n(Delay impact analysis)"]
+        G["📊 Feedback Analyzer\n(Drift detection + KS-test)"]
+        H["🔄 Model Retrainer\n(Auto retrain + deploy)"]
+        I["📋 Report Generator\n(PDF export)"]
+        J["🎫 Ticket Creator\n(Multi-turn extraction)"]
+    end
+```
 
-**Model Retraining**: Automated retraining tanpa downtime. Solution: Blue-green deployment strategy dengan model comparison sebelum switch.
+| Agent | Tool Name | Key Capability |
+|-------|-----------|----------------|
+| **A** | `qdrant_search` | Semantic search on SOPs, manuals, FAQs stored in Qdrant vector DB |
+| **B** | `database_query` | Natural language → SQL with temporal context parsing ("last 7 days", "this week") |
+| **C** | `predictive_maintenance_api` | XGBoost prediction with 44 engineered features, probability, failure type, risk breakdown |
+| **D** | `web_search` | Real-time industry information via Tavily API |
+| **E** | `optimization_engine` | Priority-based maintenance scheduling with budget constraints and technician availability |
+| **F** | `simulation_engine` | What-If analysis: "What happens if we delay maintenance by 3 days?" with cost projections |
+| **G** | `feedback_loop_analyzer` | Model performance monitoring, data drift detection (KS-test), threshold optimization |
+| **H** | `intelligent_model_retrainer` | Automated retraining pipeline (SMOTE + XGBoost), comparison with previous model, auto-deploy to MLflow |
+| **I** | `report_generator` | Daily/weekly/monthly reports with executive summary, failure breakdown, PDF export |
+| **J** | `maintenance_ticket_creator` | Multi-turn conversation for ticket creation with LLM-based information extraction |
 
-## Business Impact
+### Agent Collaboration Protocol
 
-**For Engineers**:
-- Keputusan lebih cepat (analyze sensor data dari hours ke minutes)
-- Proactive maintenance (predict failures 3-7 days ahead)
-- Natural language interface (no need SQL atau complex tools)
+When the ML Prediction agent returns a failure probability above 50%, the Agent Collaborator node automatically consults the Feedback Analyzer to cross-validate: *"Is this prediction reliable given current model performance?"*
 
-**For Business**:
-- Reduce unplanned downtime (early detection dengan 95.45% recall)
-- Cost savings (optimize maintenance scheduling)
-- Improved safety (catch critical failures early)
-- Data-driven decisions (replace gut feeling dengan predictions)
+Similarly, when the Schedule Optimizer produces an optimized schedule, it can consult the Simulation Engine to validate: *"Should this schedule be simulated first?"*
 
-**ROI**: Dengan 95.45% recall dan $260K/hour downtime cost, system bisa save millions annually.
+This inter-agent consultation happens automatically through `_COLLABORATION_RULES` defined in `graph.py`.
 
-## Leadership & Collaboration
+---
 
-**Role**: Ketua kelompok di ASAH program (Dicoding × Accenture)
+## The ML Pipeline: 44 Features, 95.45% Recall
 
-**Responsibilities**:
-- Full backend development (FastAPI, PostgreSQL, authentication)
-- AI chatbot development (10 agents, LangGraph orchestration)
-- ML pipeline (XGBoost training, MLOps setup)
-- Partial frontend (chat UI component)
-- Team coordination (sprint planning, code review, deployment)
+The XGBoost model detects 5 types of equipment failure using 44 engineered features derived from raw sensor data.
 
-**Team Size**: 5 members dengan different skill levels
+```mermaid
+flowchart TD
+    subgraph Input ["📡 Raw Sensor Data"]
+        T1["Air Temperature (K)"]
+        T2["Process Temperature (K)"]
+        R["RPM"]
+        TQ["Torque (Nm)"]
+        TW["Tool Wear (min)"]
+    end
 
-**Duration**: 5 months intensive (900+ hours learning + capstone)
+    subgraph FE ["⚙️ Feature Engineering (44 features)"]
+        D1["Derived:\n• TempDiff = Process - Air\n• Power = Torque × RPM\n• ToolTorqueInteraction"]
+        D2["Risk Indicators:\n• HDF: TempDiff ≤ 8.6 AND RPM ≤ 1379\n• PWF: Power < 33205 OR > 85986\n• OSF: Tool×Torque ≥ 11003\n• TWF: Tool_wear ≥ 198\n• RNF: Torque > 54 OR RPM > 1862"]
+        D3["Anomaly Detection:\n• Z-Score per sensor\n• Anomaly flag if |Z| > 2.0"]
+    end
 
-**Read Full Story**: [Blog Post](/blog/sentinel-predictive-maintenance)
+    subgraph Model ["🤖 XGBoost Ensemble"]
+        BM["Binary Model\n(Failure / No Failure)"]
+        MC["Multiclass Model\n(Which failure type?)"]
+    end
+
+    subgraph Output ["📊 Prediction Output"]
+        P["Probability: 0-100%"]
+        FT["Failure Type:\nHDF | TWF | PWF | OSF | RNF"]
+        RB["Risk Breakdown\n(per indicator)"]
+        HS["Health Score\n(weighted composite)"]
+    end
+
+    Input --> FE
+    FE --> Model
+    Model --> Output
+```
+
+### Why 95.45% Recall Matters
+
+In predictive maintenance, the cost asymmetry is extreme:
+
+* **False positive** (predicting failure that doesn't happen): Unnecessary inspection. Cost: $500-2,000.
+* **False negative** (missing a real failure): Unplanned downtime. Cost: $260,000/hour.
+
+We deliberately optimized for **recall** (catching real failures) over precision, using a tuned threshold of 0.3108 instead of the default 0.5.
+
+| Metric | Value |
+|--------|-------|
+| **Recall** | 95.45% |
+| **ROC-AUC** | 99.01% |
+| Precision | 42.57% |
+| Threshold | 0.3108 (tuned) |
+| Features | 44 engineered |
+| Algorithm | XGBoost Ensemble |
+
+### Automated Retraining Triggers
+
+The Intelligent Model Retrainer (`retrainer.py`, 42,943 bytes) automatically triggers retraining when:
+
+- Recall drops below 90%
+- ROC-AUC drops more than 0.5%
+- Data drift is detected via KS-test
+- Manual trigger via chatbot command
+
+The retraining pipeline includes data preparation, feature engineering, SMOTE for class imbalance, binary + multiclass model training, performance comparison against the previous model, and deployment to MLflow via DagsHub.
+
+---
+
+## The Refactoring Story: From Monolith to Clean Architecture
+
+The original codebase was a monolith: a single `main.py` file with 10,000+ lines containing all 10 AI agents, and a `backend.py` with 2,000+ lines handling REST API, database, and authentication.
+
+This caused real engineering problems:
+
+* **Event loop conflicts:** The AI agents and REST API fought over asyncio event loops.
+* **Testing nightmare:** Changing one agent could break unrelated endpoints.
+* **Scaling risk:** A single file import loaded the entire AI system into memory for every API request.
+
+I led the refactoring into a **Clean Modular Architecture** (`back-end-refactor/`):
+
+```
+app/
+├── api/          # REST endpoints (auth, dashboard, machines, tickets)
+├── services/     # Business logic (shared between API and agents)
+├── schemas/      # Pydantic V2 validation
+├── db/           # SQLAlchemy ORM models
+├── ml/           # Predictor + Retrainer modules
+├── agents/       # LangGraph graph, state, tools, helpers
+└── core/         # Configuration, constants, LLM client
+```
+
+Key improvements:
+
+* **Separation of concerns:** API routes, business logic, and AI agents live in separate modules.
+* **Single entry point:** `main.py` on port 8888 unifies everything—no more dual-server confusion.
+* **Security fix:** The database agent now uses a read-only PostgreSQL account to prevent SQL injection through LLM-generated queries.
+* **Type safety:** Pydantic V2 strict validation on all request/response schemas.
+
+---
+
+## Dependency-Aware Tool Execution
+
+A subtle but critical design decision: some tools must always run after others.
+
+If a user asks *"Predict failure for machine M12345"*, the ML Prediction agent needs the machine's current sensor data first. The Tool Selector enforces dependency rules:
+
+```
+predictive_maintenance_api → always requires database_query first
+simulation_engine         → always requires database_query first
+```
+
+If the LLM selects `predictive_maintenance_api` without `database_query`, the system automatically inserts it. After `database_query` succeeds, its results populate `state["machine_data"]`, which the ML Prediction agent then uses for feature engineering and prediction.
+
+---
+
+## Reasoning Transparency: Building Trust
+
+Industrial maintenance engineers won't trust an AI that just says *"Machine M12345 will fail."* They need to understand **why**.
+
+Every node in the LangGraph pipeline appends to `state["reasoning_steps"]`—a list of timestamped entries showing:
+
+- What the system detected (language, intent, urgency)
+- Which tools were selected and why
+- Which agents were consulted
+- What the confidence level is at each stage
+
+These reasoning steps are streamed to the frontend alongside the response, allowing engineers to see the AI's "thinking process." This transparency was essential for user trust in a safety-critical domain.
+
+---
+
+## Key Technical Decisions
+
+| Decision | Choice | Reason |
+|----------|--------|--------|
+| **Agent Orchestration** | LangGraph state machine | Conditional routing, retry logic, and human-in-loop support that simple chains can't provide |
+| **ML Model** | XGBoost (not deep learning) | Interpretable, fast inference, works well with 44 engineered features on tabular data |
+| **LLM Provider** | OpenAI / AWS Bedrock (Claude 3.5 Sonnet) | Reliable, supports structured output for intent classification and tool selection |
+| **Vector DB** | Qdrant | Semantic search on SOPs and maintenance manuals |
+| **Model Registry** | MLflow + DagsHub | Version control for models with automated deployment |
+| **Database Agent** | Read-only PostgreSQL account | Prevents SQL injection through LLM-generated queries |
+| **Threshold** | 0.3108 (tuned) | Optimized for recall in high-cost-of-failure domain |
+| **Max Tools** | 3 per query | Balances capability with response latency |
+
+---
+
+## What I Learned
+
+**Multi-Agent Systems Need Guardrails** — Without limits, the LangGraph pipeline could loop infinitely: tool selector → executor → validator → tool selector → ... I added `MAX_SUB_TASK_ITERATIONS`, `MAX_CONFIRMATION_ATTEMPTS`, and a recursion limit to prevent runaway execution. Guardrails aren't just nice-to-have—they're essential for production multi-agent systems.
+
+**Recall Matters More Than Accuracy** — In predictive maintenance, a 95% accurate model that misses 20% of real failures is worse than one with lower accuracy but 95.45% recall. The cost asymmetry ($500 false positive vs $260K/hour false negative) makes the optimization target obvious once you understand the domain.
+
+**Clean Architecture Enables Team Velocity** — The monolithic `main.py` (10,000+ lines) was a bottleneck. After refactoring into modular packages, team members could work on different agents simultaneously without merge conflicts. Architecture is a team productivity multiplier.
+
+**The Refactoring Was Worth It** — Moving from a monolith to clean architecture was time-consuming, but it solved the event loop conflicts, made testing possible, and secured the database agent against SQL injection. In a team project with different skill levels, clear module boundaries are essential.
+
+> This project taught me that impactful software is not defined by complexity, but by how effectively it solves real problems for users. The 10 agents, the 44 features, the 8-node pipeline—none of it matters if the engineer can't trust the system and act on its recommendations.
+
+---
+
+**Read the full story behind this project** → [Blog Post](/blog/sentinel-predictive-maintenance).
+
+---
+
+## Source Code & Demo
+
+- **GitHub Repository:** [Sentinel](https://github.com/AyamGanja/Sentinel)
+- **Project Overview Video:** [YouTube](https://youtu.be/QJuQIZmDAew?si=IlxA7Pdsm7nH6ERP)
+- **AI Chatbot Demo:** [YouTube](https://youtu.be/zh0kjq_TPZQ)
+
+The repository includes the complete refactored backend, React frontend, ML training scripts, 10 AI agent implementations, and documentation covering architecture, API reference, data pipeline, and deployment.

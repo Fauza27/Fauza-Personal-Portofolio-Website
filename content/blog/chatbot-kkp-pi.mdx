@@ -1,0 +1,261 @@
+---
+title: "I Built an AI Chatbot for Academic Guidelines — But the Hardest Part Wasn't the AI"
+date: "2026-05-23"
+excerpt: "Story behind building a production-grade RAG chatbot for campus KKP/PI guidelines—from hybrid search to contextual conversations that turned out to be more complex than expected"
+author: "Muhammad Fauza"
+tags: ["RAG", "AI", "Python", "FastAPI", "Supabase", "NLP", "LLM"]
+readTime: "12 min read"
+featured: true
+---
+
+One thing I noticed during college is that students often struggle more with understanding procedures than with the coursework itself.
+
+In my campus, once students enter semester 6, they are required to take either KKP (internship program) or PI (research project). These courses are considered one of the most important stages before graduation, but they also create a lot of confusion.
+
+Ironically, the official guideline book already exists.
+
+But even with the handbook available, students still repeatedly ask questions like:
+
+* “What are the requirements for PI?”
+* “How long does KKP need to be?”
+* “What is the correct proposal format?”
+* “What happens after seminar revision?”
+
+At first, I thought:
+
+> “Maybe students are just lazy to read.”
+
+But after observing more carefully, I realized the real problem was different.
+
+The handbook itself was long, dense, and difficult to navigate when someone only needed one specific answer. Most students did not want to read dozens of pages just to find one procedure.
+
+As a result:
+
+* many students repeatedly asked lecturers the same questions,
+* some relied on friends for information,
+* and misinformation often spread between students.
+
+Some students were even too hesitant or embarrassed to ask lecturers directly, so they simply guessed the procedure themselves.
+
+That was the moment I started thinking:
+
+> “What if students could simply *chat* with the handbook instead of manually searching through it?”
+
+That simple question became the starting point of this project.
+
+---
+
+## Why I Decided to Build This
+
+This project was fully self-initiated.
+
+No lecturer asked me to build it.
+It was not a class assignment.
+I simply felt the problem was real enough to solve.
+
+At first, my goal was actually very simple:
+
+> create a chatbot that could answer questions based on the official KKP/PI guideline documents.
+
+But once I started building it, I quickly realized that creating a “working chatbot” was easy.
+
+Creating a chatbot that gives answers that are actually *helpful* was much harder.
+
+That realization completely changed the way I approached AI systems.
+
+---
+
+## My First Mistake: Thinking the LLM Was the Main Problem
+
+When I first built the system, I used a simple RAG pipeline.
+
+Technically, it worked.
+
+The chatbot could answer questions.
+The retrieval system returned relevant chunks.
+The responses looked convincing.
+
+But when I tested it myself, something felt off.
+
+Some answers were technically correct but still confusing.
+Some lacked context.
+Some referenced incomplete information.
+Some sounded intelligent while still being unhelpful.
+
+That was the first time I realized something important:
+
+> In many AI systems, the biggest problem is not the model.
+> It is how information is retrieved and structured.
+
+From that point onward, I spent much more time improving retrieval architecture than changing the LLM itself.
+
+---
+
+## The Chunking Problem That Changed My Perspective
+
+One of the biggest technical challenges was document chunking.
+
+At first, I used a common fixed-size chunking approach because that was what most tutorials recommended.
+
+But the KKP/PI guideline documents had hierarchical structures:
+
+* chapters,
+* subchapters,
+* numbered procedures,
+* requirements,
+* and interconnected rules.
+
+When the document was split carelessly into fixed token sizes, the meaning broke apart.
+
+For example:
+
+* requirement lists became separated from their section titles,
+* procedures lost surrounding explanations,
+* and retrieval started returning incomplete contexts.
+
+The retrieval was still “technically relevant,” but the answers no longer felt useful for humans.
+
+That was when I implemented a parent-child chunking strategy:
+
+* smaller child chunks for retrieval,
+* larger parent chunks for LLM context.
+
+This increased complexity significantly:
+
+* ingestion became harder,
+* storage usage increased,
+* retrieval became multi-step.
+
+But the quality improvement was worth it.
+
+And honestly, this was the project that made me truly understand that building AI products is often more about system design than model selection.
+
+---
+
+## Learning That Better Metrics Do Not Always Mean Better User Experience
+
+One of the most valuable lessons from this project came from evaluation.
+
+I used RAGAS to evaluate the system using metrics like:
+
+* faithfulness,
+* context precision,
+* relevancy,
+* and completeness.
+
+At one point, I became too focused on improving the numbers.
+
+I kept optimizing the system to increase evaluation scores.
+
+And the scores improved.
+
+But when I manually tested the chatbot again, the experience actually became worse.
+
+The answers became:
+
+* shorter,
+* overly safe,
+* less natural,
+* and less helpful.
+
+That was the moment I realized:
+
+> Good evaluation metrics do not automatically create good user experiences.
+
+So I changed my priorities.
+
+Instead of optimizing purely for metrics, I started optimizing for:
+
+* clarity,
+* usefulness,
+* context,
+* and whether the answer genuinely helped the student.
+
+Some metrics decreased slightly afterward.
+But the actual chatbot experience became much better.
+
+This project taught me that engineering is often about balancing trade-offs, not maximizing a single number.
+
+---
+
+## The Most Interesting Part: Making Conversations Feel Natural
+
+Another challenge was handling follow-up questions.
+
+Humans naturally ask questions like:
+
+> “Then how long is it?”
+
+But for a retrieval system, that sentence has almost no meaning without previous context.
+
+So I started implementing:
+
+* intent classification,
+* context-aware retrieval,
+* and query reformulation.
+
+The system learned to distinguish:
+
+* casual conversation,
+* clarification questions,
+* and questions that required a full retrieval process.
+
+I also implemented query reformulation so ambiguous questions could be rewritten into clearer search queries before retrieval.
+
+This made the chatbot feel much less robotic and much more conversational.
+
+And strangely, this became one of my favorite parts of the project.
+
+Because I realized I was no longer just building “an AI model.”
+
+I was designing how humans interact with information.
+
+---
+
+## What I Learned From This Project
+
+This project taught me far more than RAG pipelines or vector databases.
+
+It changed the way I think about software engineering itself.
+
+I learned:
+
+* how important retrieval quality is in AI systems,
+* how system architecture affects user experience,
+* how evaluation metrics can sometimes be misleading,
+* and how much real-world software development involves iteration and trade-offs.
+
+More importantly, I learned that good engineering is not about adding complexity everywhere.
+
+It is about understanding:
+
+* what problem actually matters,
+* what users truly need,
+* and what trade-offs are acceptable.
+
+---
+
+## Impact
+
+Although this project started as a personal experiment, it solved a real problem inside my campus environment.
+
+The chatbot helps students:
+
+* quickly find procedural information,
+* reduce confusion about KKP/PI requirements,
+* and access guideline information more naturally through conversation.
+
+For me personally, this project became one of the experiences that pushed me deeper into:
+
+* AI engineering,
+* retrieval systems,
+* backend architecture,
+* and human-centered software design.
+
+It also made me realize that I genuinely enjoy building systems that combine:
+
+* AI,
+* software engineering,
+* and real-world usability.
+
+And I think that realization is ultimately the most valuable outcome of this project.

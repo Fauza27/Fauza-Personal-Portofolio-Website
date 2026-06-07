@@ -57,23 +57,13 @@ export function TableOfContents() {
   }, []);
 
   const scrollToHeading = (id: string) => {
-    const element = document.getElementById(id);
-    if (element) {
-      const offset = 100;
-      const elementPosition = element.getBoundingClientRect().top;
-      const offsetPosition = elementPosition + window.pageYOffset - offset;
-
-      window.scrollTo({
-        top: offsetPosition,
-        behavior: 'smooth',
-      });
-    }
+    document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   };
 
   if (headings.length === 0) return null;
 
   return (
-    <nav className="sticky top-36 hidden xl:block w-64">
+    <nav className="w-64">
       <div className="glass rounded-2xl p-6 max-h-[calc(100vh-180px)] overflow-y-auto">
         <h4 className="text-sm font-bold text-foreground uppercase tracking-wider mb-4">
           On This Page
@@ -84,20 +74,20 @@ export function TableOfContents() {
               <button
                 onClick={() => scrollToHeading(heading.id)}
                 className={`
-                  text-left w-full text-sm transition-all duration-200
-                  ${heading.level === 3 ? 'pl-4' : ''}
+                  text-left w-full text-sm transition-all duration-200 py-1 px-2 rounded-lg
+                  ${heading.level === 3 ? 'pl-6' : ''}
                   ${
                     activeId === heading.id
-                      ? 'text-primary font-medium'
-                      : 'text-muted-foreground hover:text-foreground'
+                      ? 'text-foreground font-semibold bg-white/5'
+                      : 'text-muted-foreground hover:text-foreground hover:bg-white/5'
                   }
                 `}
               >
-                <span className="flex items-start gap-2">
+                <span className="flex items-center gap-2 relative">
                   {activeId === heading.id && (
                     <motion.span
                       layoutId="active-indicator"
-                      className="w-1 h-4 bg-primary rounded-full mt-0.5 shrink-0"
+                      className="absolute -left-3 w-1 h-4 bg-primary rounded-full shrink-0"
                       transition={{ type: 'spring', stiffness: 300, damping: 30 }}
                     />
                   )}

@@ -20,11 +20,12 @@ export function NotFoundClient() {
             </p>
             
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-              <Link href="/">
-                <button className="flex items-center gap-2 px-6 py-3 bg-primary text-primary-foreground rounded-xl font-medium hover:bg-primary/90 transition-colors">
-                  <Home size={18} />
-                  Go Home
-                </button>
+              <Link
+                href="/"
+                className="flex items-center gap-2 px-6 py-3 bg-primary text-primary-foreground rounded-xl font-medium hover:bg-primary/90 transition-colors"
+              >
+                <Home size={18} />
+                Go Home
               </Link>
               <button
                 onClick={() => window.history.back()}

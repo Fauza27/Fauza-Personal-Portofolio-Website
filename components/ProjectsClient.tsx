@@ -61,7 +61,7 @@ export function ProjectsClient({ projects }: ProjectsClientProps) {
               transition={{ type: "spring", stiffness: 300 }}
               className="relative"
             >
-              <div className={`glass rounded-2xl sm:rounded-3xl p-6 sm:p-8 h-full relative overflow-hidden cursor-pointer group`}>
+              <div className="glass rounded-2xl sm:rounded-3xl p-6 sm:p-8 h-full relative overflow-hidden cursor-pointer group">
                 {/* Background gradient on hover */}
                 <div className={`absolute inset-0 bg-gradient-to-br ${project.gradient} opacity-0 group-hover:opacity-100 transition-opacity duration-500`} />
                 

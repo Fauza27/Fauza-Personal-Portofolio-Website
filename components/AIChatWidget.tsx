@@ -14,10 +14,11 @@ export const AIChatWidget = () => {
         className="fixed bottom-24 right-6 z-40 w-14 h-14 glass-strong rounded-full flex items-center justify-center glow-purple"
         whileHover={{ scale: 1.1 }}
         whileTap={{ scale: 0.95 }}
-        onClick={() => setIsOpen(true)}
+        onClick={() => setIsOpen((prev) => !prev)}
         initial={{ scale: 0, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         transition={{ delay: 1, type: "spring" }}
+        aria-label={isOpen ? "Close AI chat" : "Open AI chat"}
       >
         <Sparkles size={24} className="text-primary" />
       </motion.button>

@@ -1,4 +1,5 @@
-import { ReactNode } from 'react';
+import { ReactNode, Children, isValidElement } from 'react';
+import { MermaidDiagram } from '@/components/MermaidDiagram';
 
 export const MDXComponents = {
   h1: ({ children }: { children: ReactNode }) => (
@@ -25,7 +26,7 @@ export const MDXComponents = {
     </h4>
   ),
   p: ({ children }: { children: ReactNode }) => (
-    <p className="text-base sm:text-lg text-muted-foreground leading-[1.8] mb-6 tracking-wide">
+    <p className="text-base sm:text-lg text-foreground/80 leading-[1.8] mb-6">
       {children}
     </p>
   ),
@@ -40,7 +41,7 @@ export const MDXComponents = {
     </ol>
   ),
   li: ({ children }: { children: ReactNode }) => (
-    <li className="text-base sm:text-lg text-muted-foreground leading-[1.8] flex items-start gap-3 ml-0">
+    <li className="text-base sm:text-lg text-foreground/80 leading-[1.8] flex items-start gap-3 ml-0 mb-2 last:mb-0">
       <span className="text-primary mt-1.5 shrink-0 select-none text-lg">▸</span>
       <span className="flex-1">{children}</span>
     </li>
@@ -58,7 +59,7 @@ export const MDXComponents = {
     
     if (isInline) {
       return (
-        <code className="px-2.5 py-1 bg-primary/10 text-primary rounded-md text-[0.9em] font-mono border border-primary/20 whitespace-nowrap">
+        <code className="px-1.5 py-0.5 bg-primary/10 text-primary rounded-md text-[0.9em] font-mono border border-primary/20 break-words">
           {children}
         </code>
       );
@@ -70,11 +71,26 @@ export const MDXComponents = {
       </code>
     );
   },
-  pre: ({ children }: { children: ReactNode }) => (
-    <pre className="bg-black/60 rounded-xl p-6 sm:p-8 overflow-x-auto mb-8 border border-white/10 backdrop-blur-sm shadow-2xl">
-      <div className="text-sm sm:text-base font-mono text-foreground/90 leading-relaxed">{children}</div>
-    </pre>
-  ),
+  pre: ({ children }: { children: ReactNode }) => {
+    // Detect mermaid code blocks: <pre><code class="language-mermaid">...</code></pre>
+    const child = Children.only(children);
+    if (
+      isValidElement<{ className?: string; children?: ReactNode }>(child) &&
+      typeof child.props.className === 'string' &&
+      child.props.className.includes('language-mermaid')
+    ) {
+      const chart = typeof child.props.children === 'string'
+        ? child.props.children
+        : String(child.props.children ?? '');
+      return <MermaidDiagram chart={chart} />;
+    }
+
+    return (
+      <pre className="bg-black/60 rounded-xl p-6 sm:p-8 overflow-x-auto mb-8 border border-white/10 backdrop-blur-sm shadow-2xl">
+        <div className="text-sm sm:text-base font-mono text-foreground/90 leading-relaxed">{children}</div>
+      </pre>
+    );
+  },
   a: ({ href, children }: { href?: string; children: ReactNode }) => (
     <a
       href={href}
@@ -127,14 +143,14 @@ export const MDXComponents = {
     </td>
   ),
   img: ({ src, alt }: { src?: string; alt?: string }) => (
-    <figure className="my-12 group">
-      <div className="relative overflow-hidden rounded-xl border border-white/10 shadow-2xl">
+    <figure className="my-10">
+      <div className="relative rounded-xl border border-white/10 shadow-xl overflow-hidden bg-white/5">
         <img
           src={src}
           alt={alt}
-          className="w-full transition-transform duration-500 group-hover:scale-105"
+          className="w-full h-auto object-cover"
+          loading="lazy"
         />
-        <div className="absolute inset-0 bg-linear-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
       </div>
       {alt && (
         <figcaption className="text-sm text-muted-foreground text-center mt-4 italic">

@@ -5,23 +5,13 @@ interface YouTubeEmbedProps {
   title?: string;
 }
 
+// Moved outside component — pure function, no need to recreate on every render
+const getVideoId = (url: string): string | null => {
+  const match = url.match(/(?:youtube\.com\/(?:watch\?v=|embed\/)|youtu\.be\/)([^&?/]+)/);
+  return match?.[1] ?? null;
+};
+
 export function YouTubeEmbed({ url, title = 'YouTube video' }: YouTubeEmbedProps) {
-  // Extract video ID from various YouTube URL formats
-  const getVideoId = (url: string): string | null => {
-    const patterns = [
-      /(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([^&\?\/]+)/,
-      /youtube\.com\/watch\?.*v=([^&]+)/,
-    ];
-
-    for (const pattern of patterns) {
-      const match = url.match(pattern);
-      if (match && match[1]) {
-        return match[1];
-      }
-    }
-    return null;
-  };
-
   const videoId = getVideoId(url);
 
   if (!videoId) {
@@ -38,6 +28,7 @@ export function YouTubeEmbed({ url, title = 'YouTube video' }: YouTubeEmbedProps
         className="absolute top-0 left-0 w-full h-full"
         src={`https://www.youtube.com/embed/${videoId}`}
         title={title}
+        loading="lazy"
         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
         allowFullScreen
       />

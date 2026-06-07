@@ -48,7 +48,7 @@ export function BlogNavigation({ currentSlug, posts }: BlogNavigationProps) {
                 aria-label={`Navigate to ${post.title}`}
                 className="block group"
               >
-                <div className="relative overflow-hidden rounded-xl p-4 border border-white/5 transition-all duration-200 hover:scale-102 hover:bg-white/5">
+                <div className="relative overflow-hidden rounded-xl p-4 border border-white/5 transition-all duration-200 hover:bg-white/5">
                   {/* Gradient background on hover */}
                   <div 
                     className="absolute inset-0 bg-linear-to-br from-primary/20 to-accent/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"

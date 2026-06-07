@@ -1,48 +1,36 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { motion } from 'framer-motion';
+import { useEffect } from 'react';
+import { motion, useMotionValue, useTransform } from 'framer-motion';
 
 export function ReadingProgress() {
-  const [progress, setProgress] = useState(0);
+  const scrollProgress = useMotionValue(0);
+  const width = useTransform(scrollProgress, [0, 1], ['0%', '100%']);
 
   useEffect(() => {
     const updateProgress = () => {
-      const scrollTop = window.pageYOffset;
+      const scrollTop = window.scrollY;
       const docHeight = document.documentElement.scrollHeight - window.innerHeight;
-      const scrollPercent = (scrollTop / docHeight) * 100;
-      setProgress(Math.min(scrollPercent, 100));
+      scrollProgress.set(docHeight > 0 ? scrollTop / docHeight : 0);
     };
 
-    window.addEventListener('scroll', updateProgress);
+    window.addEventListener('scroll', updateProgress, { passive: true });
     updateProgress();
 
     return () => window.removeEventListener('scroll', updateProgress);
-  }, []);
+  }, [scrollProgress]);
 
   return (
-    <div 
+    <div
       className="fixed bottom-0 left-0 right-0 z-40"
       role="progressbar"
-      aria-label={`Reading progress: ${Math.round(progress)}%`}
-      aria-valuenow={Math.round(progress)}
-      aria-valuemin={0}
-      aria-valuemax={100}
+      aria-label="Reading progress"
     >
-      {/* Progress bar - simple dan tidak mengganggu */}
       <motion.div
         className="h-1 bg-linear-to-r from-primary via-accent to-primary"
-        style={{ 
-          width: `${progress}%`,
-          boxShadow: '0 -2px 10px rgba(168, 85, 247, 0.3)'
-        }}
-        initial={{ width: '0%' }}
-        animate={{ width: `${progress}%` }}
-        transition={{ 
-          duration: 0.15,
-          ease: 'easeOut'
-        }}
+        style={{ width, boxShadow: '0 -2px 10px rgba(168, 85, 247, 0.3)' }}
       />
     </div>
   );
 }
+

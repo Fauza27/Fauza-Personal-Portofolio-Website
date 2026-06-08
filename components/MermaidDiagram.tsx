@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState, useCallback } from 'react';
-import { ZoomIn, ZoomOut, Maximize2, Move } from 'lucide-react';
+import { ZoomIn, ZoomOut, Maximize, Expand, Shrink, Move } from 'lucide-react';
 
 interface MermaidDiagramProps {
   chart: string;
@@ -12,27 +12,26 @@ const MAX_SCALE = 4;
 const ZOOM_STEP = 0.15;
 
 export function MermaidDiagram({ chart }: MermaidDiagramProps) {
-  const viewportRef = useRef<HTMLDivElement>(null);   // the clipping box
-  const svgWrapRef  = useRef<HTMLDivElement>(null);   // the transformed element
+  const viewportRef = useRef<HTMLDivElement>(null);
+  const svgWrapRef  = useRef<HTMLDivElement>(null);
 
-  const [error, setError]       = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isDragging, setIsDragging] = useState(false);
   const [displayScale, setDisplayScale] = useState(1);
+  const [isFullscreen, setIsFullscreen] = useState(false);
+  const [naturalSize, setNaturalSize] = useState({ w: 0, h: 0 });
 
-  // Transform state stored in refs (no re-render on every drag frame)
   const scaleRef     = useRef(1);
   const translateRef = useRef({ x: 0, y: 0 });
-  const fitScaleRef  = useRef(1);   // "100%" = diagram fills container width
+  const fitScaleRef  = useRef(1);
 
-  // Pointer tracking
   const lastPointer     = useRef({ x: 0, y: 0 });
   const lastPinchDist   = useRef<number | null>(null);
   const isDraggingRef   = useRef(false);
 
   const idRef = useRef(`mermaid-${Math.random().toString(36).slice(2, 9)}`);
 
-  // ─── Apply CSS transform ──────────────────────────────────────────
   const applyTransform = useCallback(() => {
     const el = svgWrapRef.current;
     if (!el) return;
@@ -44,8 +43,8 @@ export function MermaidDiagram({ chart }: MermaidDiagramProps) {
 
   const clamp = (v: number) => Math.min(MAX_SCALE, Math.max(MIN_SCALE, v));
 
-  // ─── Zoom toward a point in viewport coordinates ─────────────────
   const zoomBy = useCallback((delta: number, cx?: number, cy?: number) => {
+    if (!isFullscreen) return;
     const wrap = viewportRef.current;
     if (!wrap) return;
 
@@ -63,58 +62,90 @@ export function MermaidDiagram({ chart }: MermaidDiagramProps) {
     };
     scaleRef.current = newScale;
     applyTransform();
-  }, [applyTransform]);
+  }, [applyTransform, isFullscreen]);
 
-  // ─── Reset to "fit" view ─────────────────────────────────────────
-  const resetTransform = useCallback(() => {
-    scaleRef.current     = fitScaleRef.current;
-    translateRef.current = { x: 0, y: 0 };
-    applyTransform();
-  }, [applyTransform]);
-
-  // ─── Compute fit scale after SVG is rendered ─────────────────────
   const computeFitScale = useCallback(() => {
     const viewport = viewportRef.current;
     const svgEl    = svgWrapRef.current?.querySelector('svg');
     if (!viewport || !svgEl) return;
 
-    // Use the SVG's intrinsic width via viewBox or width attribute
     const vb = svgEl.viewBox?.baseVal;
-    const naturalW = vb && vb.width > 0
-      ? vb.width
-      : svgEl.getBoundingClientRect().width / (scaleRef.current || 1);
+    const naturalW = vb && vb.width > 0 ? vb.width : svgEl.getBoundingClientRect().width / (scaleRef.current || 1);
+    const naturalH = vb && vb.height > 0 ? vb.height : svgEl.getBoundingClientRect().height / (scaleRef.current || 1);
 
-    const availW = viewport.clientWidth - 48; // subtract horizontal padding
-    const fit    = availW > 0 && naturalW > 0
-      ? Math.min(1, availW / naturalW)   // never upscale beyond 1
-      : 1;
+    const availW = viewport.clientWidth - 48; // padding
+    const availH = isFullscreen ? window.innerHeight - 100 : naturalH; // max height in fullscreen
+
+    const fitW = availW > 0 && naturalW > 0 ? Math.min(1, availW / naturalW) : 1;
+    const fitH = availH > 0 && naturalH > 0 ? Math.min(1, availH / naturalH) : 1;
+    
+    const fit = isFullscreen ? Math.min(fitW, fitH) : fitW;
 
     fitScaleRef.current  = fit;
     scaleRef.current     = fit;
-    translateRef.current = { x: 0, y: 0 };
-    applyTransform();
-  }, [applyTransform]);
+    
+    // In normal mode, center horizontally. In fullscreen, center both.
+    const offsetX = (availW - naturalW * fit) / 2;
+    const offsetY = isFullscreen ? (availH - naturalH * fit) / 2 : 0;
 
-  // ─── Wheel zoom ──────────────────────────────────────────────────
+    translateRef.current = { x: Math.max(0, offsetX), y: Math.max(0, offsetY) };
+    applyTransform();
+    setNaturalSize({ w: naturalW, h: naturalH });
+  }, [applyTransform, isFullscreen]);
+
+  const resetTransform = useCallback(() => {
+    computeFitScale();
+  }, [computeFitScale]);
+
+  // Handle Fullscreen Escape
+  useEffect(() => {
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && isFullscreen) {
+        setIsFullscreen(false);
+      }
+    };
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, [isFullscreen]);
+
+  // Lock body scroll when fullscreen
+  useEffect(() => {
+    if (isFullscreen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => { document.body.style.overflow = ''; };
+  }, [isFullscreen]);
+
+  // Re-fit when fullscreen changes
+  useEffect(() => {
+    if (!isLoading) {
+      // small delay to let DOM layout settle
+      const t = setTimeout(computeFitScale, 50);
+      return () => clearTimeout(t);
+    }
+  }, [isFullscreen, isLoading, computeFitScale]);
+
+  // Wheel zoom (only active in fullscreen)
   useEffect(() => {
     const el = viewportRef.current;
-    if (!el) return;
+    if (!el || !isFullscreen) return;
     const onWheel = (e: WheelEvent) => {
       e.preventDefault();
       zoomBy(e.deltaY < 0 ? ZOOM_STEP : -ZOOM_STEP, e.clientX, e.clientY);
     };
     el.addEventListener('wheel', onWheel, { passive: false });
     return () => el.removeEventListener('wheel', onWheel);
-  }, [zoomBy]);
+  }, [zoomBy, isFullscreen]);
 
-  // ─── Mouse pan ───────────────────────────────────────────────────
   const onPointerDown = useCallback((e: React.PointerEvent) => {
-    if (e.pointerType === 'touch') return;
+    if (!isFullscreen || e.pointerType === 'touch') return;
     isDraggingRef.current = true;
     setIsDragging(true);
     lastPointer.current = { x: e.clientX, y: e.clientY };
     (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
-  }, []);
+  }, [isFullscreen]);
 
   const onPointerMove = useCallback((e: React.PointerEvent) => {
     if (!isDraggingRef.current || e.pointerType === 'touch') return;
@@ -133,8 +164,8 @@ export function MermaidDiagram({ chart }: MermaidDiagramProps) {
     setIsDragging(false);
   }, []);
 
-  // ─── Touch pan + pinch ───────────────────────────────────────────
   const onTouchStart = useCallback((e: React.TouchEvent) => {
+    if (!isFullscreen) return;
     if (e.touches.length === 1) {
       lastPointer.current = { x: e.touches[0].clientX, y: e.touches[0].clientY };
       isDraggingRef.current = true;
@@ -144,9 +175,10 @@ export function MermaidDiagram({ chart }: MermaidDiagramProps) {
       const dy = e.touches[1].clientY - e.touches[0].clientY;
       lastPinchDist.current = Math.hypot(dx, dy);
     }
-  }, []);
+  }, [isFullscreen]);
 
   const onTouchMove = useCallback((e: React.TouchEvent) => {
+    if (!isFullscreen) return; // Allow normal page scrolling if not fullscreen
     e.preventDefault();
     if (e.touches.length === 1 && isDraggingRef.current) {
       const dx = e.touches[0].clientX - lastPointer.current.x;
@@ -166,14 +198,13 @@ export function MermaidDiagram({ chart }: MermaidDiagramProps) {
       zoomBy((dist / lastPinchDist.current - 1) * scaleRef.current, midX, midY);
       lastPinchDist.current = dist;
     }
-  }, [applyTransform, zoomBy]);
+  }, [applyTransform, zoomBy, isFullscreen]);
 
   const onTouchEnd = useCallback(() => {
     isDraggingRef.current = false;
     lastPinchDist.current = null;
   }, []);
 
-  // ─── Mermaid render ──────────────────────────────────────────────
   useEffect(() => {
     let cancelled = false;
 
@@ -208,17 +239,6 @@ export function MermaidDiagram({ chart }: MermaidDiagramProps) {
             actorBkg: '#1e293b',
             actorBorder: '#14b8a6',
             actorTextColor: '#f0fdfa',
-            activationBkgColor: '#0d9488',
-            activationBorderColor: '#14b8a6',
-            signalColor: '#94a3b8',
-            signalTextColor: '#cbd5e1',
-            labelBoxBkgColor: '#1e293b',
-            labelBoxBorderColor: '#4a4a8a',
-            labelTextColor: '#e2e8f0',
-            loopTextColor: '#e2e8f0',
-            noteBkgColor: '#0f172a',
-            noteBorderColor: '#14b8a6',
-            noteTextColor: '#e2e8f0',
           },
           flowchart: { useMaxWidth: false, htmlLabels: true, curve: 'basis' },
           sequence: {
@@ -240,7 +260,6 @@ export function MermaidDiagram({ chart }: MermaidDiagramProps) {
             svgEl.style.display = 'block';
             svgEl.style.maxWidth = 'none';
           }
-          // Slight delay so layout is settled before measuring
           requestAnimationFrame(() => {
             if (!cancelled) {
               computeFitScale();
@@ -260,7 +279,6 @@ export function MermaidDiagram({ chart }: MermaidDiagramProps) {
     return () => { cancelled = true; };
   }, [chart, computeFitScale]);
 
-  // Re-fit on container resize
   useEffect(() => {
     const el = viewportRef.current;
     if (!el) return;
@@ -271,8 +289,8 @@ export function MermaidDiagram({ chart }: MermaidDiagramProps) {
     return () => ro.disconnect();
   }, [isLoading, computeFitScale]);
 
-  // Zoom percentage relative to the fit scale
   const pct = Math.round((displayScale / (fitScaleRef.current || 1)) * 100);
+  const containerHeight = isFullscreen ? '100%' : (naturalSize.h * fitScaleRef.current + 48) || 180;
 
   if (error) {
     return (
@@ -284,8 +302,12 @@ export function MermaidDiagram({ chart }: MermaidDiagramProps) {
   }
 
   return (
-    <div className="my-8 w-full overflow-hidden rounded-xl border border-white/10 bg-black/30 shadow-2xl backdrop-blur-sm transition-colors hover:border-teal-500/30">
-
+    <div className={`my-8 overflow-hidden transition-all bg-black/30 backdrop-blur-sm shadow-2xl ${
+      isFullscreen 
+        ? 'fixed inset-0 z-[100] m-0 w-screen h-screen flex flex-col rounded-none border-none bg-black/95' 
+        : 'w-full rounded-xl border border-white/10 hover:border-teal-500/30'
+    }`}>
+      
       {/* ── Header ── */}
       <div className="flex items-center justify-between border-b border-white/10 px-4 py-2.5">
         <div className="flex items-center gap-3">
@@ -295,49 +317,60 @@ export function MermaidDiagram({ chart }: MermaidDiagramProps) {
             <span className="h-3 w-3 rounded-full bg-green-500/60" />
           </div>
           <span className="text-xs font-medium uppercase tracking-widest text-white/30">
-            diagram
+            diagram {isFullscreen && ' (fullscreen)'}
           </span>
         </div>
 
         <div className="flex items-center gap-1">
-          <span className="mr-1 min-w-[3.2rem] text-right text-xs tabular-nums text-white/40">
-            {pct}%
-          </span>
+          {isFullscreen && (
+            <>
+              <span className="mr-1 min-w-[3.2rem] text-right text-xs tabular-nums text-white/40">
+                {pct}%
+              </span>
+              <button
+                onClick={() => zoomBy(-ZOOM_STEP)}
+                title="Zoom out"
+                className="flex h-7 w-7 items-center justify-center rounded-lg text-white/40 transition hover:bg-white/10 hover:text-white/80 active:scale-90"
+              >
+                <ZoomOut size={14} />
+              </button>
+              <button
+                onClick={() => zoomBy(ZOOM_STEP)}
+                title="Zoom in"
+                className="flex h-7 w-7 items-center justify-center rounded-lg text-white/40 transition hover:bg-white/10 hover:text-white/80 active:scale-90"
+              >
+                <ZoomIn size={14} />
+              </button>
+              <button
+                onClick={resetTransform}
+                title="Fit to view"
+                className="flex h-7 w-7 items-center justify-center rounded-lg text-white/40 transition hover:bg-white/10 hover:text-white/80 active:scale-90 mr-2"
+              >
+                <Maximize size={13} />
+              </button>
+              <div className="w-px h-4 bg-white/10 mx-1"></div>
+            </>
+          )}
 
           <button
-            onClick={() => zoomBy(-ZOOM_STEP)}
-            title="Zoom out (scroll down)"
-            className="flex h-7 w-7 items-center justify-center rounded-lg text-white/40 transition hover:bg-white/10 hover:text-white/80 active:scale-90"
+            onClick={() => setIsFullscreen(!isFullscreen)}
+            title={isFullscreen ? "Exit fullscreen" : "Enter fullscreen"}
+            className="flex h-7 w-7 items-center justify-center rounded-lg text-white/40 transition hover:bg-white/10 hover:text-teal-400 active:scale-90"
           >
-            <ZoomOut size={14} />
-          </button>
-
-          <button
-            onClick={() => zoomBy(ZOOM_STEP)}
-            title="Zoom in (scroll up)"
-            className="flex h-7 w-7 items-center justify-center rounded-lg text-white/40 transition hover:bg-white/10 hover:text-white/80 active:scale-90"
-          >
-            <ZoomIn size={14} />
-          </button>
-
-          <button
-            onClick={resetTransform}
-            title="Fit to container (100%)"
-            className="flex h-7 w-7 items-center justify-center rounded-lg text-white/40 transition hover:bg-white/10 hover:text-white/80 active:scale-90"
-          >
-            <Maximize2 size={13} />
+            {isFullscreen ? <Shrink size={14} /> : <Expand size={14} />}
           </button>
         </div>
       </div>
 
-      {/* ── Viewport (clipping + interaction surface) ── */}
+      {/* ── Viewport ── */}
       <div
         ref={viewportRef}
-        className="relative w-full overflow-hidden"
+        className="relative w-full overflow-hidden flex-1"
         style={{
-          minHeight: 180,
-          cursor: isDragging ? 'grabbing' : 'grab',
-          touchAction: 'none',
+          height: isFullscreen ? 'auto' : containerHeight,
+          minHeight: isFullscreen ? 'auto' : 100,
+          cursor: isFullscreen ? (isDragging ? 'grabbing' : 'grab') : 'default',
+          touchAction: isFullscreen ? 'none' : 'auto',
           userSelect: 'none',
         }}
         onPointerDown={onPointerDown}
@@ -348,14 +381,12 @@ export function MermaidDiagram({ chart }: MermaidDiagramProps) {
         onTouchMove={onTouchMove}
         onTouchEnd={onTouchEnd}
       >
-        {/* Loading spinner */}
         {isLoading && (
-          <div className="flex h-44 items-center justify-center">
+          <div className="flex h-full min-h-[180px] items-center justify-center">
             <div className="h-8 w-8 animate-spin rounded-full border-2 border-teal-500/20 border-t-teal-500" />
           </div>
         )}
 
-        {/* SVG — scaled from top-left origin */}
         <div
           ref={svgWrapRef}
           className={`origin-top-left will-change-transform p-6 transition-opacity duration-300 [&_svg]:block [&_text]:fill-slate-200 [&_.label]:text-slate-200 ${
@@ -364,13 +395,13 @@ export function MermaidDiagram({ chart }: MermaidDiagramProps) {
           style={{ transform: 'translate(0px,0px) scale(1)' }}
         />
 
-        {/* Subtle hint — auto fades */}
-        {!isLoading && (
+        {/* Hint when entering fullscreen */}
+        {!isLoading && isFullscreen && (
           <div
-            className="pointer-events-none absolute bottom-3 left-1/2 flex -translate-x-1/2 items-center gap-1.5 whitespace-nowrap rounded-full border border-white/10 bg-black/50 px-3 py-1 text-[11px] text-white/30 backdrop-blur-sm"
+            className="pointer-events-none absolute bottom-5 left-1/2 flex -translate-x-1/2 items-center gap-1.5 whitespace-nowrap rounded-full border border-white/10 bg-black/50 px-3 py-1.5 text-[12px] text-white/50 backdrop-blur-sm"
             style={{ animation: 'fadeOutHint 3.5s ease-in-out 1s forwards' }}
           >
-            <Move size={10} />
+            <Move size={12} />
             <span>drag · scroll / pinch to zoom</span>
           </div>
         )}

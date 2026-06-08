@@ -1,7 +1,7 @@
 ---
-title: "Unlocking Social Media: How I Turned 637 Instagram Videos into an AI Search Engine"
+title: "Unlocking Social Media: How I Turned 900+ Instagram Videos into an AI Search Engine"
 date: "2025-11-03"
-excerpt: "How I discovered that the hardest part of building an AI chatbot isn't the AI-it's turning 637 messy Instagram videos into clean, structured data that the AI can actually use."
+excerpt: "How I discovered that the hardest part of building an AI chatbot isn't the AI-it's turning 900+ messy Instagram videos into clean, structured data that the AI can actually use."
 author: "Muhammad Fauza"
 tags: ["AI", "RAG", "LangChain", "Data Engineering", "FastAPI", "Next.js", "Vector Database"]
 readTime: "14 min read"
@@ -42,15 +42,15 @@ But that meant I first needed the data. And getting that data was the hardest pa
 
 ## The Data Pipeline: Where 80% of the Work Happened
 
-Most people think building an AI application means writing prompts and calling APIs. For this project, 80% of the engineering effort went into the **data pipeline**-a 4-step ETL process that turned 637 messy Instagram posts into a clean, structured knowledge base.
+Most people think building an AI application means writing prompts and calling APIs. For this project, 80% of the engineering effort went into the **data pipeline**-a 4-step ETL process that turned 900+ messy Instagram posts into a clean, structured knowledge base.
 
 ### Step 1: Video Transcription (The Rate Limit Problem)
 
-The first challenge was downloading 637 Instagram videos. Instagram has aggressive rate limits-download too many videos too quickly and your account gets blocked.
+The first challenge was getting the data. Instagram has aggressive rate limits, and downloading hundreds of videos manually or with simple scripts often leads to account blocks.
 
-I implemented a **cookie rotation system** with 3+ account cookies, random delays between requests, and exponential backoff retry logic. This allowed me to download all 637 videos without permanent blocks-but it took patience. Every download session felt like a negotiation with Instagram's anti-scraping systems.
+To bypass these restrictions reliably, I integrated a **third-party scraping service**. This allowed me to safely and efficiently extract over 900 Instagram videos without dealing with the constant headache of cookie rotation or IP bans.
 
-Once downloaded, each video was sent to **Azure Speech API** with Indonesian language support for transcription. Out of 637 videos, 500 were successfully transcribed-a 78% success rate. The remaining 22% were music-only clips, ambient noise, or audio too noisy for reliable transcription.
+Once downloaded, each video was sent to **Azure Speech API** with Indonesian language support for transcription. Out of the 900+ videos, around 700 were successfully transcribed. The remaining videos were music-only clips, ambient noise, or audio too noisy for reliable transcription.
 
 ### Step 2: Transcript Cleaning (Garbage In, Garbage Out)
 

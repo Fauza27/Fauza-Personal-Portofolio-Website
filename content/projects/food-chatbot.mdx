@@ -40,7 +40,7 @@ The system has two main components: an **ETL data pipeline** that processes Inst
 ```mermaid
 flowchart TD
     subgraph ETL ["📊 Data ETL Pipeline (Offline)"]
-        IG["📸 637 Instagram Posts\n(Videos + Captions)"] --> S1["Step 1: Transcribe Audio\n(Azure Speech API)"]
+        IG["📸 900+ Instagram Posts\n(Videos + Captions)"] --> S1["Step 1: Transcribe Audio\n(Azure Speech API)"]
         S1 --> S2["Step 2: Clean Transcription\n(GPT-4o-mini)"]
         S2 --> S3["Step 3: Extract Entities\n(GPT-4o-mini)"]
         S3 --> S4["Step 4: Enrich with Location\n(Google Places API)"]
@@ -91,7 +91,7 @@ flowchart LR
 
 ### Step 1: Video Transcription
 
-I downloaded 637 Instagram videos (implementing **cookie rotation with 3+ accounts** to avoid rate limits-random delays and retry logic were essential) and transcribed them using Azure Speech API with Indonesian language support. Success rate: 78% (500/637 videos). The remaining 22% were music-only, ambient, or too noisy.
+I downloaded over 900 Instagram videos using a **third-party scraping service** to avoid rate limits and account blocks, and transcribed them using Azure Speech API with Indonesian language support. Around 700 videos were successfully transcribed. The remaining videos were music-only, ambient, or too noisy.
 
 ### Step 2: Transcript Cleaning
 
@@ -109,8 +109,8 @@ Extracted locations were enriched with Google Places API to get precise Google M
 
 | Metric | Value |
 |--------|-------|
-| Instagram posts processed | 637 |
-| Videos successfully transcribed | 500 (78%) |
+| Instagram posts processed | 900+ |
+| Videos successfully transcribed | ~700 |
 | Restaurants in database | 900+ |
 | High-quality profiles | 484 (53.8%) |
 | Standardized food categories | 227 |
@@ -264,7 +264,7 @@ Without streaming, the chatbot would feel "silent" for 3-5 seconds while the LLM
 
 ## What I Learned
 
-**Data Engineering Is the Hard Part** - Building the chatbot UI took days. Building the ETL pipeline that turned 637 messy Instagram posts into 900+ clean, structured restaurant profiles with standardized categories took weeks. In AI systems, the model is rarely the bottleneck-the data quality is.
+**Data Engineering Is the Hard Part** - Building the chatbot UI took days. Building the ETL pipeline that turned over 900 messy Instagram posts into clean, structured restaurant profiles with standardized categories took weeks. In AI systems, the model is rarely the bottleneck-the data quality is.
 
 **Innovation Through Accessibility** - This project completely changed how I view innovation. I didn't create any new data. I took existing content that was trapped in an unsearchable format (Instagram timeline) and made it accessible through natural language. Sometimes the most valuable thing you can do is make existing information easier to find.
 

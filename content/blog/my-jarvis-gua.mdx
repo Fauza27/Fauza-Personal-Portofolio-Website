@@ -10,7 +10,7 @@ featured: true
 
 If I'm being completely honest, one of the main reasons I chose to study Computer Science was because of Tony Stark from Iron Man.
 
-Like many tech enthusiasts, I was fascinated by the idea of JARVIS—an intelligent, omnipresent assistant capable of understanding deep context, managing complex information, and actively helping with everyday decisions. For years, it was just a cool sci-fi concept in my head.
+Like many tech enthusiasts, I was fascinated by the idea of JARVIS-an intelligent, omnipresent assistant capable of understanding deep context, managing complex information, and actively helping with everyday decisions. For years, it was just a cool sci-fi concept in my head.
 
 But in 2026, I found myself with several months of free time. Instead of just taking a break, I decided to treat this time as a personal incubator. I wanted to challenge myself with an ambitious long-term goal: I was going to try and build my own JARVIS.
 
@@ -50,7 +50,7 @@ I told the AI:
 
 It worked... terribly.
 
-As I threw different types of information at it—from structured financial transactions to vague daily activity logs—the system became confused. The responses were unreliable. Sometimes it would "record" an expense by just saying *"I've noted that down"* without actually touching the database. Other times, it would hallucinate parameters that didn't exist.
+As I threw different types of information at it-from structured financial transactions to vague daily activity logs-the system became confused. The responses were unreliable. Sometimes it would "record" an expense by just saying *"I've noted that down"* without actually touching the database. Other times, it would hallucinate parameters that didn't exist.
 
 The worst part was prompt fragility. Every time I tweaked the prompt to improve one behavior, something else would break. If I made it better at categorizing food expenses, it would suddenly forget how to handle income transactions.
 
@@ -69,15 +69,15 @@ Instead of asking the AI to "handle everything" in a single massive prompt, I co
 1. Understand what the user wants.
 2. Decide which tool to call with what parameters.
 
-The actual execution—database writes, calculations, validations—happened in my Python code, where I had full control.
+The actual execution-database writes, calculations, validations-happened in my Python code, where I had full control.
 
 I defined 7 tools:
 
-* `create_expense` — for recording new transactions
-* `list_expenses` — with 9 filter parameters for flexible querying
-* `update_expense` — partial updates on existing records
-* `delete_expense` — soft deletion
-* `get_monthly_summary`, `get_yearly_summary`, `get_all_time_summary` — financial analytics
+* `create_expense` - for recording new transactions
+* `list_expenses` - with 9 filter parameters for flexible querying
+* `update_expense` - partial updates on existing records
+* `delete_expense` - soft deletion
+* `get_monthly_summary`, `get_yearly_summary`, `get_all_time_summary` - financial analytics
 
 Each tool had a strict JSON schema with `"strict": true`, meaning the AI couldn't hallucinate parameters. If the schema said `amount` must be a number, the AI had to send a number. Period.
 
@@ -97,10 +97,10 @@ I integrated OpenAI's Whisper model for speech-to-text. The pipeline works like 
 2. The bot downloads the `.ogg` audio file.
 3. Audio bytes are sent to Whisper with `language="id"` for optimized Indonesian recognition.
 4. The transcribed text is immediately previewed to the user (so they can see what was understood).
-5. The transcribed text is then fed into the exact same AI chat pipeline—including function calling.
+5. The transcribed text is then fed into the exact same AI chat pipeline-including function calling.
 6. The final response shows both the transcription and the AI's answer.
 
-One critical design decision was the `transcribe_safe()` method. Whisper can fail—bad audio quality, background noise, empty recordings. Instead of letting the entire pipeline crash, this method returns a tuple of `(text, error)`. The handler checks for errors and gracefully informs the user instead of showing a cryptic error message.
+One critical design decision was the `transcribe_safe()` method. Whisper can fail-bad audio quality, background noise, empty recordings. Instead of letting the entire pipeline crash, this method returns a tuple of `(text, error)`. The handler checks for errors and gracefully informs the user instead of showing a cryptic error message.
 
 The result was transformative. Recording a 3-second voice note saying *"beli kopi 25 ribu"* is far more natural than typing it out, especially on mobile. It made the bot feel genuinely useful in daily life rather than just a technical experiment.
 
@@ -110,7 +110,7 @@ The result was transformative. Recording a 3-second voice note saying *"beli kop
 
 One problem that took me an unexpectedly long time to solve was authentication.
 
-The web dashboard uses Supabase Auth with JWT tokens—standard stuff. But the Telegram bot operates in a completely different world. Telegram sends webhooks with a `chat_id`, which is just a number. There's no JWT, no OAuth, no session cookie.
+The web dashboard uses Supabase Auth with JWT tokens-standard stuff. But the Telegram bot operates in a completely different world. Telegram sends webhooks with a `chat_id`, which is just a number. There's no JWT, no OAuth, no session cookie.
 
 I needed a way to securely bridge these two authentication systems.
 
@@ -136,11 +136,11 @@ Not everything needs AI. For users who prefer structured input, I built a guided
 
 When a user types `/addexpense`, the bot walks them through:
 
-1. **Amount:** "How much?" — validates it's a positive number.
-2. **Type:** "Income or expense?" — enforces exactly two options.
-3. **Category:** "What category?" — free text.
-4. **Description:** "Any details?" — optional, can `/skip`.
-5. **Date:** "When?" — validates `YYYY-MM-DD` format, can `/skip` for today.
+1. **Amount:** "How much?" - validates it's a positive number.
+2. **Type:** "Income or expense?" - enforces exactly two options.
+3. **Category:** "What category?" - free text.
+4. **Description:** "Any details?" - optional, can `/skip`.
+5. **Date:** "When?" - validates `YYYY-MM-DD` format, can `/skip` for today.
 
 At any point, the user can type `/cancel` to abort.
 
@@ -158,9 +158,9 @@ Every time a new expense is created or updated, the system generates a 1536-dime
 
 These embeddings are stored directly in the PostgreSQL `expenses` table alongside the structured data. A custom `match_expense()` SQL function performs cosine similarity search to find semantically related transactions.
 
-This means when a user asks *"how much did I spend on food last week?"*, the system doesn't just do a keyword match on "food"—it understands that "nasi goreng", "makan siang", and "jajan" are all semantically related to food, even if the exact word was never used.
+This means when a user asks *"how much did I spend on food last week?"*, the system doesn't just do a keyword match on "food"-it understands that "nasi goreng", "makan siang", and "jajan" are all semantically related to food, even if the exact word was never used.
 
-A key design decision was making embedding generation **error-tolerant**. The `generate_for_expenses_safe()` method wraps the entire embedding pipeline in a try/except. If the OpenAI API is down or the embedding fails for any reason, the expense is still saved—the embedding column just stays NULL. The main user flow is never blocked by a failed embedding.
+A key design decision was making embedding generation **error-tolerant**. The `generate_for_expenses_safe()` method wraps the entire embedding pipeline in a try/except. If the OpenAI API is down or the embedding fails for any reason, the expense is still saved-the embedding column just stays NULL. The main user flow is never blocked by a failed embedding.
 
 ---
 
@@ -170,25 +170,25 @@ After months of iteration, the backend settled into a clean, layered architectur
 
 * **API Layer** (`api/`): FastAPI routes handling HTTP requests, authentication, and input validation.
 * **Bot Layer** (`bot/`): Telegram handlers with their own factory patterns and state management.
-* **Service Layer** (`services/`): Business logic that's shared between the API and the bot—the same `ExpenseService` serves both interfaces without code duplication.
+* **Service Layer** (`services/`): Business logic that's shared between the API and the bot-the same `ExpenseService` serves both interfaces without code duplication.
 * **Repository Layer** (`repositories/`): Pure database operations using the Supabase client.
 * **Infrastructure** (`infrastructure/`): Singleton clients for OpenAI and Supabase.
 
-This separation paid enormous dividends. When I wanted to add voice support, I didn't have to touch the expense creation logic at all. I just wrote a new handler that transcribed audio and fed the text into the existing `AIService.chat()` method. Everything downstream—function calling, tool dispatch, database operations—worked automatically.
+This separation paid enormous dividends. When I wanted to add voice support, I didn't have to touch the expense creation logic at all. I just wrote a new handler that transcribed audio and fed the text into the existing `AIService.chat()` method. Everything downstream-function calling, tool dispatch, database operations-worked automatically.
 
 ---
 
 ## What This Project Taught Me
 
-**AI Is the Easy Part** — Connecting to GPT-4o and getting responses took an afternoon. Building reliable authentication, database schemas with soft deletes and vector search, secure cross-platform account linking, error-tolerant embedding pipelines, and a proper handler registration order—that took months. The "unglamorous infrastructure" is what makes AI actually useful in production.
+**AI Is the Easy Part** - Connecting to GPT-4o and getting responses took an afternoon. Building reliable authentication, database schemas with soft deletes and vector search, secure cross-platform account linking, error-tolerant embedding pipelines, and a proper handler registration order-that took months. The "unglamorous infrastructure" is what makes AI actually useful in production.
 
-**Function Calling > Prompt Engineering** — My "God Prompt" approach was fragile and unreliable. Function calling with strict schemas made the system predictable and testable. The lesson: don't ask the AI to *be* your software. Let it *use* your software.
+**Function Calling > Prompt Engineering** - My "God Prompt" approach was fragile and unreliable. Function calling with strict schemas made the system predictable and testable. The lesson: don't ask the AI to *be* your software. Let it *use* your software.
 
-**Voice Is Underrated** — Adding speech-to-text was technically simple (Whisper API is excellent), but it transformed the user experience more than any other feature. People use their phones while walking, cooking, driving. Text input is a barrier. Voice removes it.
+**Voice Is Underrated** - Adding speech-to-text was technically simple (Whisper API is excellent), but it transformed the user experience more than any other feature. People use their phones while walking, cooking, driving. Text input is a barrier. Voice removes it.
 
-**Clean Architecture Enables Speed** — When my codebase was a mess, adding a new feature meant rewriting half the system. After restructuring into clean layers (API → Service → Repository), I could add the entire voice pipeline in a single day because the business logic was already encapsulated.
+**Clean Architecture Enables Speed** - When my codebase was a mess, adding a new feature meant rewriting half the system. After restructuring into clean layers (API → Service → Repository), I could add the entire voice pipeline in a single day because the business logic was already encapsulated.
 
-**Security Is Not Optional** — Using an admin client that bypasses RLS was necessary for the Telegram bot, but it meant I had to be paranoid about `user_id` filtering. One missing WHERE clause could expose private financial data. I learned to treat security not as a feature to add later, but as an architectural constraint to design around from day one.
+**Security Is Not Optional** - Using an admin client that bypasses RLS was necessary for the Telegram bot, but it meant I had to be paranoid about `user_id` filtering. One missing WHERE clause could expose private financial data. I learned to treat security not as a feature to add later, but as an architectural constraint to design around from day one.
 
 ---
 
@@ -201,7 +201,7 @@ Future modules I'm planning:
 * **Health Tracking:** Food photo analysis with GPT-4 Vision for calorie estimation, weight trend monitoring, TDEE calculations.
 * **Vehicle Maintenance:** Automated service reminders based on mileage and time intervals.
 * **Task Management:** Natural language task creation with intelligent prioritization.
-* **Cross-Domain Insights:** Correlating patterns across domains—like whether my spending habits change when I skip workouts.
+* **Cross-Domain Insights:** Correlating patterns across domains-like whether my spending habits change when I skip workouts.
 
 Each new module will plug into the existing function calling framework as additional tools, which is exactly why I designed the architecture to be modular in the first place.
 

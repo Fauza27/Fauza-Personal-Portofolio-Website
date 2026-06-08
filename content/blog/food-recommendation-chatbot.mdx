@@ -1,7 +1,7 @@
 ---
 title: "Unlocking Social Media: How I Turned 637 Instagram Videos into an AI Search Engine"
 date: "2025-11-03"
-excerpt: "How I discovered that the hardest part of building an AI chatbot isn't the AI—it's turning 637 messy Instagram videos into clean, structured data that the AI can actually use."
+excerpt: "How I discovered that the hardest part of building an AI chatbot isn't the AI-it's turning 637 messy Instagram videos into clean, structured data that the AI can actually use."
 author: "Muhammad Fauza"
 tags: ["AI", "RAG", "LangChain", "Data Engineering", "FastAPI", "Next.js", "Vector Database"]
 readTime: "14 min read"
@@ -20,7 +20,7 @@ My brother is a food vlogger. Over the years, he has reviewed hundreds of local 
 
 But Instagram is built for a timeline, not an archive.
 
-If I suddenly craved a specific type of soto late at night, finding his recommendation meant manually scrolling through months of old posts, watching videos one by one, and hoping I stumbled across the right one. And it wasn't just me—his followers regularly sent DMs asking *"Where was that bakso place you reviewed last month?"*
+If I suddenly craved a specific type of soto late at night, finding his recommendation meant manually scrolling through months of old posts, watching videos one by one, and hoping I stumbled across the right one. And it wasn't just me-his followers regularly sent DMs asking *"Where was that bakso place you reviewed last month?"*
 
 The information existed. It was detailed, valuable, and created by someone who genuinely cared about food. But it was **trapped inside a format that was impossible to search.**
 
@@ -42,15 +42,15 @@ But that meant I first needed the data. And getting that data was the hardest pa
 
 ## The Data Pipeline: Where 80% of the Work Happened
 
-Most people think building an AI application means writing prompts and calling APIs. For this project, 80% of the engineering effort went into the **data pipeline**—a 4-step ETL process that turned 637 messy Instagram posts into a clean, structured knowledge base.
+Most people think building an AI application means writing prompts and calling APIs. For this project, 80% of the engineering effort went into the **data pipeline**-a 4-step ETL process that turned 637 messy Instagram posts into a clean, structured knowledge base.
 
 ### Step 1: Video Transcription (The Rate Limit Problem)
 
-The first challenge was downloading 637 Instagram videos. Instagram has aggressive rate limits—download too many videos too quickly and your account gets blocked.
+The first challenge was downloading 637 Instagram videos. Instagram has aggressive rate limits-download too many videos too quickly and your account gets blocked.
 
-I implemented a **cookie rotation system** with 3+ account cookies, random delays between requests, and exponential backoff retry logic. This allowed me to download all 637 videos without permanent blocks—but it took patience. Every download session felt like a negotiation with Instagram's anti-scraping systems.
+I implemented a **cookie rotation system** with 3+ account cookies, random delays between requests, and exponential backoff retry logic. This allowed me to download all 637 videos without permanent blocks-but it took patience. Every download session felt like a negotiation with Instagram's anti-scraping systems.
 
-Once downloaded, each video was sent to **Azure Speech API** with Indonesian language support for transcription. Out of 637 videos, 500 were successfully transcribed—a 78% success rate. The remaining 22% were music-only clips, ambient noise, or audio too noisy for reliable transcription.
+Once downloaded, each video was sent to **Azure Speech API** with Indonesian language support for transcription. Out of 637 videos, 500 were successfully transcribed-a 78% success rate. The remaining 22% were music-only clips, ambient noise, or audio too noisy for reliable transcription.
 
 ### Step 2: Transcript Cleaning (Garbage In, Garbage Out)
 
@@ -61,25 +61,25 @@ Raw transcriptions from speech-to-text models are messy. They're full of:
 * Filler words and verbal tics
 * Overlapping speech from multiple people
 
-I used GPT-4o-mini to clean each transcript—fixing typos, restructuring broken sentences, and removing filler content while preserving the original meaning. This step was critical because bad transcriptions would poison every downstream process.
+I used GPT-4o-mini to clean each transcript-fixing typos, restructuring broken sentences, and removing filler content while preserving the original meaning. This step was critical because bad transcriptions would poison every downstream process.
 
 ### Step 3: Entity Extraction (The Standardization Challenge)
 
 The cleaned transcripts then needed to be parsed into structured data. I used GPT-4o-mini to extract:
 
-* **Restaurant name** — often mentioned casually ("kita hari ini di warung Pak Ahmad")
-* **Food category** — standardized into 227 categories
-* **Price range** — normalized to "XK - YK" format (e.g., "15K - 25K")
-* **Menu items** — specific dishes mentioned
-* **Facilities** — WiFi, parking, AC, etc.
-* **Operational hours** — often mentioned as "buka dari jam 7 sampai jam 10 malam"
-* **Location** — address or area description
+* **Restaurant name** - often mentioned casually ("kita hari ini di warung Pak Ahmad")
+* **Food category** - standardized into 227 categories
+* **Price range** - normalized to "XK - YK" format (e.g., "15K - 25K")
+* **Menu items** - specific dishes mentioned
+* **Facilities** - WiFi, parking, AC, etc.
+* **Operational hours** - often mentioned as "buka dari jam 7 sampai jam 10 malam"
+* **Location** - address or area description
 
-The standardization of food categories was surprisingly difficult. My brother might say "mi bakso" in one video and "bakso campur" in another—both referring to similar foods but using different terms. I built a taxonomy of 227 standardized categories so the search system could understand that queries for "bakso" should also match "mi bakso", "bakso urat", and "bakso beranak."
+The standardization of food categories was surprisingly difficult. My brother might say "mi bakso" in one video and "bakso campur" in another-both referring to similar foods but using different terms. I built a taxonomy of 227 standardized categories so the search system could understand that queries for "bakso" should also match "mi bakso", "bakso urat", and "bakso beranak."
 
 ### Step 4: Geolocation Enrichment
 
-Extracted locations were enriched with **Google Places API** to add precise Google Maps links, coordinates, and verified addresses. This was the final piece—transforming text-based location descriptions into one-tap navigation links.
+Extracted locations were enriched with **Google Places API** to add precise Google Maps links, coordinates, and verified addresses. This was the final piece-transforming text-based location descriptions into one-tap navigation links.
 
 ### The Pipeline Orchestrator
 
@@ -97,7 +97,7 @@ Each step checked for required credentials (Azure Speech Key, OpenAI API Key, Go
 
 ## Building the RAG Engine
 
-With clean, structured data in hand, I built the retrieval-augmented generation service. But I quickly learned that naive RAG—just embedding documents and doing a single vector search—produces mediocre results. Real-world RAG requires multiple layers of intelligence.
+With clean, structured data in hand, I built the retrieval-augmented generation service. But I quickly learned that naive RAG-just embedding documents and doing a single vector search-produces mediocre results. Real-world RAG requires multiple layers of intelligence.
 
 ### The Multi-Stage Retrieval Problem
 
@@ -109,11 +109,11 @@ I redesigned the retrieval into a **multi-stage fallback system**:
 
 1. **Category pre-filter:** If the query mentions a known food category (mapped from 25+ keyword patterns), the Qdrant search is pre-filtered by `kategori_makanan` metadata. This dramatically improves precision for specific food queries.
 
-2. **Score threshold:** Results below a minimum relevance score of 0.25 are filtered out. This threshold was calibrated by analyzing real query-result score distributions—bakso queries typically scored 0.55-0.62, while irrelevant results scored 0.05-0.15.
+2. **Score threshold:** Results below a minimum relevance score of 0.25 are filtered out. This threshold was calibrated by analyzing real query-result score distributions-bakso queries typically scored 0.55-0.62, while irrelevant results scored 0.05-0.15.
 
 3. **Post-filter fallback:** If pre-filtering returns fewer than 3 results (because the category is sparse), the system runs an unfiltered search with 2x candidates and applies category matching as a post-filter. This catches edge cases where the Qdrant metadata doesn't exactly match the filter condition.
 
-4. **Scoreless fallback:** If absolutely no results pass the score threshold, the system takes the top 10 results without score filtering—ensuring the user always gets *something*.
+4. **Scoreless fallback:** If absolutely no results pass the score threshold, the system takes the top 10 results without score filtering-ensuring the user always gets *something*.
 
 This cascading approach guarantees a 100% response rate while maintaining relevance.
 
@@ -138,7 +138,7 @@ A restaurant recommendation at 7 AM is completely different from one at 10 PM. T
 * *"nongkrong"* → Afternoon snacks/coffee (15:00-17:00)
 * *"makan malam"* → Dinner options (18:00-21:00)
 
-Even more interesting: the system supports **future time references.** When someone says *"tempat sarapan besok pagi"* (breakfast places tomorrow morning), the `parse_future_time()` function extracts the target datetime and evaluates restaurant operational hours against that future time—not the current time.
+Even more interesting: the system supports **future time references.** When someone says *"tempat sarapan besok pagi"* (breakfast places tomorrow morning), the `parse_future_time()` function extracts the target datetime and evaluates restaurant operational hours against that future time-not the current time.
 
 Restaurants that are open at the target time are sorted to the top of the results.
 
@@ -188,21 +188,21 @@ This ensures the vector search always retrieves contextually relevant results, e
 
 ### Before
 
-I thought innovation meant creating something entirely new—new models, new algorithms, new data. I thought the AI model was the most important part of an AI application. I thought data engineering was a boring prerequisite.
+I thought innovation meant creating something entirely new-new models, new algorithms, new data. I thought the AI model was the most important part of an AI application. I thought data engineering was a boring prerequisite.
 
 ### After
 
 This project completely changed my perspective.
 
-**Innovation through accessibility.** I didn't create any new information. Every restaurant review already existed on Instagram. The innovation was making that information *findable*—transforming an unsearchable timeline into a conversational search engine. Sometimes the most valuable thing you can do is take existing, trapped information and simply make it easier to access.
+**Innovation through accessibility.** I didn't create any new information. Every restaurant review already existed on Instagram. The innovation was making that information *findable*-transforming an unsearchable timeline into a conversational search engine. Sometimes the most valuable thing you can do is take existing, trapped information and simply make it easier to access.
 
-**The data pipeline is the product.** The chatbot UI took days. The RAG service took a week. The data pipeline—downloading videos, transcribing audio, cleaning transcripts, extracting entities, standardizing categories, enriching locations—took weeks. In AI systems, the model is rarely the bottleneck. Data quality is.
+**The data pipeline is the product.** The chatbot UI took days. The RAG service took a week. The data pipeline-downloading videos, transcribing audio, cleaning transcripts, extracting entities, standardizing categories, enriching locations-took weeks. In AI systems, the model is rarely the bottleneck. Data quality is.
 
-**Defense-in-depth for data quality.** No matter how good your ETL pipeline is, garbage leaks through. You need multiple filtering layers: at ingestion time, at retrieval time, and at display time. The gibberish detector, the relevance score threshold, the CDN URL sanitizer, the deduplication logic—each one catches things the others miss.
+**Defense-in-depth for data quality.** No matter how good your ETL pipeline is, garbage leaks through. You need multiple filtering layers: at ingestion time, at retrieval time, and at display time. The gibberish detector, the relevance score threshold, the CDN URL sanitizer, the deduplication logic-each one catches things the others miss.
 
 **Real-world search is not one-shot.** A single vector search query is not enough for production use. Multi-stage retrieval with pre-filtering, post-filtering, and fallback strategies is essential for maintaining both precision and coverage.
 
-There is an enormous amount of value hidden in plain sight—trapped in social media posts, buried in old videos, lost in unsearchable formats. Sometimes the best AI application isn't one that generates new content. It's one that **unlocks the content that already exists.**
+There is an enormous amount of value hidden in plain sight-trapped in social media posts, buried in old videos, lost in unsearchable formats. Sometimes the best AI application isn't one that generates new content. It's one that **unlocks the content that already exists.**
 
 ---
 

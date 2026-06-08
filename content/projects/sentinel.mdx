@@ -1,7 +1,7 @@
 ---
 title: "Sentinel: AI-Powered Predictive Maintenance Copilot"
 category: "AI Engineering & MLOps"
-description: "A production-grade multi-agent AI platform combining 10 specialized LangGraph agents, XGBoost failure prediction (95.45% recall), What-If simulation, and a real-time dashboard—built to help industrial maintenance teams prevent equipment failures before they happen."
+description: "A production-grade multi-agent AI platform combining 10 specialized LangGraph agents, XGBoost failure prediction (95.45% recall), What-If simulation, and a real-time dashboard-built to help industrial maintenance teams prevent equipment failures before they happen."
 tech: ["LangGraph", "XGBoost", "FastAPI", "React", "PostgreSQL", "AWS Bedrock", "Qdrant", "MLflow", "SHAP", "Docker"]
 year: "2025"
 github: "https://github.com/AyamGanja/Sentinel"
@@ -17,7 +17,7 @@ gradient: "from-blue-500/20 via-indigo-500/20 to-violet-500/20"
 
 **Sentinel** is a full-stack predictive maintenance platform that helps industrial O&M teams move from reactive to proactive decision-making. It combines machine learning failure prediction (95.45% recall), 10 specialized AI agents orchestrated by LangGraph, What-If delay simulation, and a real-time monitoring dashboard into a single integrated experience.
 
-**My Role:** Team Lead, Product Manager, AI Engineer (*Group project — Team of 5*). Designed the system architecture, developed the multi-agent AI system and ML pipeline, built the FastAPI backend, and coordinated integration between AI, backend, and frontend components.
+**My Role:** Team Lead, Product Manager, AI Engineer (*Group project - Team of 5*). Designed the system architecture, developed the multi-agent AI system and ML pipeline, built the FastAPI backend, and coordinated integration between AI, backend, and frontend components.
 
 ---
 
@@ -25,7 +25,7 @@ gradient: "from-blue-500/20 via-indigo-500/20 to-violet-500/20"
 
 During our capstone project (Dicoding × Accenture ASAH Program), our team explored how AI could help industries move from reactive maintenance to proactive decision-making.
 
-Unexpected equipment failures in manufacturing are costly. A single unplanned downtime event can cost $260K per hour in lost production, create safety risks for workers, and trigger cascade failures across interconnected systems. Traditional maintenance approaches—either fixing things after they break (reactive) or replacing parts on a fixed schedule (preventive)—are both inefficient.
+Unexpected equipment failures in manufacturing are costly. A single unplanned downtime event can cost $260K per hour in lost production, create safety risks for workers, and trigger cascade failures across interconnected systems. Traditional maintenance approaches-either fixing things after they break (reactive) or replacing parts on a fixed schedule (preventive)-are both inefficient.
 
 We wanted to investigate whether machine learning and AI agents could give maintenance teams a fundamentally better tool: one that predicts failures before they happen, explains why they're predicted, and helps engineers take the right action at the right time.
 
@@ -265,7 +265,7 @@ app/
 Key improvements:
 
 * **Separation of concerns:** API routes, business logic, and AI agents live in separate modules.
-* **Single entry point:** `main.py` on port 8888 unifies everything—no more dual-server confusion.
+* **Single entry point:** `main.py` on port 8888 unifies everything-no more dual-server confusion.
 * **Security fix:** The database agent now uses a read-only PostgreSQL account to prevent SQL injection through LLM-generated queries.
 * **Type safety:** Pydantic V2 strict validation on all request/response schemas.
 
@@ -290,7 +290,7 @@ If the LLM selects `predictive_maintenance_api` without `database_query`, the sy
 
 Industrial maintenance engineers won't trust an AI that just says *"Machine M12345 will fail."* They need to understand **why**.
 
-Every node in the LangGraph pipeline appends to `state["reasoning_steps"]`—a list of timestamped entries showing:
+Every node in the LangGraph pipeline appends to `state["reasoning_steps"]`-a list of timestamped entries showing:
 
 - What the system detected (language, intent, urgency)
 - Which tools were selected and why
@@ -318,15 +318,15 @@ These reasoning steps are streamed to the frontend alongside the response, allow
 
 ## What I Learned
 
-**Multi-Agent Systems Need Guardrails** — Without limits, the LangGraph pipeline could loop infinitely: tool selector → executor → validator → tool selector → ... I added `MAX_SUB_TASK_ITERATIONS`, `MAX_CONFIRMATION_ATTEMPTS`, and a recursion limit to prevent runaway execution. Guardrails aren't just nice-to-have—they're essential for production multi-agent systems.
+**Multi-Agent Systems Need Guardrails** - Without limits, the LangGraph pipeline could loop infinitely: tool selector → executor → validator → tool selector → ... I added `MAX_SUB_TASK_ITERATIONS`, `MAX_CONFIRMATION_ATTEMPTS`, and a recursion limit to prevent runaway execution. Guardrails aren't just nice-to-have-they're essential for production multi-agent systems.
 
-**Recall Matters More Than Accuracy** — In predictive maintenance, a 95% accurate model that misses 20% of real failures is worse than one with lower accuracy but 95.45% recall. The cost asymmetry ($500 false positive vs $260K/hour false negative) makes the optimization target obvious once you understand the domain.
+**Recall Matters More Than Accuracy** - In predictive maintenance, a 95% accurate model that misses 20% of real failures is worse than one with lower accuracy but 95.45% recall. The cost asymmetry ($500 false positive vs $260K/hour false negative) makes the optimization target obvious once you understand the domain.
 
-**Clean Architecture Enables Team Velocity** — The monolithic `main.py` (10,000+ lines) was a bottleneck. After refactoring into modular packages, team members could work on different agents simultaneously without merge conflicts. Architecture is a team productivity multiplier.
+**Clean Architecture Enables Team Velocity** - The monolithic `main.py` (10,000+ lines) was a bottleneck. After refactoring into modular packages, team members could work on different agents simultaneously without merge conflicts. Architecture is a team productivity multiplier.
 
-**The Refactoring Was Worth It** — Moving from a monolith to clean architecture was time-consuming, but it solved the event loop conflicts, made testing possible, and secured the database agent against SQL injection. In a team project with different skill levels, clear module boundaries are essential.
+**The Refactoring Was Worth It** - Moving from a monolith to clean architecture was time-consuming, but it solved the event loop conflicts, made testing possible, and secured the database agent against SQL injection. In a team project with different skill levels, clear module boundaries are essential.
 
-> This project taught me that impactful software is not defined by complexity, but by how effectively it solves real problems for users. The 10 agents, the 44 features, the 8-node pipeline—none of it matters if the engineer can't trust the system and act on its recommendations.
+> This project taught me that impactful software is not defined by complexity, but by how effectively it solves real problems for users. The 10 agents, the 44 features, the 8-node pipeline-none of it matters if the engineer can't trust the system and act on its recommendations.
 
 ---
 

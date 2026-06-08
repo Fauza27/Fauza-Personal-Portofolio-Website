@@ -22,7 +22,7 @@ gradient: "from-emerald-500/20 via-teal-500/20 to-cyan-500/20"
 
 ## Why I Built This
 
-My brother is a food vlogger in Samarinda. Over the years, he has reviewed hundreds of local restaurants on Instagram—sharing detailed information about prices, atmosphere, specific dishes, and operational hours.
+My brother is a food vlogger in Samarinda. Over the years, he has reviewed hundreds of local restaurants on Instagram-sharing detailed information about prices, atmosphere, specific dishes, and operational hours.
 
 But Instagram is built for a timeline, not an archive.
 
@@ -63,7 +63,7 @@ flowchart TD
 
 ## The Data Pipeline: From Videos to Knowledge
 
-The most challenging part of this project wasn't the AI chatbot—it was building the **4-step ETL pipeline** that turned raw Instagram content into production-ready structured data.
+The most challenging part of this project wasn't the AI chatbot-it was building the **4-step ETL pipeline** that turned raw Instagram content into production-ready structured data.
 
 ```mermaid
 flowchart LR
@@ -90,11 +90,11 @@ flowchart LR
 
 ### Step 1: Video Transcription
 
-I downloaded 637 Instagram videos (implementing **cookie rotation with 3+ accounts** to avoid rate limits—random delays and retry logic were essential) and transcribed them using Azure Speech API with Indonesian language support. Success rate: 78% (500/637 videos). The remaining 22% were music-only, ambient, or too noisy.
+I downloaded 637 Instagram videos (implementing **cookie rotation with 3+ accounts** to avoid rate limits-random delays and retry logic were essential) and transcribed them using Azure Speech API with Indonesian language support. Success rate: 78% (500/637 videos). The remaining 22% were music-only, ambient, or too noisy.
 
 ### Step 2: Transcript Cleaning
 
-Raw transcriptions were messy—full of typos, broken sentences, and misheard words. I used GPT-4o-mini to clean each transcript while preserving the original meaning. This step was critical because bad transcriptions would poison the downstream extraction.
+Raw transcriptions were messy-full of typos, broken sentences, and misheard words. I used GPT-4o-mini to clean each transcript while preserving the original meaning. This step was critical because bad transcriptions would poison the downstream extraction.
 
 ### Step 3: Entity Extraction
 
@@ -181,7 +181,7 @@ This ensures the chatbot **always has something relevant to recommend**, even fo
 
 ### Gibberish Detection
 
-Not all Instagram videos are restaurant reviews—some are music clips, religious greetings, or random audio. The `_is_gibberish_ringkasan()` method filters these out using:
+Not all Instagram videos are restaurant reviews-some are music clips, religious greetings, or random audio. The `_is_gibberish_ringkasan()` method filters these out using:
 
 - Minimum word count threshold (8 words)
 - Blacklisted phrases that indicate non-food content
@@ -240,7 +240,7 @@ The card generation also handles edge cases: CDN URLs are sanitized (Instagram s
 
 Without streaming, the chatbot would feel "silent" for 3-5 seconds while the LLM generates a full response. I implemented Server-Sent Events (SSE) to stream tokens as they're generated:
 
-1. **Tokens stream first:** Users see text appearing word by word—perceived latency drops from 5 seconds to under 2 seconds.
+1. **Tokens stream first:** Users see text appearing word by word-perceived latency drops from 5 seconds to under 2 seconds.
 2. **Restaurant cards arrive after:** Once the LLM finishes generating text, the cards are sent as a single SSE event.
 3. **Done signal:** A final `("done", "")` tuple tells the frontend to close the SSE connection.
 
@@ -263,15 +263,15 @@ Without streaming, the chatbot would feel "silent" for 3-5 seconds while the LLM
 
 ## What I Learned
 
-**Data Engineering Is the Hard Part** — Building the chatbot UI took days. Building the ETL pipeline that turned 637 messy Instagram posts into 900+ clean, structured restaurant profiles with standardized categories took weeks. In AI systems, the model is rarely the bottleneck—the data quality is.
+**Data Engineering Is the Hard Part** - Building the chatbot UI took days. Building the ETL pipeline that turned 637 messy Instagram posts into 900+ clean, structured restaurant profiles with standardized categories took weeks. In AI systems, the model is rarely the bottleneck-the data quality is.
 
-**Innovation Through Accessibility** — This project completely changed how I view innovation. I didn't create any new data. I took existing content that was trapped in an unsearchable format (Instagram timeline) and made it accessible through natural language. Sometimes the most valuable thing you can do is make existing information easier to find.
+**Innovation Through Accessibility** - This project completely changed how I view innovation. I didn't create any new data. I took existing content that was trapped in an unsearchable format (Instagram timeline) and made it accessible through natural language. Sometimes the most valuable thing you can do is make existing information easier to find.
 
-**Multi-Stage Retrieval is Essential** — A single vector search query often returns suboptimal results for specific food categories. The cascading approach (pre-filter → post-filter → fallback) was crucial for production reliability.
+**Multi-Stage Retrieval is Essential** - A single vector search query often returns suboptimal results for specific food categories. The cascading approach (pre-filter → post-filter → fallback) was crucial for production reliability.
 
-**Streaming Changes Perception** — The same 5-second response feels instant when streamed token by token. SSE implementation was straightforward but dramatically improved the user experience.
+**Streaming Changes Perception** - The same 5-second response feels instant when streamed token by token. SSE implementation was straightforward but dramatically improved the user experience.
 
-> The biggest lesson from this project: the real engineering challenge in AI isn't the model—it's the pipeline that turns messy, real-world data into clean, structured knowledge that the model can actually use.
+> The biggest lesson from this project: the real engineering challenge in AI isn't the model-it's the pipeline that turns messy, real-world data into clean, structured knowledge that the model can actually use.
 
 ---
 

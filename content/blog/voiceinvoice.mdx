@@ -12,7 +12,7 @@ I didn't plan to build VoiceInvoice. It started from a simple observation.
 
 I was at a traditional market, watching a merchant try to serve three customers at once. She was weighing rice with one hand and scribbling numbers on a piece of paper with the other, doing mental arithmetic while customers kept adding items to their orders.
 
-She made two mistakes in the receipts I saw. Not because she was bad at math, but because the situation was impossible—simultaneous physical tasks competing for the same cognitive resources.
+She made two mistakes in the receipts I saw. Not because she was bad at math, but because the situation was impossible-simultaneous physical tasks competing for the same cognitive resources.
 
 I watched other merchants too. Some used calculator apps, but typing on tiny phone screens while their hands were wet or dusty from handling goods was almost as slow as writing by hand. Others simply gave up on receipts entirely and did everything from memory.
 
@@ -43,7 +43,7 @@ I built a working prototype. And it was... terrible.
 
 On a WiFi connection in my apartment, the pipeline took 3-4 seconds. Acceptable for a demo.
 
-But traditional market merchants don't use WiFi. They use mobile data—often 3G or spotty 4G. On real mobile networks, each API call added 1-2 seconds of network overhead. Two sequential API calls meant 6-8 seconds before the merchant saw any result.
+But traditional market merchants don't use WiFi. They use mobile data-often 3G or spotty 4G. On real mobile networks, each API call added 1-2 seconds of network overhead. Two sequential API calls meant 6-8 seconds before the merchant saw any result.
 
 For context: writing a receipt by hand takes about 15 seconds. If the AI system takes 8 seconds just to process, and then the merchant needs a few more seconds to review and save, the total time barely beats the manual process. The value proposition was gone.
 
@@ -57,7 +57,7 @@ Two models in sequence meant two opportunities for errors to compound.
 
 ### Problem 3: Two Points of Failure
 
-If OpenAI's API had latency spikes, the entire pipeline slowed down. If the Whisper endpoint was temporarily unavailable, the system was completely broken—even if GPT-4 was working fine.
+If OpenAI's API had latency spikes, the entire pipeline slowed down. If the Whisper endpoint was temporarily unavailable, the system was completely broken-even if GPT-4 was working fine.
 
 For merchants who might make 50-100 transactions per day, even a 2% failure rate would mean 1-2 broken transactions daily. That's enough to destroy trust in the system.
 
@@ -65,7 +65,7 @@ For merchants who might make 50-100 transactions per day, even a 2% failure rate
 
 ## The Discovery That Changed Everything
 
-While researching alternatives, I tested **Google's Gemini 2.0 Flash**—a multimodal model that can process audio, images, and text natively.
+While researching alternatives, I tested **Google's Gemini 2.0 Flash**-a multimodal model that can process audio, images, and text natively.
 
 I sent it a raw audio file of someone saying *"beras 5 kilo tujuh puluh ribu, gula 2 kilo dua puluh lima ribu"* and asked it to return both the transcription and structured JSON.
 
@@ -83,7 +83,7 @@ No intermediate transcription step. No second API call. The model heard the audi
 }
 ```
 
-The latency was roughly half of the two-step pipeline. One request instead of two. One point of failure instead of two. And because the model heard the original audio directly—instead of working from an intermediate transcription—it made fewer errors on ambiguous pricing expressions.
+The latency was roughly half of the two-step pipeline. One request instead of two. One point of failure instead of two. And because the model heard the original audio directly-instead of working from an intermediate transcription-it made fewer errors on ambiguous pricing expressions.
 
 I deleted the Whisper integration. I deleted the GPT-4 parsing logic. I replaced hundreds of lines of orchestration code with a single 84-line route handler.
 
@@ -97,7 +97,7 @@ That was the moment I learned:
 
 After solving the AI pipeline, I faced the second major challenge: internet reliability.
 
-Traditional markets in Indonesia often have poor mobile signal. Some areas get 3G at best. And even when signal is available, it can be intermittent—dropping in and out throughout the day.
+Traditional markets in Indonesia often have poor mobile signal. Some areas get 3G at best. And even when signal is available, it can be intermittent-dropping in and out throughout the day.
 
 For most web applications, "offline support" is a nice-to-have. For VoiceInvoice, **offline was the primary mode of operation.** A receipt system that only works when you have internet is useless for exactly the merchants who need it most.
 
@@ -123,7 +123,7 @@ When I tested on a real Android phone, everything worked perfectly. When I teste
 
 The issue: **Chrome Android supports `audio/webm;codecs=opus`, but Safari iOS does not.**
 
-The MediaRecorder API doesn't throw an error for unsupported MIME types on all browsers—some just produce empty audio files. The fix was a runtime capability check:
+The MediaRecorder API doesn't throw an error for unsupported MIME types on all browsers-some just produce empty audio files. The fix was a runtime capability check:
 
 ```typescript
 MediaRecorder.isTypeSupported('audio/webm;codecs=opus')
@@ -131,7 +131,7 @@ MediaRecorder.isTypeSupported('audio/webm;codecs=opus')
   : 'audio/webm'
 ```
 
-Two lines of code. Hours of debugging. And the bug was completely invisible in the iOS simulator—it only appeared on physical devices.
+Two lines of code. Hours of debugging. And the bug was completely invisible in the iOS simulator-it only appeared on physical devices.
 
 This experience permanently changed my testing habits. Mobile web features must be tested on real hardware. There is no substitute.
 
@@ -139,16 +139,16 @@ This experience permanently changed my testing habits. Mobile web features must 
 
 ## Live Transcription as a UX Affordance
 
-When a merchant taps the record button and starts speaking, they need to know the system is actually "hearing" them. Silence and a spinning loader create anxiety—especially for users who aren't tech-savvy.
+When a merchant taps the record button and starts speaking, they need to know the system is actually "hearing" them. Silence and a spinning loader create anxiety-especially for users who aren't tech-savvy.
 
 I implemented a **dual recording strategy**:
 
 1. **MediaRecorder API** captures the actual audio bytes that get sent to Gemini.
 2. **Web Speech API** runs simultaneously and provides a real-time transcription preview on screen.
 
-The live preview is not used for the final receipt—Gemini processes the raw audio independently. The preview exists purely to build user confidence. When merchants see their words appearing on screen as they speak, they trust the system.
+The live preview is not used for the final receipt-Gemini processes the raw audio independently. The preview exists purely to build user confidence. When merchants see their words appearing on screen as they speak, they trust the system.
 
-If Web Speech API isn't available (some browsers don't support it), the recording continues without the preview. No functionality is lost—just the visual feedback.
+If Web Speech API isn't available (some browsers don't support it), the recording continues without the preview. No functionality is lost-just the visual feedback.
 
 This taught me something about product design: **perceived reliability is as important as actual reliability.** A system that works perfectly but gives no feedback feels broken. A system that shows progress feels trustworthy.
 
@@ -156,12 +156,12 @@ This taught me something about product design: **perceived reliability is as imp
 
 ## The WhatsApp Integration
 
-In Indonesia, WhatsApp is the universal communication tool—including for businesses. Many merchants already send order confirmations and receipts to customers via WhatsApp.
+In Indonesia, WhatsApp is the universal communication tool-including for businesses. Many merchants already send order confirmations and receipts to customers via WhatsApp.
 
 Instead of building a complex PDF generation system, I kept it simple. The `NotaPreview` component generates a plain-text formatted receipt and offers two actions:
 
-* **Copy to clipboard** — for pasting into any app.
-* **Share via WhatsApp** — opens `wa.me/?text=` with the pre-formatted receipt.
+* **Copy to clipboard** - for pasting into any app.
+* **Share via WhatsApp** - opens `wa.me/?text=` with the pre-formatted receipt.
 
 No PDF library. No print server. Just text that works everywhere.
 
@@ -185,7 +185,7 @@ I believed:
 I learned:
 * **Simpler architectures can outperform more complex ones.** Replacing a two-model pipeline with a single multimodal request made the system faster, cheaper, and more reliable.
 * **Offline reliability can be more valuable than advanced functionality.** For the target users, a system that works without internet is infinitely more useful than one with beautiful animations that breaks when signal drops.
-* **Great products succeed when they fit naturally into users' daily workflows.** The WhatsApp share button is technically trivial—it's just a URL. But it's the feature that makes the product genuinely useful, because it connects to what merchants are already doing.
+* **Great products succeed when they fit naturally into users' daily workflows.** The WhatsApp share button is technically trivial-it's just a URL. But it's the feature that makes the product genuinely useful, because it connects to what merchants are already doing.
 
 ---
 
@@ -199,4 +199,4 @@ I started this project thinking about AI architectures and model capabilities. I
 
 The best engineering decisions I made weren't about choosing the right model or the right framework. They were about understanding that a market merchant doesn't care whether the system uses one AI model or five. They care that they can say *"beras 5 kilo tujuh puluh ribu"* and get a receipt they can WhatsApp to their customer before the next person in line gets impatient.
 
-That shift in thinking—from "what's technically impressive" to "what actually helps"—is something I'll carry into every project I build from here.
+That shift in thinking-from "what's technically impressive" to "what actually helps"-is something I'll carry into every project I build from here.

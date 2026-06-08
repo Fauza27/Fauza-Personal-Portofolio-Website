@@ -1,7 +1,7 @@
 ---
 title: "My-Jarvis-Gua: AI-Powered Personal Life OS"
 category: "AI Engineering & Full-Stack"
-description: "A production-grade personal AI assistant with OpenAI function calling, Whisper voice transcription, semantic search via pgvector, and a full Next.js dashboard—all orchestrated through a Telegram bot."
+description: "A production-grade personal AI assistant with OpenAI function calling, Whisper voice transcription, semantic search via pgvector, and a full Next.js dashboard-all orchestrated through a Telegram bot."
 tech: ["Python", "FastAPI", "Next.js", "OpenAI GPT-4o", "Whisper", "Supabase", "pgvector", "Telegram Bot", "Docker"]
 year: "2026"
 github: "https://github.com/Fauza27/My-Jarvis-Gua"
@@ -10,7 +10,7 @@ gradient: "from-indigo-500/20 via-purple-500/20 to-pink-500/20"
 
 ## Project Summary & Role
 
-**My-Jarvis-Gua** is an ongoing, production-grade AI personal assistant inspired by Tony Stark's JARVIS. Instead of using dozens of separate apps, users interact with a single AI system through natural conversations on Telegram—typing messages, sending voice notes, or using structured commands—to manage personal finance, track health, and organize daily life.
+**My-Jarvis-Gua** is an ongoing, production-grade AI personal assistant inspired by Tony Stark's JARVIS. Instead of using dozens of separate apps, users interact with a single AI system through natural conversations on Telegram-typing messages, sending voice notes, or using structured commands-to manage personal finance, track health, and organize daily life.
 
 **My Role:** Solo Developer (*End-to-end development*). Designed the clean architecture backend in FastAPI, built the AI orchestration layer with OpenAI function calling, implemented Whisper-based voice transcription, integrated Supabase with Row Level Security, and developed the Next.js analytics dashboard.
 
@@ -18,7 +18,7 @@ gradient: "from-indigo-500/20 via-purple-500/20 to-pink-500/20"
 
 ## Why I Built This
 
-One of the main reasons I chose to study Computer Science was because of Tony Stark from Iron Man. I was fascinated by JARVIS—an AI that doesn't just answer questions, but actively manages life's complexities.
+One of the main reasons I chose to study Computer Science was because of Tony Stark from Iron Man. I was fascinated by JARVIS-an AI that doesn't just answer questions, but actively manages life's complexities.
 
 In 2026, I found myself with several months to focus entirely on learning and building. Instead of treating it as free time, I challenged myself with an ambitious goal: **build my own personal AI assistant** while significantly improving my AI engineering and system design skills.
 
@@ -35,7 +35,7 @@ I wanted to explore whether a single AI-powered system could unify these activit
 
 ## System Architecture
 
-The core design challenge was enabling a single Telegram bot to handle vastly different intents—from recording a quick coffee expense to generating a full monthly financial summary—while keeping the codebase maintainable and extensible.
+The core design challenge was enabling a single Telegram bot to handle vastly different intents-from recording a quick coffee expense to generating a full monthly financial summary-while keeping the codebase maintainable and extensible.
 
 I designed a **Clean Architecture** backend with clear separation between API layer, service layer, and repository layer, orchestrated through OpenAI's function calling mechanism.
 
@@ -72,7 +72,7 @@ flowchart TD
 
 ## The AI Brain: Function Calling Deep Dive
 
-The heart of the system is the `AIService` class—an orchestrator that manages conversations with OpenAI's Responses API and automatically executes database operations through **7 registered function tools**.
+The heart of the system is the `AIService` class-an orchestrator that manages conversations with OpenAI's Responses API and automatically executes database operations through **7 registered function tools**.
 
 ```mermaid
 sequenceDiagram
@@ -99,7 +99,7 @@ sequenceDiagram
 
 ### The Chat Loop Architecture
 
-The `_run_chat_loop` method implements a multi-turn function calling loop with a safety limit of 10 iterations. This allows the AI to chain multiple tool calls in a single conversation turn—for example, first listing expenses to find a transaction ID, then deleting it.
+The `_run_chat_loop` method implements a multi-turn function calling loop with a safety limit of 10 iterations. This allows the AI to chain multiple tool calls in a single conversation turn-for example, first listing expenses to find a transaction ID, then deleting it.
 
 What makes this different from a simple "send message, get response" pattern:
 
@@ -113,7 +113,7 @@ What makes this different from a simple "send message, get response" pattern:
 |------|---------|------------|
 | `create_expense` | Record new transaction | Auto-defaults to today's date if not specified |
 | `list_expenses` | View transaction history | Supports 9 filter parameters (type, category, date range, search, pagination, sorting) |
-| `update_expense` | Modify existing transaction | Partial update—only non-null fields are changed |
+| `update_expense` | Modify existing transaction | Partial update-only non-null fields are changed |
 | `delete_expense` | Soft-delete a transaction | Uses soft delete (sets `deleted_at` timestamp) |
 | `get_monthly_summary` | Monthly income/expense breakdown | Aggregated by month and year |
 | `get_yearly_summary` | Annual financial overview | Full-year aggregation |
@@ -155,7 +155,7 @@ The voice pipeline works in stages:
 4. **AI Processing:** The transcribed text is enhanced with a prefix `[Pesan suara dari user, sudah ditranskripsi]` and fed into the same AI chat pipeline, including function calling.
 5. **Response:** The final message shows both the transcription and the AI's response.
 
-The `transcribe_safe()` method ensures that transcription failures never crash the bot—it returns a tuple of `(text, error)` so the handler can gracefully inform the user.
+The `transcribe_safe()` method ensures that transcription failures never crash the bot-it returns a tuple of `(text, error)` so the handler can gracefully inform the user.
 
 ---
 
@@ -187,7 +187,7 @@ sequenceDiagram
 Key security decisions:
 
 * **One-time codes** with expiration timestamps prevent replay attacks.
-* **Code format** (`MYJARVIS-XXXX`) is designed to be easily distinguishable—the bot also accepts raw code paste via a Regex filter `^MYJARVIS-[A-Z0-9]+$`.
+* **Code format** (`MYJARVIS-XXXX`) is designed to be easily distinguishable-the bot also accepts raw code paste via a Regex filter `^MYJARVIS-[A-Z0-9]+$`.
 * **Row Level Security (RLS)** on Supabase ensures that even if the bot uses an admin client (required because Telegram webhooks have no JWT context), all queries explicitly enforce `user_id` filtering.
 
 ---
@@ -230,7 +230,7 @@ erDiagram
 
 **Soft Deletes with Views:** Instead of permanently deleting data, expenses set a `deleted_at` timestamp. An `active_expenses` view automatically filters deleted records, so application queries stay clean while maintaining audit capability with a dedicated `restore_expense()` function.
 
-**Vector Embeddings on Expenses:** Every expense record gets an embedding vector (1536 dimensions from `text-embedding-3-small`). This enables semantic search—when a user asks *"how much did I spend on food last week?"*, the system uses `match_expense()` with cosine similarity to find relevant transactions, even if the exact words don't match.
+**Vector Embeddings on Expenses:** Every expense record gets an embedding vector (1536 dimensions from `text-embedding-3-small`). This enables semantic search-when a user asks *"how much did I spend on food last week?"*, the system uses `match_expense()` with cosine similarity to find relevant transactions, even if the exact words don't match.
 
 **HNSW Index:** The vector column uses a Hierarchical Navigable Small World index for fast approximate nearest neighbor search at scale.
 
@@ -314,7 +314,7 @@ flowchart TD
 
 | Decision | Choice | Reason |
 |----------|--------|--------|
-| **AI Integration** | OpenAI Function Calling | Structured tool use with strict JSON schemas—no prompt hacking needed |
+| **AI Integration** | OpenAI Function Calling | Structured tool use with strict JSON schemas-no prompt hacking needed |
 | **Voice Processing** | Whisper API (`language="id"`) | Native Indonesian support, reliable transcription quality |
 | **Embedding Strategy** | Background generation | Non-blocking: embeddings are generated after expense creation without slowing down the response |
 | **Soft Deletes** | `deleted_at` + views | Data auditability with clean application queries |
@@ -325,15 +325,15 @@ flowchart TD
 
 ## What I Learned
 
-**The "God Prompt" Trap** — My first attempt used a single massive system prompt trying to handle everything. It hallucinated, forgot context, and became unmaintainable. Switching to OpenAI function calling with strict schemas made the system dramatically more reliable—the AI now knows exactly what tools are available and what parameters they accept.
+**The "God Prompt" Trap** - My first attempt used a single massive system prompt trying to handle everything. It hallucinated, forgot context, and became unmaintainable. Switching to OpenAI function calling with strict schemas made the system dramatically more reliable-the AI now knows exactly what tools are available and what parameters they accept.
 
-**Clean Architecture Pays Off** — Separating concerns into API → Service → Repository layers made it trivial to share business logic between the REST API and the Telegram bot. The same `ExpenseService` serves both interfaces without code duplication.
+**Clean Architecture Pays Off** - Separating concerns into API → Service → Repository layers made it trivial to share business logic between the REST API and the Telegram bot. The same `ExpenseService` serves both interfaces without code duplication.
 
-**Voice Changes Everything** — Adding Whisper transcription transformed the user experience. Recording a 5-second voice note saying *"beli makan siang 35 ribu"* is far more natural than typing it out. The key insight: wrapping the transcription in a `transcribe_safe()` method prevents the entire pipeline from crashing on bad audio.
+**Voice Changes Everything** - Adding Whisper transcription transformed the user experience. Recording a 5-second voice note saying *"beli makan siang 35 ribu"* is far more natural than typing it out. The key insight: wrapping the transcription in a `transcribe_safe()` method prevents the entire pipeline from crashing on bad audio.
 
-**Security Is Architecture** — The Telegram bot has no JWT context, so it must use the admin client. This means RLS is bypassed, making explicit `user_id` filtering in every single query absolutely critical. I added an `assert user_id` check as the first line of `_make_ai_service()` to prevent cross-user data leakage.
+**Security Is Architecture** - The Telegram bot has no JWT context, so it must use the admin client. This means RLS is bypassed, making explicit `user_id` filtering in every single query absolutely critical. I added an `assert user_id` check as the first line of `_make_ai_service()` to prevent cross-user data leakage.
 
-> This project taught me that building a personal AI assistant isn't about making the smartest AI—it's about designing a system where AI, backend engineering, security, and user experience all work together seamlessly.
+> This project taught me that building a personal AI assistant isn't about making the smartest AI-it's about designing a system where AI, backend engineering, security, and user experience all work together seamlessly.
 
 ---
 

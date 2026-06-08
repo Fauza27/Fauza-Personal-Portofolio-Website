@@ -1,7 +1,7 @@
 ---
 title: "Leading a Team to Build an AI That Predicts Equipment Failures"
 date: "2025-12-15"
-excerpt: "How a capstone project with 5 people, 10 AI agents, and a 10,000-line monolith taught me that the hardest part of building AI systems isn't the AI—it's the architecture, the teamwork, and the trust."
+excerpt: "How a capstone project with 5 people, 10 AI agents, and a 10,000-line monolith taught me that the hardest part of building AI systems isn't the AI-it's the architecture, the teamwork, and the trust."
 author: "Muhammad Fauza"
 tags: ["AI", "LangGraph", "Multi-Agent", "XGBoost", "MLOps", "Team Leadership", "FastAPI"]
 readTime: "15 min read"
@@ -10,7 +10,7 @@ featured: true
 
 The idea sounded simple: build an AI system that predicts when industrial equipment will fail before it actually does.
 
-Five months later, I was staring at a 10,000-line Python file containing 10 AI agents tangled together in ways that broke every time someone pushed code. The event loop crashed when the chatbot and REST API tried to run simultaneously. The database agent could technically execute arbitrary SQL through the LLM—a security nightmare we hadn't noticed for weeks.
+Five months later, I was staring at a 10,000-line Python file containing 10 AI agents tangled together in ways that broke every time someone pushed code. The event loop crashed when the chatbot and REST API tried to run simultaneously. The database agent could technically execute arbitrary SQL through the LLM-a security nightmare we hadn't noticed for weeks.
 
 This is the story of how Sentinel started as an ambitious capstone project, nearly collapsed under its own complexity, and eventually became a production-grade predictive maintenance platform through painful lessons about architecture, team leadership, and what it actually means to build AI for real users.
 
@@ -24,7 +24,7 @@ We chose predictive maintenance because the cost asymmetry is staggering:
 
 * **Reactive maintenance** (fix after break): $260,000 per hour of unplanned downtime.
 * **Preventive maintenance** (replace on schedule): Wastes 30-40% of maintenance budget on unnecessary replacements.
-* **Predictive maintenance** (replace when data says so): The sweet spot—but requires reliable prediction.
+* **Predictive maintenance** (replace when data says so): The sweet spot-but requires reliable prediction.
 
 The question we set out to answer:
 
@@ -38,7 +38,7 @@ The first component I built was the XGBoost failure prediction model. The traini
 
 ### The 44-Feature Pipeline
 
-Raw sensor data—temperature, RPM, torque, tool wear—isn't enough for reliable prediction. I engineered 44 features:
+Raw sensor data-temperature, RPM, torque, tool wear-isn't enough for reliable prediction. I engineered 44 features:
 
 * **Derived:** Temperature differential, power calculation (torque × RPM), tool-torque interaction
 * **Risk indicators:** Physics-based threshold checks for Heat Dissipation Failure (HDF), Power Failure (PWF), Overstrain Failure (OSF), Tool Wear Failure (TWF), and Random Failures (RNF)
@@ -56,7 +56,7 @@ I tuned the threshold to 0.3108, optimizing for recall:
 | Precision | ~65% | 42.57% |
 | ROC-AUC | 98.5% | **99.01%** |
 
-Yes, precision dropped—more false alarms. But in this domain, a false positive means an unnecessary inspection ($500-2,000). A false negative means catastrophic failure ($260,000/hour). The math is obvious.
+Yes, precision dropped-more false alarms. But in this domain, a false positive means an unnecessary inspection ($500-2,000). A false negative means catastrophic failure ($260,000/hour). The math is obvious.
 
 This was my first lesson in applied ML: **the right metric depends on the domain, not the textbook.**
 
@@ -66,16 +66,16 @@ This was my first lesson in applied ML: **the right metric depends on the domain
 
 The core innovation of Sentinel is its multi-agent AI chatbot. Instead of a single LLM answering questions, the system uses 10 specialized agents, each with a specific capability:
 
-1. **Knowledge Base** — semantic search on SOPs, manuals, and FAQs using Qdrant
-2. **Database Query** — converts natural language to SQL for real-time sensor data
-3. **ML Prediction** — runs the XGBoost model on live machine data
-4. **Web Search** — fetches latest industry best practices via Tavily
-5. **Schedule Optimizer** — creates priority-ranked maintenance schedules
-6. **What-If Simulator** — analyzes "What happens if we delay maintenance by 3 days?"
-7. **Feedback Analyzer** — monitors model performance and detects data drift (KS-test)
-8. **Model Retrainer** — automatically retrains the XGBoost model when performance degrades
-9. **Report Generator** — creates daily/weekly/monthly reports with PDF export
-10. **Ticket Creator** — multi-turn conversation for creating maintenance tickets
+1. **Knowledge Base** - semantic search on SOPs, manuals, and FAQs using Qdrant
+2. **Database Query** - converts natural language to SQL for real-time sensor data
+3. **ML Prediction** - runs the XGBoost model on live machine data
+4. **Web Search** - fetches latest industry best practices via Tavily
+5. **Schedule Optimizer** - creates priority-ranked maintenance schedules
+6. **What-If Simulator** - analyzes "What happens if we delay maintenance by 3 days?"
+7. **Feedback Analyzer** - monitors model performance and detects data drift (KS-test)
+8. **Model Retrainer** - automatically retrains the XGBoost model when performance degrades
+9. **Report Generator** - creates daily/weekly/monthly reports with PDF export
+10. **Ticket Creator** - multi-turn conversation for creating maintenance tickets
 
 These agents are orchestrated by a LangGraph state machine with 8 nodes: Prompt Refiner → Goal Decomposer → Intent Classifier → Tool Selector → Tool Executor → Agent Collaborator → Result Validator → Answer Generator.
 
@@ -89,7 +89,7 @@ Here's where the story gets real.
 
 In the early weeks, I wrote all 10 agents in a single `main.py` file. It started at 2,000 lines. Then 5,000. Then 10,000. Alongside it, `backend.py` grew to 2,000+ lines handling REST API, database queries, and authentication.
 
-It worked—barely. But the problems accumulated:
+It worked-barely. But the problems accumulated:
 
 ### Problem 1: The Event Loop War
 
@@ -101,7 +101,7 @@ With everything in one file, you couldn't test one agent without loading all 10.
 
 ### Problem 3: The SQL Injection Blind Spot
 
-The Database Query agent used the LLM to generate SQL from natural language. But the database connection used the main application credentials—full read/write access. If someone crafted a prompt that tricked the LLM into generating a `DROP TABLE` statement, the agent would happily execute it.
+The Database Query agent used the LLM to generate SQL from natural language. But the database connection used the main application credentials-full read/write access. If someone crafted a prompt that tricked the LLM into generating a `DROP TABLE` statement, the agent would happily execute it.
 
 We didn't notice this for weeks. When I finally realized the risk, it kept me up at night.
 
@@ -109,7 +109,7 @@ We didn't notice this for weeks. When I finally realized the risk, it kept me up
 
 ## The Refactoring: Clean Architecture Under Pressure
 
-With three weeks left before the capstone deadline, I made a risky decision: refactor the entire backend into a clean modular architecture. The team was skeptical—why break what "works"?
+With three weeks left before the capstone deadline, I made a risky decision: refactor the entire backend into a clean modular architecture. The team was skeptical-why break what "works"?
 
 I restructured everything into `back-end-refactor/`:
 
@@ -130,7 +130,7 @@ Three critical fixes came from the refactoring:
 
 **2. Event Loop Isolation.** By separating the API routes from the agent execution, the async conflicts disappeared. The LangGraph graph runs in its own context, and the FastAPI endpoint streams results via SSE without competing for the event loop.
 
-**3. Centralized Tool Registration.** Instead of each agent being hard-coded into the orchestration logic, all 10 tools are registered in a `TOOL_MAP` dictionary. The `execute_tool()` function handles lookup, execution, and error handling uniformly. Adding a new agent means adding one entry to the map—no changes to the graph logic.
+**3. Centralized Tool Registration.** Instead of each agent being hard-coded into the orchestration logic, all 10 tools are registered in a `TOOL_MAP` dictionary. The `execute_tool()` function handles lookup, execution, and error handling uniformly. Adding a new agent means adding one entry to the map-no changes to the graph logic.
 
 ---
 
@@ -144,11 +144,11 @@ But without limits, a query like *"Prepare all machines for next week"* could tr
 
 I added three guardrails:
 
-* **`MAX_SUB_TASK_ITERATIONS`** — Maximum number of sub-task cycles per query
-* **`MAX_CONFIRMATION_ATTEMPTS`** — Maximum times the system asks the user for confirmation (prevents infinite "Are you sure?" loops)
-* **`LANGGRAPH_RECURSION_LIMIT`** — Hard limit on total graph traversals
+* **`MAX_SUB_TASK_ITERATIONS`** - Maximum number of sub-task cycles per query
+* **`MAX_CONFIRMATION_ATTEMPTS`** - Maximum times the system asks the user for confirmation (prevents infinite "Are you sure?" loops)
+* **`LANGGRAPH_RECURSION_LIMIT`** - Hard limit on total graph traversals
 
-These aren't elegant. They're blunt safety valves. But they prevent the system from consuming unlimited API tokens and response time. In production multi-agent systems, guardrails aren't optional—they're the first thing you should design.
+These aren't elegant. They're blunt safety valves. But they prevent the system from consuming unlimited API tokens and response time. In production multi-agent systems, guardrails aren't optional-they're the first thing you should design.
 
 ---
 
@@ -183,7 +183,7 @@ A typical response now shows:
 6. ✅ Agent collaboration: ML prediction validated by feedback analyzer
 7. ✅ Confidence: 87%
 
-Engineers could see exactly how the AI arrived at its answer. This wasn't technically difficult to implement—it was just a list of timestamped strings. But it was the single most important feature for user adoption.
+Engineers could see exactly how the AI arrived at its answer. This wasn't technically difficult to implement-it was just a list of timestamped strings. But it was the single most important feature for user adoption.
 
 ---
 
@@ -193,7 +193,7 @@ This was my first experience as a team lead. Five people with different skill le
 
 Things I learned about technical leadership:
 
-**Architecture decisions are team decisions.** When I decided to refactor the monolith with three weeks left, I needed the team to understand why. I couldn't just declare it—I had to explain the event loop bug, show the SQL injection risk, and demonstrate how the modular structure would make their work easier.
+**Architecture decisions are team decisions.** When I decided to refactor the monolith with three weeks left, I needed the team to understand why. I couldn't just declare it-I had to explain the event loop bug, show the SQL injection risk, and demonstrate how the modular structure would make their work easier.
 
 **Clear module boundaries prevent merge conflicts.** After the refactoring, each team member owned a specific module. The frontend engineer worked on `front-end/`, the database team member handled `app/db/` and `app/api/`, and I focused on `app/agents/` and `app/ml/`. Merge conflicts dropped from daily to weekly.
 
@@ -205,15 +205,15 @@ Things I learned about technical leadership:
 
 ## What This Project Taught Me
 
-**Multi-Agent Systems Are Deceptively Hard** — Getting 10 agents to work individually is straightforward. Getting them to collaborate without infinite loops, conflicting outputs, and security vulnerabilities is an engineering challenge that requires explicit guardrails, dependency rules, and safety limits.
+**Multi-Agent Systems Are Deceptively Hard** - Getting 10 agents to work individually is straightforward. Getting them to collaborate without infinite loops, conflicting outputs, and security vulnerabilities is an engineering challenge that requires explicit guardrails, dependency rules, and safety limits.
 
-**Architecture Is a Team Productivity Multiplier** — The monolith was a bottleneck not because the code was bad, but because it forced everyone to work in the same files. Clean architecture—separating API, services, agents, and ML into distinct modules—was the single biggest improvement to team velocity.
+**Architecture Is a Team Productivity Multiplier** - The monolith was a bottleneck not because the code was bad, but because it forced everyone to work in the same files. Clean architecture-separating API, services, agents, and ML into distinct modules-was the single biggest improvement to team velocity.
 
-**The Right Metric Changes Everything** — Optimizing for accuracy (99%) would have been the textbook approach. Optimizing for recall (95.45%) was the right approach. Understanding why required understanding the domain, not just the math.
+**The Right Metric Changes Everything** - Optimizing for accuracy (99%) would have been the textbook approach. Optimizing for recall (95.45%) was the right approach. Understanding why required understanding the domain, not just the math.
 
-**Trust Is a Feature, Not a Nice-to-Have** — In safety-critical domains like industrial maintenance, engineers won't use a system they can't understand. Reasoning transparency—showing the AI's thinking process step by step—was technically trivial but strategically essential.
+**Trust Is a Feature, Not a Nice-to-Have** - In safety-critical domains like industrial maintenance, engineers won't use a system they can't understand. Reasoning transparency-showing the AI's thinking process step by step-was technically trivial but strategically essential.
 
-**Impactful Software Is Not Defined by Complexity** — We built 10 agents, 44 ML features, an 8-node pipeline, and a complete MLOps system. But none of that matters if the maintenance engineer can't ask a simple question and get a trustworthy answer. The measure of success isn't what you built—it's what the user can do with it.
+**Impactful Software Is Not Defined by Complexity** - We built 10 agents, 44 ML features, an 8-node pipeline, and a complete MLOps system. But none of that matters if the maintenance engineer can't ask a simple question and get a trustworthy answer. The measure of success isn't what you built-it's what the user can do with it.
 
 ---
 

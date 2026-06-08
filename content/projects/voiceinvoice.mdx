@@ -20,15 +20,15 @@ gradient: "from-amber-500/20 via-orange-500/20 to-red-500/20"
 
 This project started from observation, not from a technical idea.
 
-I noticed how traditional market merchants and small warung owners handle transactions during busy hours. They serve multiple customers simultaneously while trying to write receipts by hand. The process is slow, error-prone, and often leads to calculation mistakes—especially when a customer buys ten different items with varying quantities and prices.
+I noticed how traditional market merchants and small warung owners handle transactions during busy hours. They serve multiple customers simultaneously while trying to write receipts by hand. The process is slow, error-prone, and often leads to calculation mistakes-especially when a customer buys ten different items with varying quantities and prices.
 
 Some merchants use basic calculator apps, but that still requires manual typing on small phone screens. Most don't use any digital system at all because existing POS applications are too complex, too expensive, or require stable internet they don't have.
 
-I wanted to explore whether AI could genuinely simplify this workflow by allowing merchants to create receipts using only their voice—even in environments with poor or unreliable internet connections.
+I wanted to explore whether AI could genuinely simplify this workflow by allowing merchants to create receipts using only their voice-even in environments with poor or unreliable internet connections.
 
 The key constraint was clear from the start:
 
-> This system had to work reliably in a traditional market environment—with noisy surroundings, inconsistent internet, and users who may not be tech-savvy.
+> This system had to work reliably in a traditional market environment-with noisy surroundings, inconsistent internet, and users who may not be tech-savvy.
 
 ---
 
@@ -83,10 +83,10 @@ flowchart LR
 
 Problems with this approach:
 
-* **Two network requests** instead of one—double the latency on mobile networks.
-* **Two points of failure**—if either service was down, the entire pipeline broke.
-* **Accumulated errors**—if Whisper misheard "lima belas ribu" as "lima ribu", the LLM would faithfully parse the wrong number.
-* **Higher cost**—paying for two separate API calls per transaction.
+* **Two network requests** instead of one-double the latency on mobile networks.
+* **Two points of failure**-if either service was down, the entire pipeline broke.
+* **Accumulated errors**-if Whisper misheard "lima belas ribu" as "lima ribu", the LLM would faithfully parse the wrong number.
+* **Higher cost**-paying for two separate API calls per transaction.
 
 ### The Multimodal Approach (Chosen)
 
@@ -104,9 +104,9 @@ flowchart LR
 
 The result was dramatic:
 
-* **~50% lower latency**—one API call instead of two.
-* **Single point of truth**—the model hears the audio directly instead of relying on an intermediate transcription.
-* **Simpler codebase**—the entire AI logic fits in a single 84-line route handler.
+* **~50% lower latency**-one API call instead of two.
+* **Single point of truth**-the model hears the audio directly instead of relying on an intermediate transcription.
+* **Simpler codebase**-the entire AI logic fits in a single 84-line route handler.
 
 The trade-off was vendor lock-in to Google's Gemini API. For the scale of this project, that was an acceptable compromise.
 
@@ -201,14 +201,14 @@ MediaRecorder.isTypeSupported('audio/webm;codecs=opus')
   : 'audio/webm'
 ```
 
-This difference is invisible to users but was only discovered during testing on physical devices—the iOS simulator gave completely different results.
+This difference is invisible to users but was only discovered during testing on physical devices-the iOS simulator gave completely different results.
 
 ### Dual Recording Strategy
 
 The hook simultaneously runs two systems:
 
 1. **MediaRecorder API:** Captures actual audio bytes for sending to Gemini.
-2. **Web Speech API:** Provides a real-time transcription preview so the user can see what's being captured while they speak. This preview is not used for the final parsing—it's purely a UX affordance to build user confidence.
+2. **Web Speech API:** Provides a real-time transcription preview so the user can see what's being captured while they speak. This preview is not used for the final parsing-it's purely a UX affordance to build user confidence.
 
 If Web Speech API is not available (some browsers don't support it), the recording continues without the live preview. No functionality is lost.
 
@@ -263,7 +263,7 @@ erDiagram
 
 ### Key Design Decisions
 
-**Auto-Store Creation:** A PostgreSQL trigger (`create_store_for_new_user()`) automatically creates a store record when a new user signs up. This means merchants can start creating receipts immediately after registration—zero configuration required.
+**Auto-Store Creation:** A PostgreSQL trigger (`create_store_for_new_user()`) automatically creates a store record when a new user signs up. This means merchants can start creating receipts immediately after registration-zero configuration required.
 
 **Invoice Sequence Numbers:** Instead of relying on UUIDs for invoice display (which would look meaningless to merchants), I built a `get_next_invoice_seq()` function that generates human-readable, date-based sequential numbers per store. The function uses `ON CONFLICT DO UPDATE` for atomic counter increment without race conditions.
 
@@ -273,7 +273,7 @@ erDiagram
 
 ## Receipt Output: Copy & WhatsApp
 
-The `NotaPreview` component generates a formatted text receipt that can be copied to clipboard or shared directly via WhatsApp—the primary communication tool for Indonesian merchants.
+The `NotaPreview` component generates a formatted text receipt that can be copied to clipboard or shared directly via WhatsApp-the primary communication tool for Indonesian merchants.
 
 ```
 ========================
@@ -304,7 +304,7 @@ The Next.js middleware implements Supabase Auth with intelligent routing:
 * **Public routes:** Only `/login` is publicly accessible.
 * **Post-login redirect:** The middleware saves the original URL in a `?next=` parameter, so users land on their intended page after login.
 * **PWA static file bypass:** `manifest.json`, `sw.js`, and icon files skip authentication entirely to prevent PWA installation issues.
-* **getUser() over getSession():** The middleware uses `supabase.auth.getUser()` which makes a network call to validate the token, rather than `getSession()` which only reads the local cookie—significantly more secure against token tampering.
+* **getUser() over getSession():** The middleware uses `supabase.auth.getUser()` which makes a network call to validate the token, rather than `getSession()` which only reads the local cookie-significantly more secure against token tampering.
 
 ---
 
@@ -323,15 +323,15 @@ The Next.js middleware implements Supabase Auth with intelligent routing:
 
 ## What I Learned
 
-**Simpler Architectures Win** — My initial two-step pipeline (Whisper → LLM) was more "impressive" on paper but slower, more expensive, and less reliable. Replacing it with a single multimodal request was the best engineering decision I made. Sometimes the most elegant solution is the one with fewer moving parts.
+**Simpler Architectures Win** - My initial two-step pipeline (Whisper → LLM) was more "impressive" on paper but slower, more expensive, and less reliable. Replacing it with a single multimodal request was the best engineering decision I made. Sometimes the most elegant solution is the one with fewer moving parts.
 
-**Offline Is a Feature, Not an Afterthought** — For traditional market merchants, offline reliability is more valuable than advanced functionality. The `useOfflineSync` hook with `pending_sync` status tracking was essential, not optional. Building for users with unreliable internet fundamentally changed how I think about web application architecture.
+**Offline Is a Feature, Not an Afterthought** - For traditional market merchants, offline reliability is more valuable than advanced functionality. The `useOfflineSync` hook with `pending_sync` status tracking was essential, not optional. Building for users with unreliable internet fundamentally changed how I think about web application architecture.
 
-**Browser APIs Are Inconsistent** — The MIME type difference between Chrome Android and Safari iOS was invisible in development. It only surfaced during physical device testing. This taught me that mobile web features must be tested on real hardware, not simulators.
+**Browser APIs Are Inconsistent** - The MIME type difference between Chrome Android and Safari iOS was invisible in development. It only surfaced during physical device testing. This taught me that mobile web features must be tested on real hardware, not simulators.
 
-**Good Technology Adapts to Users** — The biggest lesson from VoiceInvoice isn't technical. It's that great products succeed when they fit naturally into users' daily workflows. A merchant doesn't care about multimodal AI or IndexedDB. They care that they can say *"beras 5 kilo tujuh puluh ribu"* and get a receipt they can WhatsApp to their customer in 10 seconds.
+**Good Technology Adapts to Users** - The biggest lesson from VoiceInvoice isn't technical. It's that great products succeed when they fit naturally into users' daily workflows. A merchant doesn't care about multimodal AI or IndexedDB. They care that they can say *"beras 5 kilo tujuh puluh ribu"* and get a receipt they can WhatsApp to their customer in 10 seconds.
 
-> This project changed my perspective on what "good engineering" means. It's not about adding more models and features—it's about solving real problems with the simplest architecture that works reliably in the user's actual environment.
+> This project changed my perspective on what "good engineering" means. It's not about adding more models and features-it's about solving real problems with the simplest architecture that works reliably in the user's actual environment.
 
 ---
 

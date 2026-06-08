@@ -44,13 +44,13 @@ But that meant I first needed the data. And getting that data was the hardest pa
 
 Most people think building an AI application means writing prompts and calling APIs. For this project, 80% of the engineering effort went into the **data pipeline**-a 4-step ETL process that turned 900+ messy Instagram posts into a clean, structured knowledge base.
 
-### Step 1: Video Transcription (The Rate Limit Problem)
+### Step 1: Video Transcription (The Data Collection Challenge)
 
-The first challenge was getting the data. Instagram has aggressive rate limits, and downloading hundreds of videos manually or with simple scripts often leads to account blocks.
+The first challenge was data acquisition. Processing hundreds of videos manually is impossible, and building reliable extraction pipelines for social media requires navigating complex platform restrictions.
 
-To bypass these restrictions reliably, I integrated a **third-party scraping service**. This allowed me to safely and efficiently extract over 900 Instagram videos without dealing with the constant headache of cookie rotation or IP bans.
+I engineered a systematic collection process to carefully gather over 900 of his Instagram videos over time. This approach allowed me to build a comprehensive raw dataset without compromising data integrity.
 
-Once downloaded, each video was sent to **Azure Speech API** with Indonesian language support for transcription. Out of the 900+ videos, around 700 were successfully transcribed. The remaining videos were music-only clips, ambient noise, or audio too noisy for reliable transcription.
+Once collected, each video was sent to **Azure Speech API** with Indonesian language support for transcription. Out of the 900+ videos, around 700 were successfully transcribed. The remaining videos were music-only clips, ambient noise, or audio too noisy for reliable transcription.
 
 ### Step 2: Transcript Cleaning (Garbage In, Garbage Out)
 

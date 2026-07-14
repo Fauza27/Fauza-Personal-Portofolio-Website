@@ -51,14 +51,14 @@ export default function Error({
               </button>
               
               <Link href="/blog">
-                <button className="flex items-center justify-center gap-2 px-6 py-3 glass rounded-xl text-foreground hover:bg-white/10 transition-colors w-full">
+                <button className="flex items-center justify-center gap-2 px-6 py-3 glass rounded-xl text-foreground hover:bg-foreground/10 transition-colors w-full">
                   <ArrowLeft size={18} />
                   Back to Blog
                 </button>
               </Link>
               
               <Link href="/">
-                <button className="flex items-center justify-center gap-2 px-6 py-3 glass rounded-xl text-foreground hover:bg-white/10 transition-colors w-full">
+                <button className="flex items-center justify-center gap-2 px-6 py-3 glass rounded-xl text-foreground hover:bg-foreground/10 transition-colors w-full">
                   <Home size={18} />
                   Home
                 </button>

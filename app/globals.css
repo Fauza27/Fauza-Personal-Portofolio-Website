@@ -1,43 +1,49 @@
 @import "tailwindcss";
 
+/* Make Tailwind's `dark:` variant follow the .dark class (set by next-themes),
+   not the OS prefers-color-scheme. Required for the theme toggle to control
+   dark: utilities (e.g. the Aurora background). */
+@custom-variant dark (&:where(.dark, .dark *));
+
 /* Aurora Glass Design System with TweakCN Theme */
 
 :root {
-  --background: oklch(0.9823 0.0043 308.4116);
-  --foreground: oklch(0.1909 0.0518 305.0975);
-  --card: oklch(0.9645 0.0087 308.3601);
-  --card-foreground: oklch(0.1909 0.0518 305.0975);
-  --popover: oklch(0.9823 0.0043 308.4116);
-  --popover-foreground: oklch(0.1909 0.0518 305.0975);
-  --primary: oklch(0.5098 0.2439 299.8167);
-  --primary-foreground: oklch(0.9764 0.0145 308.2957);
-  --secondary: oklch(0.9286 0.0254 317.7185);
-  --secondary-foreground: oklch(0.2795 0.0917 304.1131);
-  --muted: oklch(0.9149 0.0147 308.2818);
-  --muted-foreground: oklch(0.4912 0.0344 307.6856);
-  --accent: oklch(0.9096 0.0476 331.5105);
-  --accent-foreground: oklch(0.4157 0.1525 335.5899);
+  /* Light mode - "Cream Golden Guild": parchment cream base + royal purple + golden accent */
+  --background: oklch(0.9300 0.0400 82.0000);
+  --foreground: oklch(0.2400 0.0550 300.0000);
+  --card: oklch(0.9700 0.0250 85.0000);
+  --card-foreground: oklch(0.2400 0.0550 300.0000);
+  --popover: oklch(0.9750 0.0220 85.0000);
+  --popover-foreground: oklch(0.2400 0.0550 300.0000);
+  --primary: oklch(0.5000 0.2400 300.0000);
+  --primary-foreground: oklch(0.9800 0.0150 90.0000);
+  --secondary: oklch(0.9000 0.0450 82.0000);
+  --secondary-foreground: oklch(0.2800 0.0700 302.0000);
+  --muted: oklch(0.9100 0.0350 84.0000);
+  --muted-foreground: oklch(0.4400 0.0420 304.0000);
+  --accent: oklch(0.8400 0.1000 75.0000);
+  --accent-foreground: oklch(0.3000 0.0750 60.0000);
   --destructive: oklch(0.6356 0.2082 25.3782);
   --destructive-foreground: oklch(1.0000 0 0);
-  --border: oklch(0.8717 0.0224 308.1760);
-  --input: oklch(0.8717 0.0224 308.1760);
-  --ring: oklch(0.5098 0.2439 299.8167);
+  --border: oklch(0.8400 0.0480 80.0000);
+  --input: oklch(0.8600 0.0420 82.0000);
+  --ring: oklch(0.5000 0.2400 300.0000);
   --chart-1: oklch(0.5098 0.2439 299.8167);
   --chart-2: oklch(0.6286 0.2128 335.1222);
   --chart-3: oklch(0.4896 0.2058 275.6741);
   --chart-4: oklch(0.6611 0.1326 236.6908);
   --chart-5: oklch(0.6713 0.1418 313.7098);
-  --sidebar: oklch(0.9534 0.0146 308.2907);
-  --sidebar-foreground: oklch(0.2361 0.0725 304.4991);
-  --sidebar-primary: oklch(0.5098 0.2439 299.8167);
-  --sidebar-primary-foreground: oklch(1.0000 0 0);
-  --sidebar-accent: oklch(0.9107 0.0221 308.1911);
-  --sidebar-accent-foreground: oklch(0.4347 0.2049 300.1316);
-  --sidebar-border: oklch(0.8976 0.0178 308.2410);
-  --sidebar-ring: oklch(0.5098 0.2439 299.8167);
-  --font-sans: Inter, system-ui, sans-serif;
+  --sidebar: oklch(0.9500 0.0300 84.0000);
+  --sidebar-foreground: oklch(0.2600 0.0600 304.0000);
+  --sidebar-primary: oklch(0.5000 0.2400 300.0000);
+  --sidebar-primary-foreground: oklch(0.9800 0.0150 90.0000);
+  --sidebar-accent: oklch(0.8800 0.0500 80.0000);
+  --sidebar-accent-foreground: oklch(0.3400 0.1000 65.0000);
+  --sidebar-border: oklch(0.8600 0.0400 82.0000);
+  --sidebar-ring: oklch(0.5000 0.2400 300.0000);
+  --font-sans: var(--font-inter), Inter, system-ui, sans-serif;
   --font-serif: Georgia, serif;
-  --font-mono: Fira Code, monospace;
+  --font-mono: var(--font-jetbrains), 'JetBrains Mono', 'Fira Code', monospace;
   --radius: 0.75rem;
   --shadow-x: 0px;
   --shadow-y: 4px;
@@ -90,9 +96,9 @@
   --sidebar-accent-foreground: oklch(0.7856 0.1308 310.3438);
   --sidebar-border: oklch(0.2164 0.0367 302.6147);
   --sidebar-ring: oklch(0.6410 0.2232 308.1791);
-  --font-sans: Plus Jakarta Sans, sans-serif;
+  --font-sans: var(--font-plus-jakarta), 'Plus Jakarta Sans', sans-serif;
   --font-serif: Georgia, serif;
-  --font-mono: JetBrains Mono, monospace;
+  --font-mono: var(--font-jetbrains), 'JetBrains Mono', monospace;
   --radius: 0.75rem;
   --shadow-x: 0px;
   --shadow-y: 10px;
@@ -186,57 +192,93 @@
   }
 
   body {
-    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    font-family: var(--font-sans);
+    /* Light mode: warm parchment cream gradient */
+    background: linear-gradient(
+      135deg,
+      oklch(0.95 0.045 88) 0%,
+      oklch(0.93 0.04 78) 50%,
+      oklch(0.94 0.035 95) 100%
+    );
+    min-height: 100vh;
+    color: var(--foreground);
+    letter-spacing: var(--tracking-normal);
+  }
+
+  .dark body {
+    /* Dark mode: deep aurora night gradient */
     background: linear-gradient(
       135deg,
       oklch(0.15 0.05 280) 0%,
       oklch(0.18 0.04 260) 50%,
       oklch(0.18 0.03 240) 100%
     );
-    min-height: 100vh;
     color: oklch(0.95 0.01 308);
-    letter-spacing: var(--tracking-normal);
   }
 
   h1, h2, h3, h4, h5, h6 {
-    color: oklch(0.98 0.005 308);
+    color: var(--foreground);
     font-weight: 600;
     scroll-margin-top: 6rem;
   }
 
+  .dark h1, .dark h2, .dark h3, .dark h4, .dark h5, .dark h6 {
+    color: oklch(0.98 0.005 308);
+  }
+
   p {
+    color: var(--foreground);
+  }
+
+  .dark p {
     color: oklch(0.85 0.02 308);
   }
 
   .text-muted {
-    color: oklch(0.65 0.03 308);
+    color: var(--muted-foreground);
   }
 
   ::selection {
     background: color-mix(in oklch, var(--color-primary) 30%, transparent);
-    color: oklch(1 0 0);
+    color: var(--foreground);
   }
 }
 
 @layer components {
-  /* Glassmorphism Card - Modern iOS Style */
+  /* Glassmorphism Card - Modern iOS Style (light mode defaults: warm parchment) */
   .glass {
     position: relative;
-    background: rgba(255, 255, 255, 0.08);
+    background: oklch(0.975 0.028 84 / 0.72);
     backdrop-filter: blur(40px) saturate(180%);
     -webkit-backdrop-filter: blur(40px) saturate(180%);
-    border: 1px solid rgba(255, 255, 255, 0.12);
-    box-shadow: 
+    border: 1px solid oklch(0.76 0.06 74 / 0.6);
+    box-shadow:
+      0 10px 30px 0 oklch(0.35 0.06 70 / 0.15),
+      inset 0 1px 0 0 oklch(1 0 0 / 0.55);
+  }
+
+  .dark .glass {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.12);
+    box-shadow:
       0 8px 32px 0 rgba(0, 0, 0, 0.37),
       inset 0 1px 0 0 rgba(255, 255, 255, 0.1);
   }
 
   .glass-strong {
-    background: rgba(20, 20, 30, 0.75);
+    background: oklch(0.97 0.03 84 / 0.9);
     backdrop-filter: blur(50px) saturate(200%);
     -webkit-backdrop-filter: blur(50px) saturate(200%);
-    border: 1px solid rgba(255, 255, 255, 0.18);
-    box-shadow: 
+    border: 1px solid oklch(0.74 0.07 72 / 0.7);
+    box-shadow:
+      0 14px 44px 0 oklch(0.32 0.06 68 / 0.22),
+      inset 0 1px 0 0 oklch(1 0 0 / 0.6);
+  }
+
+  .dark .glass-strong {
+    background: rgba(20, 20, 30, 0.75);
+    border-color: rgba(255, 255, 255, 0.18);
+    box-shadow:
       0 12px 48px 0 rgba(0, 0, 0, 0.5),
       inset 0 1px 0 0 rgba(255, 255, 255, 0.15);
   }
@@ -262,6 +304,15 @@
     background-clip: text;
     -webkit-background-clip: text;
     color: transparent;
+    /* Light mode: purple -> magenta, both dark enough to stay readable on cream */
+    background-image: linear-gradient(
+      135deg,
+      var(--color-primary) 0%,
+      oklch(0.52 0.23 350) 100%
+    );
+  }
+
+  .dark .text-gradient {
     background-image: linear-gradient(
       135deg,
       var(--color-primary) 0%,

@@ -1,5 +1,7 @@
 import { ClientLayout } from '@/components/ClientLayout';
 import { getProject, getProjects } from '@/lib/mdx';
+import { SITE_CONFIG } from '@/lib/config';
+import { JsonLd } from '@/components/JsonLd';
 import { notFound } from 'next/navigation';
 import { Github, ExternalLink, Calendar, TrendingUp, ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
@@ -32,6 +34,22 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   return {
     title: `${project.title} - Muhammad Fauza`,
     description: project.description,
+    alternates: {
+      canonical: `/projects/${slug}`,
+    },
+    openGraph: {
+      type: 'website',
+      url: `/projects/${slug}`,
+      title: project.title,
+      description: project.description,
+      images: ['/me.jpg'],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: project.title,
+      description: project.description,
+      images: ['/me.jpg'],
+    },
   };
 }
 
@@ -46,8 +64,24 @@ export default async function ProjectDetail({ params }: { params: Promise<{ slug
   // Fetch all projects for navigation
   const allProjects = await getProjects();
 
+  const projectJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "CreativeWork",
+    name: project.title,
+    description: project.description,
+    url: `${SITE_CONFIG.url}/projects/${slug}`,
+    dateCreated: project.year,
+    keywords: project.tech.join(", "),
+    author: {
+      "@type": "Person",
+      name: SITE_CONFIG.name,
+      url: SITE_CONFIG.url,
+    },
+  };
+
   return (
     <ClientLayout>
+      <JsonLd data={projectJsonLd} />
       {/* Floating Back Button */}
       <FloatingBackButton href="/projects" label="Back to Projects" />
 
@@ -62,7 +96,7 @@ export default async function ProjectDetail({ params }: { params: Promise<{ slug
             <aside className="hidden xl:flex flex-col gap-6 shrink-0 sticky top-24 h-fit">
               <Link
                 href="/projects"
-                className="flex items-center gap-2 px-4 py-2 glass rounded-xl text-foreground/80 hover:text-foreground hover:bg-white/10 transition-all w-fit group"
+                className="flex items-center gap-2 px-4 py-2 glass rounded-xl text-foreground/80 hover:text-foreground hover:bg-foreground/10 transition-all w-fit group"
               >
                 <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" />
                 <span className="text-sm font-medium">Back to Projects</span>
@@ -108,7 +142,7 @@ export default async function ProjectDetail({ params }: { params: Promise<{ slug
                       </h3>
                       <div className="flex flex-wrap gap-2">
                         {project.tech.map((tech) => (
-                          <span key={tech} className="px-3 py-1.5 text-sm glass rounded-lg text-foreground/80 font-medium border border-white/10">
+                          <span key={tech} className="px-3 py-1.5 text-sm glass rounded-lg text-foreground/80 font-medium border border-foreground/10">
                             {tech}
                           </span>
                         ))}
@@ -122,7 +156,7 @@ export default async function ProjectDetail({ params }: { params: Promise<{ slug
                           href={project.github}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="flex items-center gap-2 px-5 sm:px-6 py-3 glass rounded-xl text-foreground hover:bg-white/10 transition-colors font-medium"
+                          className="flex items-center gap-2 px-5 sm:px-6 py-3 glass rounded-xl text-foreground hover:bg-foreground/10 transition-colors font-medium"
                         >
                           <Github size={18} />
                           View Code

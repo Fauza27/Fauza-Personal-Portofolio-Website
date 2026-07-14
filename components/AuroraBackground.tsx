@@ -19,12 +19,12 @@ export const AuroraBackground = () => {
 
   return (
     <div ref={containerRef} className="fixed inset-0 -z-10 overflow-hidden">
-      {/* Base gradient */}
-      <div className="absolute inset-0 bg-gradient-to-br from-[hsl(280,82%,5%)] via-[hsl(260,70%,8%)] to-[hsl(240,60%,8%)]" />
+      {/* Base gradient - transparent in light (lets cream body show), deep night in dark */}
+      <div className="absolute inset-0 bg-gradient-to-br from-transparent via-transparent to-transparent dark:from-[hsl(280,82%,5%)] dark:via-[hsl(260,70%,8%)] dark:to-[hsl(240,60%,8%)]" />
       
       {/* Aurora blobs - optimized for performance */}
       <motion.div
-        className="absolute w-[800px] h-[800px] rounded-full opacity-30 blur-[60px] md:blur-[120px]"
+        className="absolute w-[800px] h-[800px] rounded-full opacity-[0.15] dark:opacity-30 blur-[60px] md:blur-[120px]"
         style={{
           background: 'radial-gradient(circle, hsl(270 100% 50% / 0.6) 0%, transparent 70%)',
           top: '10%',
@@ -44,7 +44,7 @@ export const AuroraBackground = () => {
       />
       
       <motion.div
-        className="absolute w-[600px] h-[600px] rounded-full opacity-25 blur-[50px] md:blur-[100px]"
+        className="absolute w-[600px] h-[600px] rounded-full opacity-[0.07] dark:opacity-25 blur-[50px] md:blur-[100px]"
         style={{
           background: 'radial-gradient(circle, hsl(180 100% 50% / 0.5) 0%, transparent 70%)',
           top: '40%',
@@ -64,7 +64,7 @@ export const AuroraBackground = () => {
       />
       
       <motion.div
-        className="absolute w-[500px] h-[500px] rounded-full opacity-20 blur-[40px] md:blur-[80px]"
+        className="absolute w-[500px] h-[500px] rounded-full opacity-[0.12] dark:opacity-20 blur-[40px] md:blur-[80px]"
         style={{
           background: 'radial-gradient(circle, hsl(300 100% 50% / 0.5) 0%, transparent 70%)',
           bottom: '10%',

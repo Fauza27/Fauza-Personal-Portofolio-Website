@@ -12,6 +12,7 @@
 
 # testing
 /coverage
+*.test-results.md
 
 # next.js
 /.next/
@@ -59,3 +60,12 @@ Thumbs.db
 
 # Kiro
 /.kiro/
+
+# Allow committing example env file (overrides .env* above)
+!.env.example
+
+# Cloudflare Pages Functions local dev secrets
+.dev.vars
+
+# Wrangler local cache and generated workers
+/.wrangler/

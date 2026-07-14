@@ -3,10 +3,15 @@
 import { useState, useEffect } from 'react';
 import { AuroraBackground } from './AuroraBackground';
 import { FloatingDock } from './FloatingDock';
-import { CommandPalette } from './CommandPalette';
+import { CommandPalette, type SearchableItem } from './CommandPalette';
 import { AIChatWidget } from './AIChatWidget';
 
-export function ClientLayout({ children }: { children: React.ReactNode }) {
+interface ClientLayoutProps {
+  children: React.ReactNode;
+  searchItems?: SearchableItem[];
+}
+
+export function ClientLayout({ children, searchItems }: ClientLayoutProps) {
   const [isCommandOpen, setIsCommandOpen] = useState(false);
 
   useEffect(() => {
@@ -33,7 +38,11 @@ export function ClientLayout({ children }: { children: React.ReactNode }) {
 
       <AuroraBackground />
       <FloatingDock onOpenSearch={() => setIsCommandOpen(true)} />
-      <CommandPalette isOpen={isCommandOpen} onClose={() => setIsCommandOpen(false)} />
+      <CommandPalette
+        isOpen={isCommandOpen}
+        onClose={() => setIsCommandOpen(false)}
+        searchItems={searchItems}
+      />
       <AIChatWidget />
       {children}
     </>

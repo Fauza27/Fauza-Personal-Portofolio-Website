@@ -5,6 +5,27 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.0] - 2026-07-14
+
+### Fixed
+- **GPA consistency** — unified GPA display to 3.80 across BentoGrid and AI persona
+- **Font loading** — Plus Jakarta Sans and JetBrains Mono now properly loaded via `next/font/google` for dark mode (was falling back to system fonts)
+- **AI persona function** — restored `buildSystemPrompt()` that was accidentally removed
+- **CSS font variables** — body font now uses CSS custom properties instead of hardcoded font names
+
+### Changed
+- **AI Persona** — fully populated profile with detailed experience, projects, skills, career goals, and personal info (replaced all TODO placeholders)
+- **CORS security** — restricted `Access-Control-Allow-Origin` from wildcard (`*`) to `fauza.pages.dev` + `localhost:3000`
+- **Command Palette** — upgraded to search blog posts and projects by title and description, not just navigation
+- **QueryClient config** — added sensible defaults (1min stale time, no refetch-on-focus, single retry)
+
+### Removed
+- Cleaned up `tsconfig.json` — removed stale `"my-project"` and `"docs-fix"` from exclude
+- Deleted committed test results file (`ReadingProgress.test-results.md`)
+
+### Added
+- `.gitignore` rule for `*.test-results.md` to prevent future commits of test artifacts
+
 ## [1.0.0] - 2026-02-11
 
 ### Added
@@ -66,15 +87,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Future Releases
 
 ### Planned Features
-- [ ] Contact form with backend integration
+- [x] Contact form with backend integration
 - [ ] Newsletter subscription
 - [ ] Blog pagination
-- [ ] Search functionality for blog
+- [x] Search functionality for blog
 - [ ] RSS feed
-- [ ] Sitemap generation
+- [x] Sitemap generation
 - [ ] Analytics integration
 - [ ] Error monitoring (Sentry)
-- [ ] Unit tests
+- [x] Unit tests
 - [ ] E2E tests
 - [ ] Performance monitoring
 - [ ] Content Security Policy headers

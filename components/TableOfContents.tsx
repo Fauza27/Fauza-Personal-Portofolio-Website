@@ -78,8 +78,8 @@ export function TableOfContents() {
                   ${heading.level === 3 ? 'pl-6' : ''}
                   ${
                     activeId === heading.id
-                      ? 'text-foreground font-semibold bg-white/5'
-                      : 'text-muted-foreground hover:text-foreground hover:bg-white/5'
+                      ? 'text-foreground font-semibold bg-foreground/5'
+                      : 'text-muted-foreground hover:text-foreground hover:bg-foreground/5'
                   }
                 `}
               >

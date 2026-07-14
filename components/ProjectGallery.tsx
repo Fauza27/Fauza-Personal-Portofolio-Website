@@ -33,7 +33,7 @@ export const ProjectGallery = ({ projects }: ProjectGalleryProps) => {
     <section className="py-4 relative">
       {/* Scroll Progress */}
       <div className="max-w-6xl mx-auto px-4 sm:px-6 mb-4">
-        <div className="h-1 bg-white/5 rounded-full overflow-hidden">
+        <div className="h-1 bg-foreground/10 rounded-full overflow-hidden">
           <motion.div
             className="h-full bg-gradient-to-r from-primary via-secondary to-accent"
             style={{ scaleX: scrollXProgress, transformOrigin: "left" }}

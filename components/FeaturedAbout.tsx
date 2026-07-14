@@ -202,7 +202,7 @@ export function FeaturedAbout() {
                 {skillGroup.items.map((skill) => (
                   <div
                     key={skill}
-                    className="px-2.5 sm:px-3 py-1.5 sm:py-2 bg-white/5 rounded-lg text-xs sm:text-sm text-foreground/80 hover:bg-white/10 transition-colors"
+                    className="px-2.5 sm:px-3 py-1.5 sm:py-2 bg-foreground/5 rounded-lg text-xs sm:text-sm text-foreground/80 hover:bg-foreground/10 transition-colors"
                   >
                     {skill}
                   </div>

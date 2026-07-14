@@ -89,7 +89,7 @@ export function BlogClient({ posts }: BlogClientProps) {
                         {post.excerpt}
                       </p>
 
-                      <div className="flex flex-wrap gap-2 mb-4 pb-4 border-b border-white/5">
+                      <div className="flex flex-wrap gap-2 mb-4 pb-4 border-b border-foreground/10">
                         {post.tags.slice(0, 2).map((tag) => (
                           <span key={tag} className="px-2.5 py-1 text-xs glass rounded-lg text-foreground/70">
                             #{tag}

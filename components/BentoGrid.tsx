@@ -28,7 +28,7 @@ const itemVariants = {
   },
 };
 
-export const BentoGrid = () => {
+export const BentoGrid = ({ projectCount }: { projectCount?: number }) => {
   return (
     <motion.div
       className="bento-grid max-w-6xl mx-auto px-4 sm:px-6"
@@ -145,7 +145,7 @@ export const BentoGrid = () => {
           </div>
           <div>
             <p className="text-base sm:text-lg font-medium text-foreground">Computer Science</p>
-            <p className="text-sm text-muted-foreground">3.73 / 4.00 GPA</p>
+            <p className="text-sm text-muted-foreground">3.80 / 4.00 GPA</p>
           </div>
         </div>
       </motion.div>
@@ -161,7 +161,7 @@ export const BentoGrid = () => {
           <div className="flex items-center justify-center gap-2 mb-2">
             <Rocket size={18} className="text-primary" />
           </div>
-          <p className="text-3xl sm:text-4xl font-bold text-gradient">2+</p>
+          <p className="text-3xl sm:text-4xl font-bold text-gradient">{projectCount ?? 0}</p>
           <p className="text-xs sm:text-sm text-muted-foreground">End-to-End AI Projects</p>
         </div>
       </motion.div>

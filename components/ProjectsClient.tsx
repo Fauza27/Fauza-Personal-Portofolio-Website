@@ -102,7 +102,7 @@ export function ProjectsClient({ projects }: ProjectsClientProps) {
                   </Link>
 
                   {/* Tech Stack */}
-                  <div className="flex flex-wrap gap-2 mb-6 pb-6 border-b border-white/5">
+                  <div className="flex flex-wrap gap-2 mb-6 pb-6 border-b border-foreground/10">
                     {project.tech.slice(0, 5).map((tech) => (
                       <span key={tech} className="px-3 py-1.5 text-xs glass rounded-lg text-foreground/70 font-medium">
                         {tech}

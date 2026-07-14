@@ -12,10 +12,12 @@ A modern, high-performance portfolio website built with Next.js 16, React 19, an
 - 🎨 **Modern Design** - Glassmorphism UI with Aurora background effects
 - ⚡ **Lightning Fast** - Static generation with Next.js 16
 - 📱 **Fully Responsive** - Mobile-first design
-- 🌙 **Dark Mode** - Built-in theme support
+- 🌗 **Light & Dark Mode** - Cream-gold light theme and aurora dark theme, with a toggle
 - 📝 **MDX Blog** - Write blog posts in MDX
-- 🎯 **SEO Optimized** - Meta tags, OpenGraph, and more
-- ♿ **Accessible** - WCAG compliant with ARIA labels
+- 📬 **Working Contact Form** - Submissions saved to Google Sheets (no backend server)
+- 🤖 **AI Chat Assistant** - "Ask Fauza's AI" powered by OpenAI via Cloudflare Pages Functions
+- 🎯 **SEO Optimized** - Metadata, OpenGraph, sitemap, robots, and JSON-LD structured data
+- ♿ **Accessible** - WCAG-minded with ARIA labels and keyboard navigation
 - 🔍 **Command Palette** - Quick navigation with ⌘K
 - 🎭 **Smooth Animations** - Framer Motion powered
 - 📊 **Type Safe** - Full TypeScript support
@@ -46,21 +48,31 @@ Open [http://localhost:3000](http://localhost:3000) to see your portfolio.
 
 ```
 ├── app/                    # Next.js app directory
-│   ├── blog/              # Blog pages
-│   ├── projects/          # Project pages
+│   ├── blog/              # Blog listing + [slug] post pages
+│   ├── projects/          # Project listing + [slug] detail pages
 │   ├── about/             # About page
 │   ├── contact/           # Contact page
-│   ├── layout.tsx         # Root layout
+│   ├── layout.tsx         # Root layout + site metadata
 │   ├── page.tsx           # Homepage
+│   ├── sitemap.ts         # Generated sitemap.xml
+│   ├── robots.ts          # Generated robots.txt
 │   └── error.tsx          # Error boundary
 ├── components/            # React components
 │   ├── BentoGrid.tsx     # Hero section
-│   ├── FloatingDock.tsx  # Navigation
+│   ├── FloatingDock.tsx  # Navigation + theme toggle
+│   ├── ThemeToggle.tsx   # Light/dark switch
+│   ├── AIChatWidget.tsx  # "Ask Fauza's AI" chat UI
 │   ├── MDXComponents.tsx # MDX styling
 │   └── ...
 ├── content/              # MDX content
 │   ├── blog/            # Blog posts
 │   └── projects/        # Project details
+├── functions/            # Cloudflare Pages Functions (server-side)
+│   └── api/
+│       ├── chat.ts      # Secure OpenAI proxy for the AI chat
+│       └── _persona.ts  # Knowledge base used by the chat (EDIT THIS)
+├── google-apps-script/   # Google Apps Script for the contact form
+│   └── contact-form.gs
 ├── lib/                 # Utilities
 │   ├── mdx.ts          # MDX processing
 │   ├── config.ts       # Site configuration
@@ -162,6 +174,35 @@ Edit `app/globals.css` to customize colors:
 }
 ```
 
+## 🔐 Environment Variables
+
+Copy `.env.example` to `.env` and fill in:
+
+```bash
+# Google Apps Script Web App URL for the contact form (public, safe to expose)
+NEXT_PUBLIC_CONTACT_ENDPOINT=https://script.google.com/macros/s/XXXX/exec
+
+# Path to the AI chat function (default works out of the box)
+NEXT_PUBLIC_CHAT_ENDPOINT=/api/chat
+```
+
+The OpenAI key is a **server-side secret** used by the Cloudflare Pages Function. It is NOT a `NEXT_PUBLIC_` variable. For local testing copy `.dev.vars.example` to `.dev.vars`; in production set it in Cloudflare Pages → Settings → Environment variables:
+
+```bash
+OPENAI_API_KEY=sk-...        # required
+OPENAI_MODEL=gpt-4o-mini     # optional, defaults to gpt-4o-mini
+```
+
+## 📬 Contact Form (Google Sheets)
+
+The contact form posts submissions to a Google Sheet via a Google Apps Script Web App — no backend server required. Setup steps are documented in `google-apps-script/contact-form.gs`. In short: create a Sheet → paste the script → deploy as a Web App (access: Anyone) → put the URL in `NEXT_PUBLIC_CONTACT_ENDPOINT`.
+
+## 🤖 AI Chat Assistant
+
+"Ask Fauza's AI" is backed by `functions/api/chat.ts`, a Cloudflare Pages Function that securely proxies OpenAI (the API key never reaches the browser). Edit `functions/api/_persona.ts` to teach the assistant about you — the more detail, the better the answers.
+
+> The chat endpoint only runs on Cloudflare (deployed) or locally via `npx wrangler pages dev out`. A plain `next dev` won't serve `/api/chat`.
+
 ## 🚀 Deployment
 
 ### Deploy to Cloudflare Pages
@@ -178,6 +219,13 @@ Edit `app/globals.css` to customize colors:
    - Build command: `npm run build`
    - Build output: `out`
    - Deploy!
+
+3. **Set environment variables** (Settings → Environment variables):
+   - `OPENAI_API_KEY` (secret) — for the AI chat
+   - `OPENAI_MODEL` (optional) — defaults to `gpt-4o-mini`
+   - `NEXT_PUBLIC_CONTACT_ENDPOINT` — your Google Apps Script URL
+
+> The `functions/` directory is deployed automatically as Pages Functions alongside the static `out/` assets — no extra config needed.
 
 ## 📊 Scripts
 
@@ -272,4 +320,4 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 
 ---
 
-**Last Updated:** February 11, 2026
+**Last Updated:** June 18, 2026

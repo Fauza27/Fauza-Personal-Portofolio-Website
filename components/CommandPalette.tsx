@@ -5,12 +5,30 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Search, FolderKanban, FileText, User, Home, Mail, ArrowRight } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
+export interface SearchableItem {
+  id: string;
+  label: string;
+  description?: string;
+  path: string;
+  category: 'Blog' | 'Projects';
+}
+
 interface CommandPaletteProps {
   isOpen: boolean;
   onClose: () => void;
+  searchItems?: SearchableItem[];
 }
 
-const commands = [
+interface CommandItem {
+  id: string;
+  label: string;
+  icon: typeof Home;
+  path: string;
+  category: string;
+  description?: string;
+}
+
+const navCommands: CommandItem[] = [
   { id: 'home', label: 'Home', icon: Home, path: '/', category: 'Navigation' },
   { id: 'projects', label: 'Projects', icon: FolderKanban, path: '/projects', category: 'Navigation' },
   { id: 'blog', label: 'Blog', icon: FileText, path: '/blog', category: 'Navigation' },
@@ -18,27 +36,48 @@ const commands = [
   { id: 'contact', label: 'Contact', icon: Mail, path: '/contact', category: 'Navigation' },
 ];
 
-export const CommandPalette = ({ isOpen, onClose }: CommandPaletteProps) => {
+const CATEGORY_ICONS: Record<string, typeof Home> = {
+  Navigation: Home,
+  Blog: FileText,
+  Projects: FolderKanban,
+};
+
+export const CommandPalette = ({ isOpen, onClose, searchItems = [] }: CommandPaletteProps) => {
   const [query, setQuery] = useState('');
   const [selectedIndex, setSelectedIndex] = useState(0);
   const router = useRouter();
   const dialogRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
+  // Merge navigation commands with searchable content items
+  const allCommands = useMemo((): CommandItem[] => {
+    const contentCommands: CommandItem[] = searchItems.map((item) => ({
+      id: item.id,
+      label: item.label,
+      icon: CATEGORY_ICONS[item.category] || FileText,
+      path: item.path,
+      category: item.category,
+      description: item.description,
+    }));
+    return [...navCommands, ...contentCommands];
+  }, [searchItems]);
+
   const filteredCommands = useMemo(() => {
+    if (!query) return allCommands;
     const lowerQuery = query.toLowerCase();
-    return commands.filter(cmd =>
+    return allCommands.filter(cmd =>
       cmd.label.toLowerCase().includes(lowerQuery) ||
-      cmd.category.toLowerCase().includes(lowerQuery)
+      cmd.category.toLowerCase().includes(lowerQuery) ||
+      cmd.description?.toLowerCase().includes(lowerQuery)
     );
-  }, [query]);
+  }, [query, allCommands]);
 
   const groupedCommands = useMemo(() => {
     return filteredCommands.reduce((acc, cmd) => {
       if (!acc[cmd.category]) acc[cmd.category] = [];
       acc[cmd.category].push(cmd);
       return acc;
-    }, {} as Record<string, typeof commands>);
+    }, {} as Record<string, typeof filteredCommands>);
   }, [filteredCommands]);
 
   useEffect(() => {
@@ -63,10 +102,16 @@ export const CommandPalette = ({ isOpen, onClose }: CommandPaletteProps) => {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [isOpen, onClose, filteredCommands, selectedIndex, router]);
 
+  const prevOpenRef = useRef(isOpen);
+  if (isOpen && !prevOpenRef.current) {
+    // Reset on open — this runs during render, not inside an effect
+    if (query !== '') setQuery('');
+    if (selectedIndex !== 0) setSelectedIndex(0);
+  }
+  prevOpenRef.current = isOpen;
+
   useEffect(() => {
     if (isOpen) {
-      setQuery('');
-      setSelectedIndex(0);
       // Focus input when opened
       setTimeout(() => inputRef.current?.focus(), 0);
     }
@@ -125,19 +170,19 @@ export const CommandPalette = ({ isOpen, onClose }: CommandPaletteProps) => {
             aria-labelledby="command-palette-title"
           >
             <div className="glass-strong rounded-2xl overflow-hidden shadow-2xl">
-              <div className="flex items-center gap-3 px-4 py-4 border-b border-white/10">
+              <div className="flex items-center gap-3 px-4 py-4 border-b border-foreground/10">
                 <Search size={20} className="text-muted-foreground" aria-hidden="true" />
                 <input
                   ref={inputRef}
                   type="text"
-                  placeholder="Search commands, projects..."
+                  placeholder="Search pages, blog posts, projects..."
                   className="flex-1 bg-transparent text-foreground placeholder:text-muted-foreground outline-none text-lg"
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
                   aria-label="Search commands"
                   id="command-palette-title"
                 />
-                <kbd className="px-2 py-1 text-xs text-muted-foreground bg-white/5 rounded-md border border-white/10">
+                <kbd className="px-2 py-1 text-xs text-muted-foreground bg-foreground/5 rounded-md border border-foreground/10">
                   ESC
                 </kbd>
               </div>
@@ -156,8 +201,8 @@ export const CommandPalette = ({ isOpen, onClose }: CommandPaletteProps) => {
                           key={cmd.id}
                           className={`w-full flex items-center gap-3 px-4 py-3 text-left transition-colors ${
                             selectedIndex === globalIndex
-                              ? 'bg-white/10 text-foreground'
-                              : 'text-foreground/70 hover:bg-white/5'
+                              ? 'bg-foreground/10 text-foreground'
+                              : 'text-foreground/70 hover:bg-foreground/5'
                           }`}
                           onClick={() => {
                             router.push(cmd.path);
@@ -166,8 +211,15 @@ export const CommandPalette = ({ isOpen, onClose }: CommandPaletteProps) => {
                           onMouseEnter={() => setSelectedIndex(globalIndex)}
                         >
                           <Icon size={18} />
-                          <span className="flex-1">{cmd.label}</span>
-                          <ArrowRight size={14} className="text-muted-foreground" />
+                          <div className="flex-1 min-w-0">
+                            <span className="block truncate">{cmd.label}</span>
+                            {cmd.description && (
+                              <span className="block text-xs text-muted-foreground truncate">
+                                {cmd.description}
+                              </span>
+                            )}
+                          </div>
+                          <ArrowRight size={14} className="text-muted-foreground shrink-0" />
                         </motion.button>
                       );
                     })}

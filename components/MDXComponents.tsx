@@ -10,7 +10,7 @@ export const MDXComponents = {
     </h1>
   ),
   h2: ({ children }: { children: ReactNode }) => (
-    <h2 className="text-2xl sm:text-3xl font-bold text-foreground mb-6 mt-16 leading-[1.3] tracking-tight border-b border-white/10 pb-3">
+    <h2 className="text-2xl sm:text-3xl font-bold text-foreground mb-6 mt-16 leading-[1.3] tracking-tight border-b border-foreground/15 pb-3">
       {children}
     </h2>
   ),
@@ -31,12 +31,12 @@ export const MDXComponents = {
     </p>
   ),
   ul: ({ children }: { children: ReactNode }) => (
-    <ul className="space-y-3 mb-8 ml-0 bg-white/[0.02] rounded-xl p-6 border border-white/5">
+    <ul className="space-y-3 mb-8 ml-0 bg-foreground/[0.03] rounded-xl p-6 border border-foreground/10">
       {children}
     </ul>
   ),
   ol: ({ children }: { children: ReactNode }) => (
-    <ol className="space-y-3 mb-8 ml-0 bg-white/[0.02] rounded-xl p-6 border border-white/5 counter-reset-[item]">
+    <ol className="space-y-3 mb-8 ml-0 bg-foreground/[0.03] rounded-xl p-6 border border-foreground/10 counter-reset-[item]">
       {children}
     </ol>
   ),
@@ -86,8 +86,8 @@ export const MDXComponents = {
     }
 
     return (
-      <pre className="bg-black/60 rounded-xl p-6 sm:p-8 overflow-x-auto mb-8 border border-white/10 backdrop-blur-sm shadow-2xl">
-        <div className="text-sm sm:text-base font-mono text-foreground/90 leading-relaxed">{children}</div>
+      <pre className="bg-[oklch(0.17_0.03_285)] rounded-xl p-6 sm:p-8 overflow-x-auto mb-8 border border-white/10 backdrop-blur-sm shadow-2xl">
+        <div className="text-sm sm:text-base font-mono text-[oklch(0.92_0.015_300)] leading-relaxed">{children}</div>
       </pre>
     );
   },
@@ -108,27 +108,27 @@ export const MDXComponents = {
     <em className="italic text-foreground/90 font-medium">{children}</em>
   ),
   hr: () => (
-    <hr className="border-0 h-px bg-linear-to-r from-transparent via-white/20 to-transparent my-12" />
+    <hr className="border-0 h-px bg-linear-to-r from-transparent via-foreground/20 to-transparent my-12" />
   ),
   table: ({ children }: { children: ReactNode }) => (
-    <div className="overflow-x-auto mb-8 rounded-xl border border-white/10 shadow-lg">
+    <div className="overflow-x-auto mb-8 rounded-xl border border-foreground/15 shadow-lg">
       <table className="w-full">
         {children}
       </table>
     </div>
   ),
   thead: ({ children }: { children: ReactNode }) => (
-    <thead className="bg-white/5 border-b border-white/10">
+    <thead className="bg-foreground/5 border-b border-foreground/10">
       {children}
     </thead>
   ),
   tbody: ({ children }: { children: ReactNode }) => (
-    <tbody className="divide-y divide-white/5">
+    <tbody className="divide-y divide-foreground/10">
       {children}
     </tbody>
   ),
   tr: ({ children }: { children: ReactNode }) => (
-    <tr className="hover:bg-white/5 transition-colors">
+    <tr className="hover:bg-foreground/5 transition-colors">
       {children}
     </tr>
   ),
@@ -144,7 +144,7 @@ export const MDXComponents = {
   ),
   img: ({ src, alt }: { src?: string; alt?: string }) => (
     <figure className="my-10">
-      <div className="relative rounded-xl border border-white/10 shadow-xl overflow-hidden bg-white/5">
+      <div className="relative rounded-xl border border-foreground/15 shadow-xl overflow-hidden bg-foreground/5">
         <img
           src={src}
           alt={alt}

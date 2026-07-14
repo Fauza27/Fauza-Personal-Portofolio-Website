@@ -1,5 +1,7 @@
 import { ClientLayout } from '@/components/ClientLayout';
 import { getBlogPost, getBlogPosts } from '@/lib/mdx';
+import { SITE_CONFIG } from '@/lib/config';
+import { JsonLd } from '@/components/JsonLd';
 import { notFound } from 'next/navigation';
 import { Calendar, Clock, User, Share2, ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
@@ -32,6 +34,24 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   return {
     title: `${post.title} - Muhammad Fauza`,
     description: post.excerpt,
+    alternates: {
+      canonical: `/blog/${slug}`,
+    },
+    openGraph: {
+      type: 'article',
+      url: `/blog/${slug}`,
+      title: post.title,
+      description: post.excerpt,
+      publishedTime: post.date,
+      authors: [post.author],
+      images: ['/me.jpg'],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: post.title,
+      description: post.excerpt,
+      images: ['/me.jpg'],
+    },
   };
 }
 
@@ -46,8 +66,25 @@ export default async function BlogPost({ params }: { params: Promise<{ slug: str
   // Fetch all blog posts for navigation
   const allPosts = await getBlogPosts();
 
+  const articleJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    headline: post.title,
+    description: post.excerpt,
+    datePublished: post.date,
+    author: {
+      "@type": "Person",
+      name: post.author,
+      url: SITE_CONFIG.url,
+    },
+    keywords: post.tags.join(", "),
+    url: `${SITE_CONFIG.url}/blog/${slug}`,
+    mainEntityOfPage: `${SITE_CONFIG.url}/blog/${slug}`,
+  };
+
   return (
     <ClientLayout>
+      <JsonLd data={articleJsonLd} />
       {/* Floating Back Button */}
       <FloatingBackButton href="/blog" label="Back to Blog" />
 
@@ -62,7 +99,7 @@ export default async function BlogPost({ params }: { params: Promise<{ slug: str
             <aside className="hidden xl:flex flex-col gap-6 shrink-0 sticky top-24 h-fit">
               <Link
                 href="/blog"
-                className="flex items-center gap-2 px-4 py-2 glass rounded-xl text-foreground/80 hover:text-foreground hover:bg-white/10 transition-all w-fit group"
+                className="flex items-center gap-2 px-4 py-2 glass rounded-xl text-foreground/80 hover:text-foreground hover:bg-foreground/10 transition-all w-fit group"
               >
                 <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" />
                 <span className="text-sm font-medium">Back to Blog</span>
@@ -106,7 +143,7 @@ export default async function BlogPost({ params }: { params: Promise<{ slug: str
                   </p>
 
                   {/* Tags */}
-                  <div className="flex flex-wrap gap-2 mb-6 pb-6 border-b border-white/10">
+                  <div className="flex flex-wrap gap-2 mb-6 pb-6 border-b border-foreground/10">
                     {post.tags.map((tag) => (
                       <span key={tag} className="px-3 py-1.5 text-sm glass rounded-lg text-primary font-medium">
                         #{tag}

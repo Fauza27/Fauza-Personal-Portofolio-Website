@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { Home, FolderKanban, FileText, User, Mail, Search } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState, useRef } from "react";
+import { ThemeToggle } from "./ThemeToggle";
 
 interface DockItemProps {
   icon: React.ReactNode;
@@ -27,22 +28,22 @@ const DockItem = ({ icon, label, isActive, onClick }: DockItemProps) => {
       <div
         className={`w-12 h-12 sm:w-14 sm:h-14 rounded-2xl sm:rounded-3xl flex items-center justify-center transition-all ${
           isActive
-            ? "bg-white/20 text-white shadow-lg"
-            : "bg-white/5 text-foreground/60 group-hover:bg-white/10 group-hover:text-foreground/80"
+            ? "bg-primary/20 text-primary shadow-lg"
+            : "bg-foreground/5 text-foreground/60 group-hover:bg-foreground/10 group-hover:text-foreground/80"
         }`}
       >
         {icon}
       </div>
       <span
         className={`text-[9px] sm:text-[10px] font-medium transition-colors whitespace-nowrap ${
-          isActive ? "text-white" : "text-foreground/50"
+          isActive ? "text-primary" : "text-foreground/50"
         }`}
       >
         {label}
       </span>
       {isActive && (
         <motion.div
-          className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-white/60"
+          className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-primary"
           layoutId="activeIndicator"
           transition={{ type: "spring", stiffness: 500, damping: 30 }}
         />
@@ -164,7 +165,7 @@ export const FloatingDock = ({ onOpenSearch }: FloatingDockProps) => {
       onMouseLeave={handleMouseLeave}
       transition={{ type: "spring", stiffness: 300, damping: 25 }}
     >
-      <div className="flex items-center gap-2 sm:gap-3 px-4 sm:px-5 py-3 sm:py-4 glass-strong rounded-[2rem] sm:rounded-[2.5rem] shadow-2xl border border-white/15">
+      <div className="flex items-center gap-2 sm:gap-3 px-4 sm:px-5 py-3 sm:py-4 glass-strong rounded-[2rem] sm:rounded-[2.5rem] shadow-2xl border border-foreground/15">
         {navItems.map((item) => {
           const isActive =
             item.path.startsWith("/#")
@@ -183,7 +184,7 @@ export const FloatingDock = ({ onOpenSearch }: FloatingDockProps) => {
           );
         })}
 
-        <div className="w-px h-12 sm:h-14 bg-white/10 mx-1 sm:mx-2" />
+        <div className="w-px h-12 sm:h-14 bg-foreground/10 mx-1 sm:mx-2" />
 
         <motion.button
           onClick={onOpenSearch}
@@ -193,13 +194,15 @@ export const FloatingDock = ({ onOpenSearch }: FloatingDockProps) => {
           transition={{ type: "spring", stiffness: 400, damping: 17 }}
           aria-label="Open search (⌘K)"
         >
-          <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl sm:rounded-3xl flex items-center justify-center bg-white/5 text-foreground/60 group-hover:bg-white/10 group-hover:text-foreground/80 transition-all">
+          <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl sm:rounded-3xl flex items-center justify-center bg-foreground/5 text-foreground/60 group-hover:bg-foreground/10 group-hover:text-foreground/80 transition-all">
             <Search size={20} />
           </div>
           <span className="text-[9px] sm:text-[10px] font-medium text-foreground/50 whitespace-nowrap">
             Search
           </span>
         </motion.button>
+
+        <ThemeToggle />
       </div>
 
       <div className="hidden sm:block text-center mt-2">

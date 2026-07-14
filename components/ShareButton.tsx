@@ -28,7 +28,7 @@ export function ShareButton({ title, url }: ShareButtonProps) {
   return (
     <button
       onClick={handleShare}
-      className="flex items-center gap-2 px-4 py-2 glass rounded-lg text-foreground/70 hover:text-foreground hover:bg-white/10 transition-colors text-sm"
+      className="flex items-center gap-2 px-4 py-2 glass rounded-lg text-foreground/70 hover:text-foreground hover:bg-foreground/10 transition-colors text-sm"
     >
       <Share2 size={16} />
       Share Article

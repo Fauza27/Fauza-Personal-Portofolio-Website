@@ -29,7 +29,7 @@ export function NotFoundClient() {
               </Link>
               <button
                 onClick={() => window.history.back()}
-                className="flex items-center gap-2 px-6 py-3 glass rounded-xl text-foreground hover:bg-white/10 transition-colors"
+                className="flex items-center gap-2 px-6 py-3 glass rounded-xl text-foreground hover:bg-foreground/10 transition-colors"
               >
                 <ArrowLeft size={18} />
                 Go Back

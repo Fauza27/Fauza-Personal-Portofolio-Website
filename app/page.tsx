@@ -4,6 +4,8 @@ import { FeaturedBlog } from "@/components/FeaturedBlog";
 import { FeaturedAbout } from "@/components/FeaturedAbout";
 import { FeaturedContact } from "@/components/FeaturedContact";
 import { ClientLayout } from "@/components/ClientLayout";
+import { JsonLd } from "@/components/JsonLd";
+import type { SearchableItem } from "@/components/CommandPalette";
 import {
   ArrowRight,
   Github,
@@ -17,16 +19,54 @@ export default async function Home() {
   const projects = await getProjects();
   const posts = await getBlogPosts();
 
+  // Build searchable items for the command palette
+  const searchItems: SearchableItem[] = [
+    ...posts.map((p) => ({
+      id: `blog-${p.slug}`,
+      label: p.title,
+      description: p.excerpt,
+      path: `/blog/${p.slug}`,
+      category: 'Blog' as const,
+    })),
+    ...projects.map((p) => ({
+      id: `project-${p.slug}`,
+      label: p.title,
+      description: p.description,
+      path: `/projects/${p.slug}`,
+      category: 'Projects' as const,
+    })),
+  ];
+
   // Ambil beberapa project & blog post terbaru untuk di-featured
   const featuredProjects = projects.slice(0, 4);
   const featuredPosts = posts.slice(0, 3);
 
+  const personJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    name: SITE_CONFIG.name,
+    jobTitle: "AI Software Engineer",
+    description: SITE_CONFIG.description,
+    url: SITE_CONFIG.url,
+    email: `mailto:${SITE_CONFIG.email}`,
+    sameAs: [SITE_CONFIG.social.github, SITE_CONFIG.social.linkedin],
+    knowsAbout: [
+      "Artificial Intelligence",
+      "Machine Learning",
+      "Large Language Models",
+      "Retrieval-Augmented Generation",
+      "Computer Vision",
+      "Full-Stack Development",
+    ],
+  };
+
   return (
-    <ClientLayout>
+    <ClientLayout searchItems={searchItems}>
+      <JsonLd data={personJsonLd} />
       <main id="main-content" className="pt-16 sm:pt-20 pb-24 sm:pb-32">
         {/* --- Hero Section --- */}
         <section id="home" className="mb-12 sm:mb-20 scroll-mt-24">
-          <BentoGrid />
+          <BentoGrid projectCount={projects.length} />
         </section>
 
         {/* --- About Section --- */}

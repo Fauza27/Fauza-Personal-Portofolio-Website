@@ -53,7 +53,7 @@ export default function Error({
             </button>
             <Link
               href="/projects"
-              className="px-6 py-3 glass rounded-xl text-foreground hover:bg-white/10 transition-colors inline-flex items-center justify-center"
+              className="px-6 py-3 glass rounded-xl text-foreground hover:bg-foreground/10 transition-colors inline-flex items-center justify-center"
             >
               Back to Projects
             </Link>

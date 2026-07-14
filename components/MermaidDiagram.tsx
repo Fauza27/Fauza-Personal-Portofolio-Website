@@ -302,7 +302,7 @@ export function MermaidDiagram({ chart }: MermaidDiagramProps) {
   }
 
   return (
-    <div className={`my-8 overflow-hidden transition-all bg-black/30 backdrop-blur-sm shadow-2xl ${
+    <div className={`my-8 overflow-hidden transition-all bg-[oklch(0.17_0.03_285)] backdrop-blur-sm shadow-2xl ${
       isFullscreen 
         ? 'fixed inset-0 z-[100] m-0 w-screen h-screen flex flex-col rounded-none border-none bg-black/95' 
         : 'w-full rounded-xl border border-white/10 hover:border-teal-500/30'

@@ -26,7 +26,7 @@ export const SITE_CONFIG = {
     { name: 'Docker', color: 'from-sky-400 to-blue-500' },
 
     // --- Frontend (Product Delivery) ---
-    { name: 'Next.js', color: 'from-white to-gray-400' },
+    { name: 'Next.js', color: 'from-gray-400 to-gray-600' },
     { name: 'React', color: 'from-cyan-400 to-blue-500' },
     { name: 'TypeScript', color: 'from-blue-400 to-blue-600' },
     ],

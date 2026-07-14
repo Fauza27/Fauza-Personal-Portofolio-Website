@@ -1,0 +1,8 @@
+# Local secrets for `wrangler pages dev` (Cloudflare Pages Functions).
+# Copy this file to ".dev.vars" (which is gitignored) and fill in real values.
+# In PRODUCTION, set these in Cloudflare Pages > Settings > Environment variables instead.
+
+OPENAI_API_KEY=sk-your-openai-key-here
+
+# Optional - defaults to gpt-4o-mini if omitted.
+OPENAI_MODEL=gpt-4o-mini

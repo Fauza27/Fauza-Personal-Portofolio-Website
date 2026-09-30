@@ -6,7 +6,6 @@ import { AuroraBackground } from './AuroraBackground';
 import { FloatingDock } from './FloatingDock';
 import type { SearchableItem } from './CommandPalette';
 import { AIChatLauncher } from './AIChatLauncher';
-import { Footer } from './Footer';
 
 const CommandPalette = dynamic(() => import('./CommandPalette').then((module) => module.CommandPalette), {
   ssr: false,
@@ -53,7 +52,6 @@ export function ClientLayout({ children, searchItems }: ClientLayoutProps) {
       )}
       <AIChatLauncher />
       {children}
-      <Footer />
     </>
   );
 }

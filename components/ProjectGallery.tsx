@@ -1,7 +1,8 @@
 "use client";
 
-import { motion } from "framer-motion";
-import { ArrowRight, Play } from "lucide-react";
+import { useRef } from "react";
+import { motion, useScroll } from "framer-motion";
+import { ExternalLink } from "lucide-react";
 import Link from "next/link";
 import type { ProjectSummary } from "@/lib/mdx";
 
@@ -22,53 +23,108 @@ export function getVideoThumbnail(project: ProjectSummary) {
   }
 }
 
+// Helper to get accent color based on category
+const getAccentColor = (category: string) => {
+  const colors: Record<string, string> = {
+    "AI & Full-Stack": "text-purple-400",
+    "AI & LLM": "text-green-400",
+    "Machine Learning": "text-blue-400",
+    "Data Science": "text-orange-400",
+    "AI Engineering": "text-cyan-400",
+  };
+  return colors[category] || "text-primary";
+};
+
 export const ProjectGallery = ({ projects }: ProjectGalleryProps) => {
-  if (projects.length === 0) return null;
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  const { scrollXProgress } = useScroll({
+    container: containerRef,
+  });
 
   return (
-    <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
-      {projects.map((project, index) => {
-        const thumbnail = project.cover ?? getVideoThumbnail(project);
+    <section className="py-4 relative">
+      {/* Scroll Progress */}
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 mb-4">
+        <div className="h-1 bg-white/5 rounded-full overflow-hidden">
+          <motion.div
+            className="h-full bg-gradient-to-r from-primary via-secondary to-accent"
+            style={{ scaleX: scrollXProgress, transformOrigin: "left" }}
+          />
+        </div>
+      </div>
 
-        return (
-          <motion.article
+      {/* Horizontal Scroll Container */}
+      <div
+        ref={containerRef}
+        className="flex gap-4 sm:gap-6 overflow-x-auto pb-6 sm:pb-8 px-4 sm:px-6 snap-x snap-proximity scrollbar-hide scroll-smooth-x"
+        style={{ touchAction: "pan-x" }}
+      >
+        <div className="flex-shrink-0 w-2 sm:w-[calc((100vw-1200px)/2+24px)] sm:max-w-[200px]" />
+
+        {projects.map((project) => (
+          <div
             key={project.slug}
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: index * 0.08 }}
-            className="min-w-0"
+            className="flex-shrink-0 w-[300px] sm:w-[400px] md:w-[500px] snap-center"
+            style={{ willChange: "transform" }}
           >
-            <Link
-              href={`/projects/${project.slug}`}
-              className="group flex h-full flex-col overflow-hidden rounded-2xl border border-foreground/15 bg-card/90 shadow-sm transition-all hover:-translate-y-1 hover:border-primary/50 hover:shadow-lg focus-visible:outline-2 focus-visible:outline-primary"
-            >
-              <div
-                className={`relative flex h-44 items-end overflow-hidden p-5 bg-linear-to-br ${project.gradient}`}
-                style={thumbnail ? { backgroundImage: `linear-gradient(to top, rgba(17, 10, 34, .82), rgba(17, 10, 34, .08)), url("${thumbnail}")`, backgroundSize: "cover", backgroundPosition: "center" } : undefined}
+            <Link href={`/projects/${project.slug}`}>
+              <motion.div
+                className="glass rounded-2xl sm:rounded-3xl p-6 sm:p-8 h-[320px] sm:h-[400px] flex flex-col justify-between relative overflow-hidden cursor-pointer group"
+                whileHover={{ scale: 1.02, y: -5 }}
+                transition={{ type: "spring", stiffness: 300, damping: 20 }}
               >
-                {!thumbnail && <div className="absolute inset-x-5 top-5 rounded-xl border border-foreground/10 bg-background/40 p-3" aria-hidden="true"><span className="block text-[10px] font-bold uppercase tracking-wider text-primary">Product snapshot</span><span className="mt-1 block text-sm font-semibold leading-snug text-foreground">{project.highlight || project.description}</span></div>}
-                <span className={`relative z-10 text-xs font-bold uppercase tracking-wider ${thumbnail ? "text-white" : "text-foreground/75"}`}>
-                  {project.category}
-                </span>
-                {thumbnail && <span className="absolute right-5 top-5 rounded-full bg-black/55 p-2 text-white" aria-label="Video project available"><Play size={15} fill="currentColor" /></span>}
-              </div>
+                {/* Background gradient */}
+                <div
+                  className={`absolute inset-0 bg-gradient-to-br ${project.gradient} opacity-0 group-hover:opacity-100 transition-opacity duration-500`}
+                />
 
-              <div className="flex flex-1 flex-col p-5 sm:p-6">
-                <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-primary">Featured project {String(index + 1).padStart(2, "0")}</p>
-                <h3 className="mb-3 text-xl font-bold leading-snug text-foreground group-hover:text-primary transition-colors">{project.title}</h3>
-                <p className="mb-4 line-clamp-3 text-sm leading-relaxed text-muted-foreground">{project.description}</p>
-                {project.role && <p className="mb-2 text-sm text-foreground/85"><span className="font-semibold">Role:</span> {project.role}</p>}
-                {project.highlight && <p className="mb-5 rounded-lg bg-primary/8 p-3 text-sm font-medium leading-relaxed text-foreground">{project.highlight}</p>}
-                <div className="mt-auto flex flex-wrap gap-1.5 border-t border-foreground/10 pt-4">
-                  {project.tech.slice(0, 3).map((tag) => <span key={tag} className="rounded-md bg-foreground/5 px-2 py-1 text-xs text-foreground/75">{tag}</span>)}
+                {/* Content */}
+                <div className="relative z-10">
+                  <div className="flex items-center justify-between mb-3 sm:mb-4">
+                    <span
+                      className={`text-xs font-medium ${getAccentColor(project.category)}`}
+                    >
+                      {project.category} • {project.year}
+                    </span>
+                    <motion.div
+                      className="p-1.5 sm:p-2 glass rounded-lg opacity-0 group-hover:opacity-100 transition-opacity"
+                      whileHover={{ scale: 1.1 }}
+                    >
+                      <ExternalLink
+                        size={14}
+                        className="sm:w-4 sm:h-4 text-foreground"
+                      />
+                    </motion.div>
+                  </div>
+
+                  <h3 className="text-xl sm:text-2xl font-bold text-foreground mb-2 sm:mb-3">
+                    {project.title}
+                  </h3>
+                  <p className="text-muted-foreground text-sm sm:text-base line-clamp-2 sm:line-clamp-3">
+                    {project.description}
+                  </p>
                 </div>
-                <span className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-primary">View case study <ArrowRight size={16} /></span>
-              </div>
+
+                <div className="relative z-10">
+                  <div className="flex flex-wrap gap-1.5 sm:gap-2">
+                    {project.tech.slice(0, 4).map((tag) => (
+                      <span
+                        key={tag}
+                        className="px-2 sm:px-3 py-0.5 sm:py-1 text-xs glass rounded-full text-foreground/70"
+                      >
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              </motion.div>
             </Link>
-          </motion.article>
-        );
-      })}
-    </div>
+          </div>
+        ))}
+
+        <div className="flex-shrink-0 w-2 sm:w-[calc((100vw-1200px)/2+24px)] sm:max-w-[200px]" />
+      </div>
+    </section>
   );
 };

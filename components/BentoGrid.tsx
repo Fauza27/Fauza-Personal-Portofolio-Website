@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { ArrowUpRight, Code2, Sparkles, GraduationCap, Rocket, FileText } from 'lucide-react';
+import { ArrowUpRight, Code2, Sparkles, GraduationCap, Rocket } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { SITE_CONFIG } from '@/lib/config';
@@ -46,8 +46,6 @@ export const BentoGrid = ({ projectCount }: { projectCount?: number }) => {
         <div className="absolute inset-0 bg-linear-to-br from-primary/20 via-transparent to-accent/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
         
         <div className="relative z-10">
-          <p className="text-sm font-semibold text-primary mb-3">Muhammad Fauza · AI Software Engineer</p>
-          
           <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mb-3 sm:mb-4">
             <span className="text-gradient">Building</span>
             <br />
@@ -59,10 +57,10 @@ export const BentoGrid = ({ projectCount }: { projectCount?: number }) => {
           </p>
         </div>
         
-        <div className="relative z-10 flex flex-col sm:flex-row sm:flex-wrap items-stretch sm:items-center gap-3 mt-6">
-          <Link href="/projects" className="shrink-0">
+        <div className="relative z-10 flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4 mt-6">
+          <Link href="/projects">
             <motion.button
-              className="w-full sm:w-auto whitespace-nowrap flex items-center justify-center gap-2 px-5 py-3 bg-primary text-primary-foreground rounded-xl font-medium text-sm sm:text-base"
+              className="w-full sm:w-auto flex items-center justify-center gap-2 px-5 sm:px-6 py-3 bg-primary text-primary-foreground rounded-xl font-medium text-sm sm:text-base"
               whileHover={{ scale: 1.05, x: 5 }}
               whileTap={{ scale: 0.98 }}
             >
@@ -70,23 +68,15 @@ export const BentoGrid = ({ projectCount }: { projectCount?: number }) => {
               <ArrowUpRight size={18} />
             </motion.button>
           </Link>
-          <Link href="/contact" className="shrink-0">
+          <Link href="/contact">
             <motion.button
-              className="w-full sm:w-auto whitespace-nowrap flex items-center justify-center gap-2 px-5 py-3 glass rounded-xl text-foreground/80 hover:text-foreground text-sm sm:text-base"
+              className="w-full sm:w-auto flex items-center justify-center gap-2 px-5 sm:px-6 py-3 glass rounded-xl text-foreground/80 hover:text-foreground text-sm sm:text-base"
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.98 }}
             >
               Get in Touch
             </motion.button>
           </Link>
-          <a
-            href={SITE_CONFIG.resumeUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex shrink-0 whitespace-nowrap items-center justify-center gap-2 px-2 py-3 rounded-xl text-sm font-medium text-foreground/80 hover:text-primary transition-colors"
-          >
-            <FileText size={18} /> Resume / CV
-          </a>
         </div>
       </motion.div>
 
@@ -177,7 +167,7 @@ export const BentoGrid = ({ projectCount }: { projectCount?: number }) => {
 
       {/* Tech Stack Card - Wide */}
       <motion.div
-        className="col-span-1 sm:col-span-3 row-span-1 glass rounded-2xl sm:rounded-3xl p-5 sm:p-6 overflow-hidden relative"
+        className="col-span-1 sm:col-span-2 lg:col-span-3 row-span-1 glass rounded-2xl sm:rounded-3xl p-5 sm:p-6 overflow-hidden relative"
         variants={itemVariants}
         whileHover={{ scale: 1.01 }}
       >

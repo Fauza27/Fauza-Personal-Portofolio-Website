@@ -20,7 +20,7 @@ export function ShareButton({ title, url }: ShareButtonProps) {
         await navigator.clipboard.writeText(shareUrl);
         alert('Link copied to clipboard!');
       }
-    } catch (error) {
+    } catch {
       // User cancelled share or other error
     }
   };

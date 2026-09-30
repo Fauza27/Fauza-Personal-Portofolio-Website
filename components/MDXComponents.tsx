@@ -145,6 +145,8 @@ export const MDXComponents = {
   img: ({ src, alt }: { src?: string; alt?: string }) => (
     <figure className="my-10">
       <div className="relative rounded-xl border border-foreground/15 shadow-xl overflow-hidden bg-foreground/5">
+        {/* MDX images have no guaranteed dimensions; the site exports without an image optimizer. */}
+        {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src={src}
           alt={alt}

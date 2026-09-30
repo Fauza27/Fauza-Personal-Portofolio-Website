@@ -17,18 +17,15 @@ import {
 import { SITE_CONFIG } from '@/lib/config';
 
 const contactSchema = z.object({
-  name: z.string().min(2, 'Please enter your name'),
-  email: z.string().email('Please enter a valid email address'),
-  subject: z.string().min(3, 'Please add a short subject'),
-  message: z.string().min(10, 'Message should be at least 10 characters'),
+  name: z.string().min(2, 'Please enter your name').max(100, 'Name is too long'),
+  email: z.email('Please enter a valid email address').max(254, 'Email is too long'),
+  subject: z.string().min(3, 'Please add a short subject').max(200, 'Subject is too long'),
+  message: z.string().min(10, 'Message should be at least 10 characters').max(5000, 'Message is too long'),
   // Honeypot field - real users never see/fill this. Bots usually do.
   company: z.string().optional(),
 });
 
 type ContactFormValues = z.infer<typeof contactSchema>;
-
-// Google Apps Script Web App URL (see google-apps-script/contact-form.gs for setup).
-const ENDPOINT = process.env.NEXT_PUBLIC_CONTACT_ENDPOINT;
 
 export function FeaturedContact() {
   const {
@@ -52,27 +49,23 @@ export function FeaturedContact() {
       return;
     }
 
-    if (!ENDPOINT) {
-      console.error(
-        'NEXT_PUBLIC_CONTACT_ENDPOINT is not set. Configure it in your .env to enable the contact form.'
-      );
-      setStatus('error');
-      return;
-    }
-
     try {
-      // text/plain keeps this a "simple request" (no CORS preflight) for Apps Script.
-      await fetch(ENDPOINT, {
+      const response = await fetch('/api/contact', {
         method: 'POST',
-        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           name: data.name,
           email: data.email,
           subject: data.subject,
           message: data.message,
-          submittedAt: new Date().toISOString(),
+          company: data.company ?? '',
         }),
       });
+
+      const result = (await response.json()) as { result?: string };
+      if (!response.ok || result.result !== 'success') {
+        throw new Error('The contact endpoint did not confirm delivery.');
+      }
 
       reset();
       setStatus('success');

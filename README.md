@@ -179,9 +179,6 @@ Edit `app/globals.css` to customize colors:
 Copy `.env.example` to `.env` and fill in:
 
 ```bash
-# Google Apps Script Web App URL for the contact form (public, safe to expose)
-NEXT_PUBLIC_CONTACT_ENDPOINT=https://script.google.com/macros/s/XXXX/exec
-
 # Path to the AI chat function (default works out of the box)
 NEXT_PUBLIC_CHAT_ENDPOINT=/api/chat
 ```
@@ -191,17 +188,18 @@ The OpenAI key is a **server-side secret** used by the Cloudflare Pages Function
 ```bash
 OPENAI_API_KEY=sk-...        # required
 OPENAI_MODEL=gpt-4o-mini     # optional, defaults to gpt-4o-mini
+CONTACT_ENDPOINT=https://script.google.com/macros/s/XXXX/exec
 ```
 
 ## 📬 Contact Form (Google Sheets)
 
-The contact form posts submissions to a Google Sheet via a Google Apps Script Web App — no backend server required. Setup steps are documented in `google-apps-script/contact-form.gs`. In short: create a Sheet → paste the script → deploy as a Web App (access: Anyone) → put the URL in `NEXT_PUBLIC_CONTACT_ENDPOINT`.
+The contact form calls `functions/api/contact.ts`, which validates the submission and forwards it to a Google Apps Script Web App. Setup steps are in `google-apps-script/contact-form.gs`: create a Sheet, deploy the script as a Web App, and set its URL as the server-side `CONTACT_ENDPOINT`. After editing the Apps Script, deploy a new version for its validation changes to take effect. The function also accepts the previous `NEXT_PUBLIC_CONTACT_ENDPOINT` environment variable during migration.
 
 ## 🤖 AI Chat Assistant
 
 "Ask Fauza's AI" is backed by `functions/api/chat.ts`, a Cloudflare Pages Function that securely proxies OpenAI (the API key never reaches the browser). Edit `functions/api/_persona.ts` to teach the assistant about you — the more detail, the better the answers.
 
-> The chat endpoint only runs on Cloudflare (deployed) or locally via `npx wrangler pages dev out`. A plain `next dev` won't serve `/api/chat`.
+> The chat and contact endpoints only run on Cloudflare (deployed) or locally via `npx wrangler pages dev out`. A plain `next dev` won't serve `/api/chat` or `/api/contact`.
 
 ## 🚀 Deployment
 
@@ -223,7 +221,7 @@ The contact form posts submissions to a Google Sheet via a Google Apps Script We
 3. **Set environment variables** (Settings → Environment variables):
    - `OPENAI_API_KEY` (secret) — for the AI chat
    - `OPENAI_MODEL` (optional) — defaults to `gpt-4o-mini`
-   - `NEXT_PUBLIC_CONTACT_ENDPOINT` — your Google Apps Script URL
+   - `CONTACT_ENDPOINT` — your Google Apps Script URL
 
 > The `functions/` directory is deployed automatically as Pages Functions alongside the static `out/` assets — no extra config needed.
 

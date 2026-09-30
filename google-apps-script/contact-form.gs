@@ -22,10 +22,10 @@
  * 4. Copy the "Web app URL" it gives you. It looks like:
  *      https://script.google.com/macros/s/XXXXXXXX/exec
  *
- * 5. Put that URL in your portfolio .env (and in Cloudflare Pages build env):
- *      NEXT_PUBLIC_CONTACT_ENDPOINT=https://script.google.com/macros/s/XXXXXXXX/exec
+ * 5. Set the URL as CONTACT_ENDPOINT in Cloudflare Pages environment variables
+ *    (or .dev.vars for local Pages Functions testing).
  *
- * 6. Re-build / re-deploy the site. Submit the form to test, then check the Sheet.
+ * 6. Re-deploy the site. Submit the form to test, then check the Sheet.
  *
  * Whenever you change this script, create a NEW deployment version (or "Manage
  * deployments" > edit > new version) so the changes go live.
@@ -36,9 +36,17 @@ var SHEET_NAME = 'Submissions';
 
 function doPost(e) {
   try {
-    var data = {};
-    if (e && e.postData && e.postData.contents) {
-      data = JSON.parse(e.postData.contents);
+    if (!e || !e.postData || !e.postData.contents) {
+      return jsonOutput({ result: 'error' });
+    }
+    var data = JSON.parse(e.postData.contents);
+    if (data.company) return jsonOutput({ result: 'success' });
+    if (!validText(data.name, 2, 100) ||
+        !validText(data.email, 3, 254) ||
+        !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email) ||
+        !validText(data.subject, 3, 200) ||
+        !validText(data.message, 10, 5000)) {
+      return jsonOutput({ result: 'error' });
     }
 
     var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(SHEET_NAME)
@@ -46,16 +54,25 @@ function doPost(e) {
 
     sheet.appendRow([
       new Date(),
-      data.name || '',
-      data.email || '',
-      data.subject || '',
-      data.message || '',
+      safeCell(data.name),
+      safeCell(data.email),
+      safeCell(data.subject),
+      safeCell(data.message),
     ]);
 
     return jsonOutput({ result: 'success' });
   } catch (err) {
     return jsonOutput({ result: 'error', message: String(err) });
   }
+}
+
+function validText(value, min, max) {
+  return typeof value === 'string' && value.trim().length >= min && value.trim().length <= max;
+}
+
+function safeCell(value) {
+  var text = value.trim();
+  return /^[=+\-@]/.test(text) ? "'" + text : text;
 }
 
 // Simple GET handler so you can open the URL in a browser to confirm it's live.

@@ -28,6 +28,11 @@ const projectFrontmatterSchema = z.object({
   github: z.string().url().optional(),
   demo: z.string().url().optional(),
   video: z.string().url().optional(),
+  cover: z.string().optional(),
+  role: z.string().optional(),
+  problem: z.string().optional(),
+  highlight: z.string().optional(),
+  highlightLabel: z.string().optional(),
   videos: z.array(z.object({
     title: z.string(),
     url: z.string().url(),
@@ -45,6 +50,14 @@ export interface BlogPost {
   content: string;
 }
 
+export type BlogSummary = Omit<BlogPost, 'content'>;
+
+export function toBlogSummary(post: BlogPost): BlogSummary {
+  const { content, ...summary } = post;
+  void content;
+  return summary;
+}
+
 export interface Project {
   slug: string;
   title: string;
@@ -57,10 +70,23 @@ export interface Project {
   github?: string;
   demo?: string;
   video?: string;
+  cover?: string;
+  role?: string;
+  problem?: string;
+  highlight?: string;
+  highlightLabel?: string;
   videos?: Array<{
     title: string;
     url: string;
   }>;
+}
+
+export type ProjectSummary = Omit<Project, 'content'>;
+
+export function toProjectSummary(project: Project): ProjectSummary {
+  const { content, ...summary } = project;
+  void content;
+  return summary;
 }
 
 export const getBlogPosts = unstable_cache(

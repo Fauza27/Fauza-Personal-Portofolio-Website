@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { X, Send, Sparkles, Loader2 } from 'lucide-react';
 
 type ChatRole = 'user' | 'assistant';
@@ -18,8 +18,7 @@ const GREETING: ChatMessage = {
     "Hi! I'm Fauza's AI assistant. Ask me anything about his projects, skills, or experience.",
 };
 
-export const AIChatWidget = () => {
-  const [isOpen, setIsOpen] = useState(false);
+export const AIChatWidget = ({ onClose }: { onClose: () => void }) => {
   const [input, setInput] = useState('');
   const [messages, setMessages] = useState<ChatMessage[]>([GREETING]);
   const [isLoading, setIsLoading] = useState(false);
@@ -35,13 +34,19 @@ export const AIChatWidget = () => {
     }
   }, [messages, isLoading]);
 
-  // Focus the input when the panel opens.
+  // Focus the input when the panel mounts.
   useEffect(() => {
-    if (isOpen) {
-      const t = setTimeout(() => inputRef.current?.focus(), 150);
-      return () => clearTimeout(t);
-    }
-  }, [isOpen]);
+    const t = setTimeout(() => inputRef.current?.focus(), 150);
+    return () => clearTimeout(t);
+  }, []);
+
+  useEffect(() => {
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') onClose();
+    };
+    window.addEventListener('keydown', closeOnEscape);
+    return () => window.removeEventListener('keydown', closeOnEscape);
+  }, [onClose]);
 
   const sendMessage = async () => {
     const trimmed = input.trim();
@@ -85,24 +90,10 @@ export const AIChatWidget = () => {
   };
 
   return (
-    <>
-      <motion.button
-        className="fixed bottom-24 right-6 z-40 w-14 h-14 glass-strong rounded-full flex items-center justify-center glow-purple"
-        whileHover={{ scale: 1.1 }}
-        whileTap={{ scale: 0.95 }}
-        onClick={() => setIsOpen((prev) => !prev)}
-        initial={{ scale: 0, opacity: 0 }}
-        animate={{ scale: 1, opacity: 1 }}
-        transition={{ delay: 1, type: 'spring' }}
-        aria-label={isOpen ? 'Close AI chat' : 'Open AI chat'}
-      >
-        <Sparkles size={24} className="text-primary" />
-      </motion.button>
-
-      <AnimatePresence>
-        {isOpen && (
-          <motion.div
-            className="fixed bottom-24 right-6 z-50 w-80 sm:w-96"
+    <motion.div
+            className="fixed bottom-32 sm:bottom-24 right-4 sm:right-6 z-50 w-[calc(100vw-2rem)] max-w-80 sm:max-w-96"
+            role="dialog"
+            aria-label="Ask Fauza's AI"
             initial={{ opacity: 0, scale: 0.9, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.9, y: 20 }}
@@ -121,7 +112,7 @@ export const AIChatWidget = () => {
                   </div>
                 </div>
                 <button
-                  onClick={() => setIsOpen(false)}
+                  onClick={onClose}
                   className="p-1 rounded-lg hover:bg-foreground/10 transition-colors text-muted-foreground"
                   aria-label="Close chat"
                 >
@@ -132,7 +123,7 @@ export const AIChatWidget = () => {
               {/* Chat Area */}
               <div
                 ref={scrollRef}
-                className="h-72 p-4 overflow-y-auto flex flex-col gap-4"
+                className="h-72 max-h-[40dvh] p-4 overflow-y-auto flex flex-col gap-4"
                 role="log"
                 aria-live="polite"
                 aria-label="Conversation"
@@ -206,9 +197,6 @@ export const AIChatWidget = () => {
                 </p>
               </div>
             </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </>
+    </motion.div>
   );
 };

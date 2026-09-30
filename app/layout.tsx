@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter, Plus_Jakarta_Sans, JetBrains_Mono } from "next/font/google";
+import { Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { Providers } from "./providers";
 import { SITE_CONFIG } from "@/lib/config";
@@ -7,11 +7,6 @@ import { SITE_CONFIG } from "@/lib/config";
 const inter = Inter({
   subsets: ["latin"],
   variable: "--font-inter",
-});
-
-const plusJakarta = Plus_Jakarta_Sans({
-  subsets: ["latin"],
-  variable: "--font-plus-jakarta",
 });
 
 const jetbrainsMono = JetBrains_Mono({
@@ -71,7 +66,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`${inter.variable} ${plusJakarta.variable} ${jetbrainsMono.variable} ${inter.className}`}
+        className={`${inter.variable} ${jetbrainsMono.variable} ${inter.className}`}
       >
         <Providers>{children}</Providers>
       </body>

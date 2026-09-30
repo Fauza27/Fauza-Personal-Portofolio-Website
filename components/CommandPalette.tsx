@@ -102,14 +102,6 @@ export const CommandPalette = ({ isOpen, onClose, searchItems = [] }: CommandPal
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [isOpen, onClose, filteredCommands, selectedIndex, router]);
 
-  const prevOpenRef = useRef(isOpen);
-  if (isOpen && !prevOpenRef.current) {
-    // Reset on open — this runs during render, not inside an effect
-    if (query !== '') setQuery('');
-    if (selectedIndex !== 0) setSelectedIndex(0);
-  }
-  prevOpenRef.current = isOpen;
-
   useEffect(() => {
     if (isOpen) {
       // Focus input when opened

@@ -1,10 +1,16 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import dynamic from 'next/dynamic';
 import { AuroraBackground } from './AuroraBackground';
 import { FloatingDock } from './FloatingDock';
-import { CommandPalette, type SearchableItem } from './CommandPalette';
-import { AIChatWidget } from './AIChatWidget';
+import type { SearchableItem } from './CommandPalette';
+import { AIChatLauncher } from './AIChatLauncher';
+import { Footer } from './Footer';
+
+const CommandPalette = dynamic(() => import('./CommandPalette').then((module) => module.CommandPalette), {
+  ssr: false,
+});
 
 interface ClientLayoutProps {
   children: React.ReactNode;
@@ -38,13 +44,16 @@ export function ClientLayout({ children, searchItems }: ClientLayoutProps) {
 
       <AuroraBackground />
       <FloatingDock onOpenSearch={() => setIsCommandOpen(true)} />
-      <CommandPalette
-        isOpen={isCommandOpen}
-        onClose={() => setIsCommandOpen(false)}
-        searchItems={searchItems}
-      />
-      <AIChatWidget />
+      {isCommandOpen && (
+        <CommandPalette
+          isOpen={isCommandOpen}
+          onClose={() => setIsCommandOpen(false)}
+          searchItems={searchItems}
+        />
+      )}
+      <AIChatLauncher />
       {children}
+      <Footer />
     </>
   );
 }

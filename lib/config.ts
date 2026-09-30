@@ -4,6 +4,7 @@ export const SITE_CONFIG = {
   description:'An AI Engineer who builds production-ready full-stack applications by integrating machine learning, LLMs, and intelligent systems into real-world software.',
   url: 'https://muhammadfauza.com',
   email: 'muhammadfauza27@gmail.com',
+  resumeUrl: 'https://drive.google.com/file/d/1PpH_xbwfliiud33N2ZGMEIv1FXb54xPG/view?usp=drive_link',
   
   social: {
     github: 'https://github.com/Fauza27',

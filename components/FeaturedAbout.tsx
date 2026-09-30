@@ -3,7 +3,6 @@
 import { motion } from "framer-motion";
 import { MapPin, Briefcase, Award } from "lucide-react";
 import Image from "next/image";
-import Link from "next/link";
 
 const skills = [
   {
@@ -184,26 +183,7 @@ export function FeaturedAbout({ isPage = false }: { isPage?: boolean }) {
         </motion.div>
       </div>
 
-      {!isPage && (
-        <div>
-          <h3 className="mb-4 text-xl sm:text-2xl font-bold text-foreground">Experience highlights</h3>
-          <div className="grid gap-4 sm:grid-cols-2 mb-5">
-            <div className="rounded-2xl border border-foreground/10 bg-card/80 p-5">
-              <p className="font-semibold text-foreground">External Code Reviewer · Dicoding Indonesia</p>
-              <p className="mt-1 text-sm leading-relaxed text-muted-foreground">Review machine learning submissions and provide technical feedback.</p>
-            </div>
-            <div className="rounded-2xl border border-foreground/10 bg-card/80 p-5">
-              <p className="font-semibold text-foreground">Data Scientist Facilitator · Indosat Ooredoo Hutchison</p>
-              <p className="mt-1 text-sm leading-relaxed text-muted-foreground">Mentored 50+ participants across two data science cohorts.</p>
-            </div>
-          </div>
-          <Link href="/about" className="inline-flex items-center rounded-xl bg-primary/10 px-5 py-3 text-sm font-semibold text-primary hover:bg-primary/20 transition-colors">
-            View all experience and skills
-          </Link>
-        </div>
-      )}
-
-      {isPage && <><motion.div id="tech-stack" variants={itemVariants} className="mb-12 sm:mb-20 scroll-mt-24">
+      {isPage && <motion.div id="tech-stack" variants={itemVariants} className="mb-12 sm:mb-20 scroll-mt-24">
         <h3 className="text-xl sm:text-2xl font-bold text-foreground mb-6 sm:mb-8 flex items-center gap-2 sm:gap-3">
           <Award size={20} className="sm:w-6 sm:h-6 text-primary" />
           Technical Skills
@@ -232,7 +212,7 @@ export function FeaturedAbout({ isPage = false }: { isPage?: boolean }) {
             </motion.div>
           ))}
         </div>
-      </motion.div>
+      </motion.div>}
 
       <motion.div id="experience" variants={itemVariants} className="scroll-mt-24">
         <h3 className="text-xl sm:text-2xl font-bold text-foreground mb-6 sm:mb-8 flex items-center gap-2 sm:gap-3">
@@ -240,12 +220,12 @@ export function FeaturedAbout({ isPage = false }: { isPage?: boolean }) {
           Experience
         </h3>
 
-        <div className="space-y-4 sm:space-y-6">
+        <div className={isPage ? "space-y-4 sm:space-y-6" : "grid gap-4 md:grid-cols-2"}>
           {experience.map((job) => (
             <motion.div
               variants={itemVariants}
               key={`${job.role}-${job.period}`}
-              className="glass rounded-xl sm:rounded-2xl p-4 sm:p-6 relative overflow-hidden group hover:translate-x-2 transition-transform"
+              className="glass rounded-xl sm:rounded-2xl p-4 sm:p-6 relative overflow-hidden"
             >
               <div className="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-primary to-accent" />
               <div className="pl-3 sm:pl-4">
@@ -265,7 +245,7 @@ export function FeaturedAbout({ isPage = false }: { isPage?: boolean }) {
             </motion.div>
           ))}
         </div>
-      </motion.div></>}
+      </motion.div>
     </motion.div>
   );
 }

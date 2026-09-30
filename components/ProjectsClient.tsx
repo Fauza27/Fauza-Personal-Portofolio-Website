@@ -3,10 +3,11 @@
 import { motion } from 'framer-motion';
 import { ArrowRight, ExternalLink, Github, Calendar } from 'lucide-react';
 import Link from 'next/link';
-import type { Project } from '@/lib/mdx';
+import type { ProjectSummary } from '@/lib/mdx';
+import { getVideoThumbnail } from '@/components/ProjectGallery';
 
 interface ProjectsClientProps {
-  projects: Project[];
+  projects: ProjectSummary[];
 }
 
 const containerVariants = {
@@ -24,7 +25,7 @@ const itemVariants = {
 
 export function ProjectsClient({ projects }: ProjectsClientProps) {
   return (
-    <main className="pt-20 sm:pt-24 pb-24 sm:pb-32">
+    <main id="main-content" className="pt-16 sm:pt-10 pb-24 sm:pb-32">
       {/* Hero Section */}
       <section className="max-w-6xl mx-auto px-4 sm:px-6 mb-12 sm:mb-16">
         <motion.div
@@ -33,14 +34,13 @@ export function ProjectsClient({ projects }: ProjectsClientProps) {
           className="text-center max-w-3xl mx-auto"
         >
           <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold mb-4 sm:mb-6">
-            <span className="text-gradient">Projects</span> That Make
+            <span className="text-gradient">AI Projects</span> Built
             <br />
-            <span className="text-foreground">An Impact</span>
+            <span className="text-foreground">End to End</span>
           </h1>
           
           <p className="text-lg sm:text-xl text-muted-foreground max-w-2xl mx-auto">
-            Showcasing innovation through code. From AI-powered systems to scalable web applications, 
-            each project demonstrates technical excellence and real-world impact.
+            Explore the problems, my contributions, and the working demos behind each AI product.
           </p>
         </motion.div>
       </section>
@@ -53,7 +53,7 @@ export function ProjectsClient({ projects }: ProjectsClientProps) {
           initial="hidden"
           animate="visible"
         >
-          {projects.map((project, index) => (
+          {projects.map((project) => (
             <motion.div
               key={project.slug}
               variants={itemVariants}
@@ -66,6 +66,14 @@ export function ProjectsClient({ projects }: ProjectsClientProps) {
                 <div className={`absolute inset-0 bg-gradient-to-br ${project.gradient} opacity-0 group-hover:opacity-100 transition-opacity duration-500`} />
                 
                 <div className="relative z-10">
+                  {(project.cover || getVideoThumbnail(project)) && (
+                    <Link href={`/projects/${project.slug}`} className="block mb-5 overflow-hidden rounded-xl focus-visible:outline-2 focus-visible:outline-primary" aria-label={`View ${project.title} case study`}>
+                      <div
+                        className="h-44 bg-cover bg-center transition-transform duration-300 group-hover:scale-[1.02]"
+                        style={{ backgroundImage: `linear-gradient(to top, rgba(17, 10, 34, .4), transparent), url("${project.cover || getVideoThumbnail(project)}")` }}
+                      />
+                    </Link>
+                  )}
                   {/* Header */}
                   <div className="flex items-start justify-between mb-4">
                     <div className="flex-1">
@@ -101,6 +109,9 @@ export function ProjectsClient({ projects }: ProjectsClientProps) {
                     </p>
                   </Link>
 
+                  {project.role && <p className="mb-2 text-sm text-foreground/85"><span className="font-semibold">My role:</span> {project.role}</p>}
+                  {project.highlight && <p className="mb-5 rounded-lg bg-primary/8 p-3 text-sm font-medium text-foreground">{project.highlight}</p>}
+
                   {/* Tech Stack */}
                   <div className="flex flex-wrap gap-2 mb-6 pb-6 border-b border-foreground/10">
                     {project.tech.slice(0, 5).map((tech) => (
@@ -131,6 +142,7 @@ export function ProjectsClient({ projects }: ProjectsClientProps) {
                           href={project.github}
                           target="_blank"
                           rel="noopener noreferrer"
+                          aria-label={`View source code for ${project.title}`}
                           className="p-2 glass rounded-lg text-foreground/70 hover:text-foreground transition-colors relative z-20"
                         >
                           <Github size={16} />
@@ -151,6 +163,7 @@ export function ProjectsClient({ projects }: ProjectsClientProps) {
                           href={project.demo}
                           target="_blank"
                           rel="noopener noreferrer"
+                          aria-label={`Open live demo for ${project.title}`}
                           className="p-2 glass rounded-lg text-foreground/70 hover:text-foreground transition-colors relative z-20"
                         >
                           <ExternalLink size={16} />
@@ -180,7 +193,7 @@ export function ProjectsClient({ projects }: ProjectsClientProps) {
               Interested in Working Together?
             </h2>
             <p className="text-muted-foreground max-w-xl mx-auto mb-8">
-              I'm always open to discussing new projects, creative ideas, or opportunities to be part of your vision.
+              I&apos;m always open to discussing new projects, creative ideas, or opportunities to be part of your vision.
             </p>
             
             <Link href="/contact">
@@ -189,7 +202,7 @@ export function ProjectsClient({ projects }: ProjectsClientProps) {
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.98 }}
               >
-                Let's Talk
+                Let&apos;s Talk
               </motion.button>
             </Link>
           </div>

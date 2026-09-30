@@ -3,7 +3,6 @@
 import { motion } from "framer-motion";
 import { Home, FolderKanban, FileText, User, Mail, Search } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
-import { useEffect, useState, useRef } from "react";
 import { ThemeToggle } from "./ThemeToggle";
 
 interface DockItemProps {
@@ -26,7 +25,7 @@ const DockItem = ({ icon, label, isActive, onClick }: DockItemProps) => {
       aria-current={isActive ? "page" : undefined}
     >
       <div
-        className={`w-12 h-12 sm:w-14 sm:h-14 rounded-2xl sm:rounded-3xl flex items-center justify-center transition-all ${
+        className={`w-10 h-10 sm:w-10 sm:h-10 rounded-xl flex items-center justify-center transition-all ${
           isActive
             ? "bg-primary/20 text-primary shadow-lg"
             : "bg-foreground/5 text-foreground/60 group-hover:bg-foreground/10 group-hover:text-foreground/80"
@@ -35,7 +34,7 @@ const DockItem = ({ icon, label, isActive, onClick }: DockItemProps) => {
         {icon}
       </div>
       <span
-        className={`text-[9px] sm:text-[10px] font-medium transition-colors whitespace-nowrap ${
+        className={`hidden sm:block text-xs font-medium transition-colors whitespace-nowrap ${
           isActive ? "text-primary" : "text-foreground/50"
         }`}
       >
@@ -59,85 +58,9 @@ interface FloatingDockProps {
 export const FloatingDock = ({ onOpenSearch }: FloatingDockProps) => {
   const pathname = usePathname();
   const router = useRouter();
-  const [activeHash, setActiveHash] = useState("");
-  const [isHovered, setIsHovered] = useState(false);
-  const hoverTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-
-  const handleMouseEnter = () => {
-    if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current);
-    setIsHovered(true);
-  };
-
-  const handleMouseLeave = () => {
-    hoverTimeoutRef.current = setTimeout(() => {
-      setIsHovered(false);
-    }, 2500);
-  };
-
-  useEffect(() => {
-    return () => {
-      if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current);
-    };
-  }, []);
-
-  const isDetailPage = pathname.startsWith('/blog/') || pathname.startsWith('/projects/');
-  const shouldEnlarge = !isDetailPage || isHovered;
-
-  useEffect(() => {
-    if (pathname !== "/") return;
-
-    // Set initial hash
-    setActiveHash(window.location.hash);
-
-    const sectionIds = ["home", "about", "projects", "blog", "contact"];
-    const visibleSections = new Set<string>();
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          const id = `#${entry.target.id}`;
-          if (entry.isIntersecting) {
-            visibleSections.add(id);
-          } else {
-            visibleSections.delete(id);
-          }
-        });
-
-        // Pick the topmost visible section
-        if (visibleSections.size > 0) {
-          const orderedHash = sectionIds
-            .map((id) => `#${id}`)
-            .find((id) => visibleSections.has(id));
-          if (orderedHash) {
-            const newHash = orderedHash === "#home" ? "" : orderedHash;
-            setActiveHash(newHash);
-            window.history.replaceState(null, "", newHash ? `/${newHash}` : "/");
-          }
-        }
-      },
-      { threshold: 0.2, rootMargin: "-10% 0px -10% 0px" }
-    );
-
-    sectionIds.forEach((id) => {
-      const el = document.getElementById(id);
-      if (el) observer.observe(el);
-    });
-
-    return () => observer.disconnect();
-  }, [pathname]);
 
   const handleNavClick = (path: string) => {
-    if (pathname === "/" && path.startsWith("/#")) {
-      const hash = path.replace("/", "");
-      setActiveHash(hash);
-      window.history.pushState(null, "", path);
-      const element = document.querySelector(hash);
-      if (element) {
-        element.scrollIntoView({ behavior: "smooth" });
-      }
-    } else if (pathname === "/" && path === "/") {
-      setActiveHash("");
-      window.history.pushState(null, "", "/");
+    if (pathname === "/" && path === "/") {
       window.scrollTo({ top: 0, behavior: "smooth" });
     } else {
       router.push(path);
@@ -146,31 +69,22 @@ export const FloatingDock = ({ onOpenSearch }: FloatingDockProps) => {
 
   const navItems = [
     { icon: <Home size={20} />, label: "Home", path: "/" },
-    { icon: <User size={20} />, label: "About", path: "/#about" },
-    { icon: <FolderKanban size={20} />, label: "Projects", path: "/#projects" },
-    { icon: <FileText size={20} />, label: "Blog", path: "/#blog" },
-    { icon: <Mail size={20} />, label: "Contact", path: "/#contact" },
+    { icon: <User size={20} />, label: "About", path: "/about" },
+    { icon: <FolderKanban size={20} />, label: "Projects", path: "/projects" },
+    { icon: <FileText size={20} />, label: "Blog", path: "/blog" },
+    { icon: <Mail size={20} />, label: "Contact", path: "/contact" },
   ];
 
   return (
     <motion.nav
-      className="fixed bottom-4 sm:bottom-6 left-1/2 -translate-x-1/2 z-50 origin-bottom"
-      initial={{ y: 100, opacity: 0, scale: isDetailPage ? 0.85 : 1 }}
-      animate={{ 
-        y: 0, 
-        opacity: shouldEnlarge ? 1 : 0.5, 
-        scale: shouldEnlarge ? 1 : 0.85 
-      }}
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}
-      transition={{ type: "spring", stiffness: 300, damping: 25 }}
+      className="fixed bottom-2 left-1/2 -translate-x-1/2 z-50 max-w-[calc(100vw-0.5rem)] sm:sticky sm:top-0 sm:bottom-auto sm:left-auto sm:translate-x-0 sm:mx-auto sm:flex sm:w-fit sm:justify-center sm:pt-3"
+      initial={{ y: -12, opacity: 0 }}
+      animate={{ y: 0, opacity: 1 }}
+      transition={{ duration: 0.25 }}
     >
-      <div className="flex items-center gap-2 sm:gap-3 px-4 sm:px-5 py-3 sm:py-4 glass-strong rounded-[2rem] sm:rounded-[2.5rem] shadow-2xl border border-foreground/15">
+      <div className="flex items-center gap-1 sm:gap-3 px-2 sm:px-4 py-2 glass-strong rounded-2xl shadow-xl border border-foreground/15">
         {navItems.map((item) => {
-          const isActive =
-            item.path.startsWith("/#")
-              ? activeHash === item.path.slice(1)
-              : pathname === item.path && (item.path !== "/" || !activeHash || activeHash === "#home");
+          const isActive = pathname === item.path || (item.path !== '/' && pathname.startsWith(`${item.path}/`));
 
           return (
             <DockItem
@@ -184,20 +98,20 @@ export const FloatingDock = ({ onOpenSearch }: FloatingDockProps) => {
           );
         })}
 
-        <div className="w-px h-12 sm:h-14 bg-foreground/10 mx-1 sm:mx-2" />
+        <div className="hidden sm:block w-px h-10 bg-foreground/10 mx-1" />
 
         <motion.button
           onClick={onOpenSearch}
-          className="relative flex flex-col items-center gap-1.5 p-0 group"
+          className="relative hidden sm:flex flex-col items-center gap-1.5 p-0 group"
           whileHover={{ scale: 1.15, y: -4 }}
           whileTap={{ scale: 0.95 }}
           transition={{ type: "spring", stiffness: 400, damping: 17 }}
           aria-label="Open search (⌘K)"
         >
-          <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl sm:rounded-3xl flex items-center justify-center bg-foreground/5 text-foreground/60 group-hover:bg-foreground/10 group-hover:text-foreground/80 transition-all">
+          <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-foreground/5 text-foreground/60 group-hover:bg-foreground/10 group-hover:text-foreground/80 transition-all">
             <Search size={20} />
           </div>
-          <span className="text-[9px] sm:text-[10px] font-medium text-foreground/50 whitespace-nowrap">
+          <span className="text-[10px] sm:text-xs font-medium text-foreground/50 whitespace-nowrap">
             Search
           </span>
         </motion.button>
@@ -205,11 +119,6 @@ export const FloatingDock = ({ onOpenSearch }: FloatingDockProps) => {
         <ThemeToggle />
       </div>
 
-      <div className="hidden sm:block text-center mt-2">
-        <span className="text-[10px] text-muted-foreground/50">
-          Press ⌘K to search
-        </span>
-      </div>
     </motion.nav>
   );
 };

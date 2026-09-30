@@ -1,16 +1,13 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useSyncExternalStore } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Sun, Moon } from 'lucide-react';
 import { useTheme } from 'next-themes';
 
 export const ThemeToggle = () => {
   const { theme, setTheme, resolvedTheme } = useTheme();
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => setMounted(true), []);
-
+  const mounted = useSyncExternalStore(() => () => {}, () => true, () => false);
   const current = resolvedTheme ?? theme;
   const isDark = current === 'dark';
 
@@ -21,15 +18,9 @@ export const ThemeToggle = () => {
       whileHover={{ scale: 1.15, y: -4 }}
       whileTap={{ scale: 0.95 }}
       transition={{ type: 'spring', stiffness: 400, damping: 17 }}
-      aria-label={
-        mounted
-          ? isDark
-            ? 'Switch to light mode'
-            : 'Switch to dark mode'
-          : 'Toggle theme'
-      }
+      aria-label={mounted ? (isDark ? 'Switch to light mode' : 'Switch to dark mode') : 'Toggle theme'}
     >
-      <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl sm:rounded-3xl flex items-center justify-center bg-foreground/5 text-foreground/60 group-hover:bg-foreground/10 group-hover:text-foreground/80 transition-all overflow-hidden">
+      <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-foreground/5 text-foreground/60 group-hover:bg-foreground/10 group-hover:text-foreground/80 transition-all overflow-hidden">
         <AnimatePresence mode="wait" initial={false}>
           <motion.span
             key={mounted && isDark ? 'moon' : 'sun'}
@@ -43,7 +34,7 @@ export const ThemeToggle = () => {
           </motion.span>
         </AnimatePresence>
       </div>
-      <span className="text-[9px] sm:text-[10px] font-medium text-foreground/50 whitespace-nowrap">
+      <span className="hidden sm:block text-xs font-medium text-foreground/50 whitespace-nowrap">
         Theme
       </span>
     </motion.button>

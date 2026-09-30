@@ -15,7 +15,7 @@ export function FloatingBackButton({ href, label }: FloatingBackButtonProps) {
   return (
     <MotionLink
       href={href}
-      className="fixed top-20 left-4 sm:left-6 z-50 flex xl:hidden items-center gap-2 px-4 py-2.5 glass rounded-xl text-foreground/80 hover:text-foreground hover:bg-foreground/10 transition-all shadow-lg group"
+      className="absolute top-2 left-4 sm:top-4 sm:left-6 z-40 flex 2xl:hidden items-center gap-2 px-3 py-2 bg-card rounded-xl text-foreground/80 hover:text-foreground hover:bg-foreground/10 transition-all border border-foreground/10 group"
       initial={{ opacity: 0, x: -20 }}
       animate={{ opacity: 1, x: 0 }}
       transition={{ delay: 0.2 }}

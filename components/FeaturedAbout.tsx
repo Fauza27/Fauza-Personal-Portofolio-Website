@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import { MapPin, Briefcase, Award } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 
 const skills = [
   {
@@ -29,18 +30,11 @@ const skills = [
 
 const experience = [
   {
-    role: "Student Mentor",
-    company: "Digital Talent Scholarship Program with KOMDIGI",
-    period: "Okt 2024 - Des 2024",
+    role: "External Code Reviewer (Dicoding Elite)",
+    company: "Dicoding Indonesia",
+    period: "Nov 2025 - Present",
     description:
-      "Mentored and guided 80 students in the Google Cloud Skill Boost program, achieving a 90% completion rate by providing technical assistance and resolving blockers.",
-  },
-  {
-    role: "Data Scientist Facilitator",
-    company: "Indosat Ooredoo Hutchison",
-    period: "Jan 2025 - Apr 2025",
-    description:
-      "Assisted a group of 25 participants in completing the program on time by providing technical guidance, mentorship, and progress monitoring.",
+      "Review and analyze student submissions for the Machine Learning (ML) learning path.",
   },
   {
     role: "Laboratory Assistant",
@@ -50,25 +44,32 @@ const experience = [
       "Supported and supervised hands-on programming labs for Informatics Engineering students, assisted lecturers during practical sessions, graded assignments, and maintained lab software and hardware environments to ensure smooth learning operations.",
   },
   {
-    role: "Google cloud Arcade Facilitator",
+    role: "Data Scientist Facilitator",
+    company: "Indosat Ooredoo Hutchison",
+    period: "Jan 2026 - Mar 2026",
+    description:
+      "Trusted to serve as a facilitator for two cohorts of a data science program, mentoring 50+ participants.",
+  },
+  {
+    role: "Google Cloud Arcade Facilitator",
     company: "Google Cloud",
     period: "Jul 2025 - Sep 2025",
     description:
       "Assisted 25+ participants in a gamified cloud education program.",
   },
   {
-    role: "External Code Reviewer (Dicoding Elite)",
-    company: "Dicoding Indonesia",
-    period: "Nov 2025 - Now",
+    role: "Data Scientist Facilitator",
+    company: "Indosat Ooredoo Hutchison",
+    period: "Jan 2025 - Apr 2025",
     description:
-      "Review and analyze student submissions for the Machine Learning (ML) learning path.",
+      "Assisted a group of 25 participants in completing the program on time by providing technical guidance, mentorship, and progress monitoring.",
   },
   {
-    role: "Data Scientist Facilitator ",
-    company: "Indosat Ooredoo Hutchison",
-    period: "Jan 2026 - Mar 2026",
+    role: "Student Mentor",
+    company: "Digital Talent Scholarship Program with KOMDIGI",
+    period: "Okt 2024 - Des 2024",
     description:
-      "Trusted to serve as a facilitator for two cohorts of a data science program, mentoring 50+ participants.",
+      "Mentored and guided 80 students in the Google Cloud Skill Boost program, achieving a 90% completion rate by providing technical assistance and resolving blockers.",
   },
 ];
 
@@ -89,7 +90,8 @@ const itemVariants = {
   },
 };
 
-export function FeaturedAbout() {
+export function FeaturedAbout({ isPage = false }: { isPage?: boolean }) {
+  const Heading = isPage ? motion.h1 : motion.h2;
   return (
     <motion.div
       variants={containerVariants}
@@ -98,12 +100,12 @@ export function FeaturedAbout() {
       viewport={{ once: true, margin: "-100px" }}
     >
       <div className="text-center mb-12 sm:mb-16">
-        <motion.h2
+        <Heading
           variants={itemVariants}
           className="text-3xl sm:text-4xl font-bold text-foreground inline-block"
         >
           About <span className="text-gradient">Me</span>
-        </motion.h2>
+        </Heading>
       </div>
 
       <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 mb-12 sm:mb-20">
@@ -182,7 +184,26 @@ export function FeaturedAbout() {
         </motion.div>
       </div>
 
-      <motion.div variants={itemVariants} className="mb-12 sm:mb-20">
+      {!isPage && (
+        <div>
+          <h3 className="mb-4 text-xl sm:text-2xl font-bold text-foreground">Experience highlights</h3>
+          <div className="grid gap-4 sm:grid-cols-2 mb-5">
+            <div className="rounded-2xl border border-foreground/10 bg-card/80 p-5">
+              <p className="font-semibold text-foreground">External Code Reviewer · Dicoding Indonesia</p>
+              <p className="mt-1 text-sm leading-relaxed text-muted-foreground">Review machine learning submissions and provide technical feedback.</p>
+            </div>
+            <div className="rounded-2xl border border-foreground/10 bg-card/80 p-5">
+              <p className="font-semibold text-foreground">Data Scientist Facilitator · Indosat Ooredoo Hutchison</p>
+              <p className="mt-1 text-sm leading-relaxed text-muted-foreground">Mentored 50+ participants across two data science cohorts.</p>
+            </div>
+          </div>
+          <Link href="/about" className="inline-flex items-center rounded-xl bg-primary/10 px-5 py-3 text-sm font-semibold text-primary hover:bg-primary/20 transition-colors">
+            View all experience and skills
+          </Link>
+        </div>
+      )}
+
+      {isPage && <><motion.div id="tech-stack" variants={itemVariants} className="mb-12 sm:mb-20 scroll-mt-24">
         <h3 className="text-xl sm:text-2xl font-bold text-foreground mb-6 sm:mb-8 flex items-center gap-2 sm:gap-3">
           <Award size={20} className="sm:w-6 sm:h-6 text-primary" />
           Technical Skills
@@ -213,7 +234,7 @@ export function FeaturedAbout() {
         </div>
       </motion.div>
 
-      <motion.div variants={itemVariants}>
+      <motion.div id="experience" variants={itemVariants} className="scroll-mt-24">
         <h3 className="text-xl sm:text-2xl font-bold text-foreground mb-6 sm:mb-8 flex items-center gap-2 sm:gap-3">
           <Briefcase size={20} className="sm:w-6 sm:h-6 text-primary" />
           Experience
@@ -223,7 +244,7 @@ export function FeaturedAbout() {
           {experience.map((job) => (
             <motion.div
               variants={itemVariants}
-              key={job.role}
+              key={`${job.role}-${job.period}`}
               className="glass rounded-xl sm:rounded-2xl p-4 sm:p-6 relative overflow-hidden group hover:translate-x-2 transition-transform"
             >
               <div className="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-primary to-accent" />
@@ -244,7 +265,7 @@ export function FeaturedAbout() {
             </motion.div>
           ))}
         </div>
-      </motion.div>
+      </motion.div></>}
     </motion.div>
   );
 }

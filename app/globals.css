@@ -20,7 +20,7 @@
   --secondary: oklch(0.9000 0.0450 82.0000);
   --secondary-foreground: oklch(0.2800 0.0700 302.0000);
   --muted: oklch(0.9100 0.0350 84.0000);
-  --muted-foreground: oklch(0.4400 0.0420 304.0000);
+  --muted-foreground: oklch(0.3800 0.0420 304.0000);
   --accent: oklch(0.8400 0.1000 75.0000);
   --accent-foreground: oklch(0.3000 0.0750 60.0000);
   --destructive: oklch(0.6356 0.2082 25.3782);
@@ -96,7 +96,7 @@
   --sidebar-accent-foreground: oklch(0.7856 0.1308 310.3438);
   --sidebar-border: oklch(0.2164 0.0367 302.6147);
   --sidebar-ring: oklch(0.6410 0.2232 308.1791);
-  --font-sans: var(--font-plus-jakarta), 'Plus Jakarta Sans', sans-serif;
+  --font-sans: var(--font-inter), Inter, system-ui, sans-serif;
   --font-serif: Georgia, serif;
   --font-mono: var(--font-jetbrains), 'JetBrains Mono', monospace;
   --radius: 0.75rem;
@@ -412,6 +412,10 @@
 
   /* Disable animations for users who prefer reduced motion */
   @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+
     *,
     *::before,
     *::after {

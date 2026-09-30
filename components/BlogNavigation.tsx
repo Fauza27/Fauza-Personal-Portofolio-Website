@@ -3,11 +3,11 @@
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { Calendar, Clock, ArrowRight, Tag } from 'lucide-react';
-import type { BlogPost } from '@/lib/mdx';
+import type { BlogSummary } from '@/lib/mdx';
 
 interface BlogNavigationProps {
   currentSlug: string;
-  posts: BlogPost[];
+  posts: BlogSummary[];
 }
 
 export function BlogNavigation({ currentSlug, posts }: BlogNavigationProps) {
@@ -22,7 +22,7 @@ export function BlogNavigation({ currentSlug, posts }: BlogNavigationProps) {
   }
 
   return (
-    <aside className="hidden xl:block w-[280px] shrink-0">
+    <aside className="hidden 2xl:block w-[280px] shrink-0">
       <div className="sticky top-24">
         <nav aria-label="Recent posts" className="glass rounded-2xl p-6 max-h-[calc(100vh-120px)] overflow-y-auto">
         <h4 

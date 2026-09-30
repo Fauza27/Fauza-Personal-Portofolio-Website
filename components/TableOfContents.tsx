@@ -15,7 +15,7 @@ export function TableOfContents() {
 
   useEffect(() => {
     // Extract headings from the page
-    const elements = Array.from(document.querySelectorAll('h2, h3'));
+    const elements = Array.from(document.querySelectorAll('[data-article-content] h2, [data-article-content] h3'));
     const items: TOCItem[] = elements.map((element, index) => {
       // Generate unique ID by combining text and index
       const baseId = element.textContent?.toLowerCase().replace(/\s+/g, '-') || '';
@@ -35,7 +35,7 @@ export function TableOfContents() {
       }
     });
 
-    setHeadings(items);
+    const frame = requestAnimationFrame(() => setHeadings(items));
 
     // Intersection Observer for active heading
     const observer = new IntersectionObserver(
@@ -53,7 +53,10 @@ export function TableOfContents() {
 
     elements.forEach((element) => observer.observe(element));
 
-    return () => observer.disconnect();
+    return () => {
+      cancelAnimationFrame(frame);
+      observer.disconnect();
+    };
   }, []);
 
   const scrollToHeading = (id: string) => {

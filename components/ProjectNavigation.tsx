@@ -3,11 +3,11 @@
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { Calendar, ArrowRight } from 'lucide-react';
-import type { Project } from '@/lib/mdx';
+import type { ProjectSummary } from '@/lib/mdx';
 
 interface ProjectNavigationProps {
   currentSlug: string;
-  projects: Project[];
+  projects: ProjectSummary[];
 }
 
 export function ProjectNavigation({ currentSlug, projects }: ProjectNavigationProps) {
@@ -22,7 +22,7 @@ export function ProjectNavigation({ currentSlug, projects }: ProjectNavigationPr
   }
 
   return (
-    <aside className="hidden xl:block w-[280px] shrink-0">
+    <aside className="hidden 2xl:block w-[280px] shrink-0">
       <div className="sticky top-24">
         <nav aria-label="Other projects" className="glass rounded-2xl p-6 max-h-[calc(100vh-120px)] overflow-y-auto">
         <h4 

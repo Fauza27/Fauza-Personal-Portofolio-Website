@@ -1,5 +1,5 @@
 import { ClientLayout } from '@/components/ClientLayout';
-import { getProject, getProjects } from '@/lib/mdx';
+import { getProject, getProjects, toProjectSummary } from '@/lib/mdx';
 import { SITE_CONFIG } from '@/lib/config';
 import { JsonLd } from '@/components/JsonLd';
 import { notFound } from 'next/navigation';
@@ -62,7 +62,7 @@ export default async function ProjectDetail({ params }: { params: Promise<{ slug
   }
 
   // Fetch all projects for navigation
-  const allProjects = await getProjects();
+  const allProjects = (await getProjects()).map(toProjectSummary);
 
   const projectJsonLd = {
     "@context": "https://schema.org",
@@ -88,12 +88,12 @@ export default async function ProjectDetail({ params }: { params: Promise<{ slug
       {/* Reading Progress Bar */}
       <ReadingProgress />
 
-      <main className="pt-20 sm:pt-24 pb-32 sm:pb-48">
+      <main id="main-content" className="pt-16 sm:pt-10 pb-32 sm:pb-48">
         {/* Container with Sidebar */}
         <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex gap-8 justify-center">
             {/* Left Sidebar - Table of Contents */}
-            <aside className="hidden xl:flex flex-col gap-6 shrink-0 sticky top-24 h-fit">
+            <aside className="hidden 2xl:flex flex-col gap-6 shrink-0 sticky top-24 h-fit">
               <Link
                 href="/projects"
                 className="flex items-center gap-2 px-4 py-2 glass rounded-xl text-foreground/80 hover:text-foreground hover:bg-foreground/10 transition-all w-fit group"
@@ -105,7 +105,7 @@ export default async function ProjectDetail({ params }: { params: Promise<{ slug
             </aside>
 
             {/* Main Content - Centered */}
-            <div className="w-full max-w-4xl">
+            <div className="w-full min-w-0 max-w-4xl">
               {/* Project Header */}
               <div className="mb-8 sm:mb-12">
                 <div className="glass rounded-2xl sm:rounded-3xl p-6 sm:p-8 md:p-12 relative overflow-hidden">
@@ -123,7 +123,7 @@ export default async function ProjectDetail({ params }: { params: Promise<{ slug
                       </div>
                       <div className="flex items-center gap-2 text-sm text-primary">
                         <TrendingUp size={16} />
-                        <span>Featured Project</span>
+                        <span>Case study</span>
                       </div>
                     </div>
 
@@ -131,7 +131,15 @@ export default async function ProjectDetail({ params }: { params: Promise<{ slug
                     <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-foreground mb-4 sm:mb-6">
                       {project.title}
                     </h1>
-                    <p className="text-lg sm:text-xl text-muted-foreground mb-6 sm:mb-8 leading-relaxed">
+                    {(project.problem || project.role || project.highlight) && (
+                      <dl className="grid gap-4 sm:grid-cols-3 mb-6 sm:mb-8 rounded-2xl bg-background/60 p-4 sm:p-5 border border-foreground/10">
+                        {project.problem && <div><dt className="text-xs font-semibold uppercase tracking-wider text-primary mb-2">Problem</dt><dd className="text-sm leading-relaxed text-foreground/85">{project.problem}</dd></div>}
+                        {project.role && <div><dt className="text-xs font-semibold uppercase tracking-wider text-primary mb-2">My role</dt><dd className="text-sm leading-relaxed text-foreground/85">{project.role}</dd></div>}
+                        {project.highlight && <div><dt className="text-xs font-semibold uppercase tracking-wider text-primary mb-2">{project.highlightLabel || 'Outcome'}</dt><dd className="text-sm leading-relaxed text-foreground/85">{project.highlight}</dd></div>}
+                      </dl>
+                    )}
+
+                    <p className="text-base sm:text-lg text-muted-foreground mb-6 sm:mb-8 leading-relaxed">
                       {project.description}
                     </p>
 
@@ -141,11 +149,12 @@ export default async function ProjectDetail({ params }: { params: Promise<{ slug
                         Tech Stack
                       </h3>
                       <div className="flex flex-wrap gap-2">
-                        {project.tech.map((tech) => (
+                        {project.tech.slice(0, 6).map((tech) => (
                           <span key={tech} className="px-3 py-1.5 text-sm glass rounded-lg text-foreground/80 font-medium border border-foreground/10">
                             {tech}
                           </span>
                         ))}
+                        {project.tech.length > 6 && <span className="px-3 py-1.5 text-sm text-muted-foreground">+{project.tech.length - 6} more technologies</span>}
                       </div>
                     </div>
 
@@ -223,7 +232,7 @@ export default async function ProjectDetail({ params }: { params: Promise<{ slug
                   </div>
                 )}
 
-                <div className="prose-custom">
+                <div className="prose-custom" data-article-content>
                   <MDXRemote 
                     source={project.content} 
                     components={MDXComponents} 
@@ -238,7 +247,7 @@ export default async function ProjectDetail({ params }: { params: Promise<{ slug
                   Interested in This Project?
                 </h3>
                 <p className="text-muted-foreground mb-6">
-                  Let's discuss how I can help with your next project
+                  Let&apos;s discuss how I can help with your next project
                 </p>
                 <Link
                   href="/contact"

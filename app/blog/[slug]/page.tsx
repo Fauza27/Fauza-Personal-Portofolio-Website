@@ -1,9 +1,9 @@
 import { ClientLayout } from '@/components/ClientLayout';
-import { getBlogPost, getBlogPosts } from '@/lib/mdx';
+import { getBlogPost, getBlogPosts, toBlogSummary } from '@/lib/mdx';
 import { SITE_CONFIG } from '@/lib/config';
 import { JsonLd } from '@/components/JsonLd';
 import { notFound } from 'next/navigation';
-import { Calendar, Clock, User, Share2, ArrowLeft } from 'lucide-react';
+import { Calendar, Clock, User, ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 import { MDXRemote } from 'next-mdx-remote/rsc';
 import remarkGfm from 'remark-gfm';
@@ -64,7 +64,7 @@ export default async function BlogPost({ params }: { params: Promise<{ slug: str
   }
 
   // Fetch all blog posts for navigation
-  const allPosts = await getBlogPosts();
+  const allPosts = (await getBlogPosts()).map(toBlogSummary);
 
   const articleJsonLd = {
     "@context": "https://schema.org",
@@ -91,12 +91,12 @@ export default async function BlogPost({ params }: { params: Promise<{ slug: str
       {/* Reading Progress Bar */}
       <ReadingProgress />
 
-      <main className="pt-20 sm:pt-24 pb-32 sm:pb-48">
+      <main id="main-content" className="pt-16 sm:pt-10 pb-32 sm:pb-48">
         {/* Container with Sidebar */}
         <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex gap-8 justify-center">
             {/* Left Sidebar - Table of Contents */}
-            <aside className="hidden xl:flex flex-col gap-6 shrink-0 sticky top-24 h-fit">
+            <aside className="hidden 2xl:flex flex-col gap-6 shrink-0 sticky top-24 h-fit">
               <Link
                 href="/blog"
                 className="flex items-center gap-2 px-4 py-2 glass rounded-xl text-foreground/80 hover:text-foreground hover:bg-foreground/10 transition-all w-fit group"
@@ -108,7 +108,7 @@ export default async function BlogPost({ params }: { params: Promise<{ slug: str
             </aside>
 
             {/* Main Content - Centered */}
-            <div className="w-full max-w-4xl">
+            <div className="w-full min-w-0 max-w-4xl">
               {/* Article Header */}
               <article className="mb-8 sm:mb-12">
                 <div className="glass rounded-2xl sm:rounded-3xl p-6 sm:p-8 md:p-12">
@@ -133,7 +133,7 @@ export default async function BlogPost({ params }: { params: Promise<{ slug: str
                   </div>
 
                   {/* Title */}
-                  <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-foreground mb-6 leading-tight">
+                  <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground mb-6 leading-tight">
                     {post.title}
                   </h1>
                   
@@ -160,7 +160,7 @@ export default async function BlogPost({ params }: { params: Promise<{ slug: str
 
               {/* Article Content */}
               <div className="glass rounded-2xl sm:rounded-3xl p-6 sm:p-8 md:p-12 mb-8">
-                <div className="prose-custom">
+                <div className="prose-custom" data-article-content>
                   <MDXRemote 
                     source={post.content} 
                     components={MDXComponents} 
@@ -199,7 +199,7 @@ export default async function BlogPost({ params }: { params: Promise<{ slug: str
                   Found This Helpful?
                 </h3>
                 <p className="text-muted-foreground mb-6">
-                  Let's connect and discuss your next project
+                  Let&apos;s connect and discuss your next project
                 </p>
                 <Link
                   href="/contact"

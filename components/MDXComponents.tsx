@@ -31,20 +31,17 @@ export const MDXComponents = {
     </p>
   ),
   ul: ({ children }: { children: ReactNode }) => (
-    <ul className="space-y-3 mb-8 ml-0 bg-foreground/[0.03] rounded-xl p-6 border border-foreground/10">
+    <ul className="list-disc space-y-3 mb-8 bg-foreground/[0.03] rounded-xl py-6 pl-10 pr-6 border border-foreground/10 marker:text-primary">
       {children}
     </ul>
   ),
   ol: ({ children }: { children: ReactNode }) => (
-    <ol className="space-y-3 mb-8 ml-0 bg-foreground/[0.03] rounded-xl p-6 border border-foreground/10 counter-reset-[item]">
+    <ol className="list-decimal space-y-3 mb-8 bg-foreground/[0.03] rounded-xl py-6 pl-10 pr-6 border border-foreground/10 marker:text-primary">
       {children}
     </ol>
   ),
   li: ({ children }: { children: ReactNode }) => (
-    <li className="text-base sm:text-lg text-foreground/80 leading-[1.8] flex items-start gap-3 ml-0 mb-2 last:mb-0">
-      <span className="text-primary mt-1.5 shrink-0 select-none text-lg">▸</span>
-      <span className="flex-1">{children}</span>
-    </li>
+    <li className="text-base sm:text-lg text-foreground/80 leading-[1.8] pl-1 mb-2 last:mb-0">{children}</li>
   ),
   blockquote: ({ children }: { children: ReactNode }) => (
     <blockquote className="relative border-l-4 border-primary/50 pl-6 pr-6 py-4 my-8 bg-primary/5 rounded-r-xl">

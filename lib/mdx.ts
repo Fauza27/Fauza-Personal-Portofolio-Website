@@ -3,6 +3,7 @@ import path from 'path';
 import matter from 'gray-matter';
 import { unstable_cache } from 'next/cache';
 import { z } from 'zod';
+import { estimateReadTime } from './read-time';
 
 const contentDirectory = path.join(process.cwd(), 'content');
 
@@ -13,7 +14,6 @@ const blogPostFrontmatterSchema = z.object({
   excerpt: z.string().min(1, 'Excerpt is required'),
   author: z.string().default('Muhammad Fauza'),
   tags: z.array(z.string()).default([]),
-  readTime: z.string().default('5 min read'),
   category: z.string().optional(),
   featured: z.boolean().optional(),
 });
@@ -99,7 +99,12 @@ export const getBlogPosts = unstable_cache(
       .map((file) => {
         try {
           const { data, content } = matter(fs.readFileSync(path.join(blogDir, file), 'utf8'));
-          return { slug: path.basename(file, '.mdx'), ...blogPostFrontmatterSchema.parse(data), content };
+          return {
+            slug: path.basename(file, '.mdx'),
+            ...blogPostFrontmatterSchema.parse(data),
+            readTime: estimateReadTime(content),
+            content,
+          };
         } catch (error) {
           console.error(`Error processing blog post ${file}:`, error);
           return null;
@@ -132,6 +137,7 @@ export async function getBlogPost(slug: string): Promise<BlogPost | null> {
     return {
       slug,
       ...validatedData,
+      readTime: estimateReadTime(content),
       content,
     };
   } catch (error) {

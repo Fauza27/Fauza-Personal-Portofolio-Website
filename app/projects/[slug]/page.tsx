@@ -13,6 +13,7 @@ import { FloatingBackButton } from '@/components/FloatingBackButton';
 import { ProjectNavigation } from '@/components/ProjectNavigation';
 import { ReadingProgress } from '@/components/ReadingProgress';
 import { YouTubeEmbed } from '@/components/YouTubeEmbed';
+import { getVideoThumbnail } from '@/lib/media';
 
 export async function generateStaticParams() {
   const projects = await getProjects();
@@ -31,6 +32,8 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     };
   }
 
+  const shareImage = project.cover || getVideoThumbnail(project) || '/me.jpg';
+
   return {
     title: `${project.title} - Muhammad Fauza`,
     description: project.description,
@@ -42,13 +45,13 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
       url: `/projects/${slug}`,
       title: project.title,
       description: project.description,
-      images: ['/me.jpg'],
+      images: [shareImage],
     },
     twitter: {
       card: 'summary_large_image',
       title: project.title,
       description: project.description,
-      images: ['/me.jpg'],
+      images: [shareImage],
     },
   };
 }
@@ -203,6 +206,7 @@ export default async function ProjectDetail({ params }: { params: Promise<{ slug
 
               {/* Project Content */}
               <div className="glass rounded-2xl sm:rounded-3xl p-6 sm:p-8 md:p-12 mb-8">
+                <TableOfContents compact />
                 {/* Video Section - Multiple Videos */}
                 {project.videos && project.videos.length > 0 && (
                   <div className="mb-8 sm:mb-12">

@@ -136,7 +136,7 @@ export function BlogClient({ posts }: BlogClientProps) {
         </section>
       )}
 
-      {/* Newsletter CTA */}
+      {/* Contact CTA */}
       <section className="max-w-6xl mx-auto px-4 sm:px-6 mt-16 sm:mt-20">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
@@ -148,10 +148,10 @@ export function BlogClient({ posts }: BlogClientProps) {
 
           <div className="relative z-10">
             <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground mb-4">
-              Want to Stay Updated?
+              Want to Discuss an Article?
             </h2>
             <p className="text-muted-foreground max-w-xl mx-auto mb-8">
-              Get notified when I publish new articles about web development, AI, and software engineering.
+              Have a question about a project or an idea to explore together? Send me a message.
             </p>
 
             <Link href="/contact">

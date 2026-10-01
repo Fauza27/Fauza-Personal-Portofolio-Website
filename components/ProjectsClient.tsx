@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 import { ArrowRight, ExternalLink, Github, Calendar } from 'lucide-react';
 import Link from 'next/link';
 import type { ProjectSummary } from '@/lib/mdx';
-import { getVideoThumbnail } from '@/components/ProjectGallery';
+import { getVideoThumbnail } from '@/lib/media';
 
 interface ProjectsClientProps {
   projects: ProjectSummary[];

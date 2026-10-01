@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { motion } from 'framer-motion';
 
 interface TOCItem {
   id: string;
@@ -9,7 +8,7 @@ interface TOCItem {
   level: number;
 }
 
-export function TableOfContents() {
+export function TableOfContents({ compact = false }: { compact?: boolean }) {
   const [headings, setHeadings] = useState<TOCItem[]>([]);
   const [activeId, setActiveId] = useState<string>('');
 
@@ -65,41 +64,39 @@ export function TableOfContents() {
 
   if (headings.length === 0) return null;
 
+  const items = (
+    <ul className="space-y-2">
+      {headings.map((heading) => (
+        <li key={heading.id}>
+          <button
+            onClick={() => scrollToHeading(heading.id)}
+            className={`text-left w-full text-sm transition-colors py-1 px-2 rounded-lg ${heading.level === 3 ? 'pl-6' : ''} ${activeId === heading.id ? 'text-foreground font-semibold bg-foreground/5' : 'text-muted-foreground hover:text-foreground hover:bg-foreground/5'}`}
+          >
+            {heading.text}
+          </button>
+        </li>
+      ))}
+    </ul>
+  );
+
+  if (compact) {
+    return (
+      <nav aria-label="Article sections" className="2xl:hidden mb-6">
+        <details className="rounded-xl border border-foreground/15 bg-foreground/5">
+          <summary className="cursor-pointer px-4 py-3 text-sm font-semibold text-foreground">On this page · {headings.length} sections</summary>
+          <div className="max-h-72 overflow-y-auto border-t border-foreground/10 p-3">{items}</div>
+        </details>
+      </nav>
+    );
+  }
+
   return (
-    <nav className="w-64">
+    <nav aria-label="Article sections" className="w-64">
       <div className="glass rounded-2xl p-6 max-h-[calc(100vh-180px)] overflow-y-auto">
         <h4 className="text-sm font-bold text-foreground uppercase tracking-wider mb-4">
           On This Page
         </h4>
-        <ul className="space-y-2">
-          {headings.map((heading) => (
-            <li key={heading.id}>
-              <button
-                onClick={() => scrollToHeading(heading.id)}
-                className={`
-                  text-left w-full text-sm transition-all duration-200 py-1 px-2 rounded-lg
-                  ${heading.level === 3 ? 'pl-6' : ''}
-                  ${
-                    activeId === heading.id
-                      ? 'text-foreground font-semibold bg-foreground/5'
-                      : 'text-muted-foreground hover:text-foreground hover:bg-foreground/5'
-                  }
-                `}
-              >
-                <span className="flex items-center gap-2 relative">
-                  {activeId === heading.id && (
-                    <motion.span
-                      layoutId="active-indicator"
-                      className="absolute -left-3 w-1 h-4 bg-primary rounded-full shrink-0"
-                      transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-                    />
-                  )}
-                  <span className="line-clamp-2">{heading.text}</span>
-                </span>
-              </button>
-            </li>
-          ))}
-        </ul>
+        {items}
       </div>
     </nav>
   );

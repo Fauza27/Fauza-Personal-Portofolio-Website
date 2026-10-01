@@ -1,5 +1,5 @@
 import { ClientLayout } from '@/components/ClientLayout';
-import { getBlogPost, getBlogPosts, toBlogSummary } from '@/lib/mdx';
+import { getBlogPost, getBlogPosts, getProject, toBlogSummary } from '@/lib/mdx';
 import { SITE_CONFIG } from '@/lib/config';
 import { JsonLd } from '@/components/JsonLd';
 import { notFound } from 'next/navigation';
@@ -13,6 +13,13 @@ import { FloatingBackButton } from '@/components/FloatingBackButton';
 import { ReadingProgress } from '@/components/ReadingProgress';
 import { BlogNavigation } from '@/components/BlogNavigation';
 import { ShareButton } from '@/components/ShareButton';
+import { getVideoThumbnail } from '@/lib/media';
+
+const projectSlugs: Record<string, string> = {
+  'sentinel-predictive-maintenance': 'sentinel',
+  'food-recommendation-chatbot': 'food-chatbot',
+  'customer-churn-prediction': 'customer-churn',
+};
 
 export async function generateStaticParams() {
   const posts = await getBlogPosts();
@@ -24,6 +31,7 @@ export async function generateStaticParams() {
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const post = await getBlogPost(slug);
+  const relatedProject = await getProject(projectSlugs[slug] ?? slug);
   
   if (!post) {
     return {
@@ -44,13 +52,13 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
       description: post.excerpt,
       publishedTime: post.date,
       authors: [post.author],
-      images: ['/me.jpg'],
+      images: [relatedProject?.cover || (relatedProject && getVideoThumbnail(relatedProject)) || '/me.jpg'],
     },
     twitter: {
       card: 'summary_large_image',
       title: post.title,
       description: post.excerpt,
-      images: ['/me.jpg'],
+      images: [relatedProject?.cover || (relatedProject && getVideoThumbnail(relatedProject)) || '/me.jpg'],
     },
   };
 }
@@ -62,6 +70,8 @@ export default async function BlogPost({ params }: { params: Promise<{ slug: str
   if (!post) {
     notFound();
   }
+
+  const relatedProject = await getProject(projectSlugs[slug] ?? slug);
 
   // Fetch all blog posts for navigation
   const allPosts = (await getBlogPosts()).map(toBlogSummary);
@@ -133,34 +143,37 @@ export default async function BlogPost({ params }: { params: Promise<{ slug: str
                   </div>
 
                   {/* Title */}
-                  <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground mb-6 leading-tight">
+                  <h1 className="text-2xl sm:text-4xl lg:text-5xl font-bold text-foreground mb-5 leading-tight">
                     {post.title}
                   </h1>
                   
                   {/* Excerpt */}
-                  <p className="text-lg sm:text-xl text-muted-foreground mb-6 leading-relaxed">
+                  <p className="text-base sm:text-xl text-muted-foreground mb-5 leading-relaxed">
                     {post.excerpt}
                   </p>
 
                   {/* Tags */}
-                  <div className="flex flex-wrap gap-2 mb-6 pb-6 border-b border-foreground/10">
-                    {post.tags.map((tag) => (
+                  <div className="flex flex-wrap gap-2 mb-5 pb-5 border-b border-foreground/10">
+                    {post.tags.slice(0, 3).map((tag) => (
                       <span key={tag} className="px-3 py-1.5 text-sm glass rounded-lg text-primary font-medium">
                         #{tag}
                       </span>
                     ))}
+                    {post.tags.length > 3 && <span className="px-3 py-1.5 text-sm text-muted-foreground">+{post.tags.length - 3} topics</span>}
                   </div>
 
                   {/* Share Button */}
                   <div className="flex items-center gap-3">
                     <ShareButton title={post.title} />
+                    {relatedProject && <Link href={`/projects/${relatedProject.slug}`} className="text-sm font-semibold text-primary hover:underline">View project case study →</Link>}
                   </div>
                 </div>
               </article>
 
               {/* Article Content */}
               <div className="glass rounded-2xl sm:rounded-3xl p-6 sm:p-8 md:p-12 mb-8">
-                <div className="prose-custom" data-article-content>
+                <TableOfContents compact />
+                <div className="prose-custom max-w-3xl mx-auto" data-article-content>
                   <MDXRemote 
                     source={post.content} 
                     components={MDXComponents} 
@@ -168,6 +181,14 @@ export default async function BlogPost({ params }: { params: Promise<{ slug: str
                   />
                 </div>
               </div>
+
+              {relatedProject && (
+                <div className="glass rounded-2xl p-6 sm:p-8 mb-8">
+                  <h2 className="text-xl sm:text-2xl font-bold text-foreground mb-3">See the project behind this article</h2>
+                  <p className="text-muted-foreground mb-4">Explore the architecture, evaluation, demo, and source code for {relatedProject.title}.</p>
+                  <Link href={`/projects/${relatedProject.slug}`} className="inline-flex rounded-xl bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground hover:bg-primary/90">View case study</Link>
+                </div>
+              )}
 
               {/* Author Bio */}
               <div className="glass rounded-2xl sm:rounded-3xl p-6 sm:p-8 mb-8">

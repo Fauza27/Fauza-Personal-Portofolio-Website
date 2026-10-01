@@ -1,6 +1,3 @@
-'use client';
-
-import { motion } from 'framer-motion';
 import { ArrowRight, ExternalLink, Github, Calendar, FolderKanban } from 'lucide-react';
 import Link from 'next/link';
 import type { ProjectSummary } from '@/lib/mdx';
@@ -10,29 +7,12 @@ interface ProjectsClientProps {
   projects: ProjectSummary[];
 }
 
-const containerVariants = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: { staggerChildren: 0.1 },
-  },
-};
-
-const itemVariants = {
-  hidden: { opacity: 0, y: 30 },
-  visible: { opacity: 1, y: 0 },
-};
-
 export function ProjectsClient({ projects }: ProjectsClientProps) {
   return (
     <main id="main-content" className="pt-14 sm:pt-10 pb-24 sm:pb-32">
       {/* Hero Section */}
       <section className="max-w-6xl mx-auto px-4 sm:px-6 mb-10 sm:mb-14">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="text-center max-w-3xl mx-auto"
-        >
+        <div className="text-center max-w-3xl mx-auto">
           <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold mb-4 sm:mb-6">
             <span className="text-gradient">AI Projects</span> Built
             <br />
@@ -42,28 +22,20 @@ export function ProjectsClient({ projects }: ProjectsClientProps) {
           <p className="text-base sm:text-xl text-muted-foreground max-w-2xl mx-auto">
             Explore the problems, my contributions, and the working demos behind each AI and machine learning project.
           </p>
-        </motion.div>
+        </div>
       </section>
 
       {/* Projects Grid */}
       <section className="max-w-6xl mx-auto px-4 sm:px-6">
-        <motion.div
-          className="grid gap-6 md:grid-cols-2"
-          variants={containerVariants}
-          initial="hidden"
-          animate="visible"
-        >
+        <div className="grid gap-6 md:grid-cols-2">
           {projects.map((project, index) => {
             const isFeatured = index === 0 && projects.length % 2 === 1;
             const preview = project.cover || getVideoThumbnail(project);
 
             return (
-            <motion.div
+            <div
               key={project.slug}
-              variants={itemVariants}
-              whileHover={{ y: -8 }}
-              transition={{ type: "spring", stiffness: 300 }}
-              className={`relative ${isFeatured ? 'md:col-span-2' : ''}`}
+              className={`relative transition-transform duration-200 hover:-translate-y-1 ${isFeatured ? 'md:col-span-2' : ''}`}
             >
               <div className={`glass rounded-2xl sm:rounded-3xl p-5 sm:p-6 h-full relative overflow-hidden group flex flex-col ${isFeatured ? 'lg:flex-row lg:gap-7' : ''}`}>
                 {/* Background gradient on hover */}
@@ -102,12 +74,9 @@ export function ProjectsClient({ projects }: ProjectsClientProps) {
                       </Link>
                     </div>
                     <Link href={`/projects/${project.slug}`}>
-                      <motion.div
-                        className="p-2.5 glass rounded-xl opacity-0 group-hover:opacity-100 transition-opacity"
-                        whileHover={{ scale: 1.1, rotate: 45 }}
-                      >
+                      <div className="p-2.5 glass rounded-xl opacity-0 group-hover:opacity-100 transition-opacity">
                         <ArrowRight size={20} className="text-primary" />
-                      </motion.div>
+                      </div>
                     </Link>
                   </div>
 
@@ -138,12 +107,9 @@ export function ProjectsClient({ projects }: ProjectsClientProps) {
                   {/* Action Buttons */}
                   <div className="mt-auto flex items-center gap-3">
                     <Link href={`/projects/${project.slug}`}>
-                      <motion.div
-                        className="flex items-center gap-2 text-sm font-medium text-primary"
-                        whileHover={{ x: 5 }}
-                      >
+                      <div className="flex items-center gap-2 text-sm font-medium text-primary">
                         View Case Study <ArrowRight size={16} />
-                      </motion.div>
+                      </div>
                     </Link>
                     <div className="flex gap-2 ml-auto">
                       {project.github ? (
@@ -182,19 +148,14 @@ export function ProjectsClient({ projects }: ProjectsClientProps) {
                   </div>
                 </div>
               </div>
-            </motion.div>
+            </div>
           )})}
-        </motion.div>
+        </div>
       </section>
 
       {/* CTA Section */}
       <section className="max-w-6xl mx-auto px-4 sm:px-6 mt-16 sm:mt-20">
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="glass rounded-2xl sm:rounded-3xl p-8 sm:p-12 text-center relative overflow-hidden"
-        >
+        <div className="glass rounded-2xl sm:rounded-3xl p-8 sm:p-12 text-center relative overflow-hidden">
           <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-accent/10" />
           
           <div className="relative z-10">
@@ -205,17 +166,11 @@ export function ProjectsClient({ projects }: ProjectsClientProps) {
               I&apos;m always open to discussing new projects, creative ideas, or opportunities to be part of your vision.
             </p>
             
-            <Link href="/contact">
-              <motion.button
-                className="px-8 py-4 bg-primary text-primary-foreground rounded-xl font-medium text-lg"
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.98 }}
-              >
-                Let&apos;s Talk
-              </motion.button>
+            <Link href="/contact" className="inline-block px-8 py-4 bg-primary text-primary-foreground rounded-xl font-medium text-lg transition-transform duration-200 hover:scale-105">
+              Let&apos;s Talk
             </Link>
           </div>
-        </motion.div>
+        </div>
       </section>
     </main>
   );

@@ -8,38 +8,14 @@ import { SITE_CONFIG } from '@/lib/config';
 
 const techStack = SITE_CONFIG.techStack;
 
-const containerVariants = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.1,
-      delayChildren: 0.2,
-    },
-  },
-};
-
-const itemVariants = {
-  hidden: { opacity: 0, y: 20, scale: 0.95 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    scale: 1,
-  },
-};
-
 export const BentoGrid = ({ projectCount }: { projectCount?: number }) => {
   return (
     <motion.div
       className="bento-grid max-w-6xl mx-auto px-4 sm:px-6"
-      variants={containerVariants}
-      initial="hidden"
-      animate="visible"
     >
       {/* Hero Card - 2x2 on desktop, full width on mobile */}
       <motion.div
         className="col-span-1 sm:col-span-2 row-span-1 sm:row-span-2 glass rounded-2xl sm:rounded-3xl p-6 sm:p-8 flex flex-col justify-between relative overflow-hidden group min-h-[280px] sm:min-h-0"
-        variants={itemVariants}
         whileHover={{ scale: 1.02 }}
         transition={{ type: "spring", stiffness: 300 }}
       >
@@ -83,7 +59,6 @@ export const BentoGrid = ({ projectCount }: { projectCount?: number }) => {
       {/* Profile Photo Card - hidden on mobile, shown on tablet+ */}
       <motion.div
         className="hidden sm:flex col-span-1 row-span-2 glass rounded-2xl sm:rounded-3xl p-6 items-center justify-center relative overflow-hidden group"
-        variants={itemVariants}
         whileHover={{ scale: 1.02 }}
       >
         <div className="absolute inset-0 bg-linear-to-br from-primary/10 to-accent/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
@@ -114,7 +89,6 @@ export const BentoGrid = ({ projectCount }: { projectCount?: number }) => {
       {/* Current what i build Card */}
       <motion.div
         className="col-span-1 row-span-1 glass rounded-2xl sm:rounded-3xl p-5 sm:p-6 flex flex-col justify-between min-h-[120px] relative overflow-hidden group"
-        variants={itemVariants}
         whileHover={{ scale: 1.02 }}
       >
         <div className="absolute inset-0 bg-linear-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
@@ -133,7 +107,6 @@ export const BentoGrid = ({ projectCount }: { projectCount?: number }) => {
       {/* Education Card */}
       <motion.div
         className="col-span-1 row-span-1 glass rounded-2xl sm:rounded-3xl p-5 sm:p-6 flex flex-col justify-between min-h-[120px] relative overflow-hidden group"
-        variants={itemVariants}
         whileHover={{ scale: 1.02 }}
       >
         <div className="absolute inset-0 bg-linear-to-br from-accent/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
@@ -152,7 +125,6 @@ export const BentoGrid = ({ projectCount }: { projectCount?: number }) => {
       {/* Projects Count Card */}
       <motion.div
         className="col-span-1 row-span-1 glass rounded-2xl sm:rounded-3xl p-5 sm:p-6 flex flex-col justify-center items-center text-center min-h-[120px] relative overflow-hidden group"
-        variants={itemVariants}
         whileHover={{ scale: 1.02 }}
       >
         <div className="absolute inset-0 bg-linear-to-br from-primary/5 to-accent/5 opacity-0 group-hover:opacity-100 transition-opacity" />
@@ -168,7 +140,6 @@ export const BentoGrid = ({ projectCount }: { projectCount?: number }) => {
       {/* Tech Stack Card - Wide */}
       <motion.div
         className="col-span-1 sm:col-span-2 lg:col-span-3 row-span-1 glass rounded-2xl sm:rounded-3xl p-5 sm:p-6 overflow-hidden relative"
-        variants={itemVariants}
         whileHover={{ scale: 1.01 }}
       >
         <div className="flex items-center gap-2 mb-3 sm:mb-4">

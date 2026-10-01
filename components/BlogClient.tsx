@@ -1,6 +1,3 @@
-'use client';
-
-import { motion } from 'framer-motion';
 import { Calendar, Clock, ArrowRight, Sparkles } from 'lucide-react';
 import Link from 'next/link';
 import type { BlogSummary } from '@/lib/mdx';
@@ -9,29 +6,12 @@ interface BlogClientProps {
   posts: BlogSummary[];
 }
 
-const containerVariants = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: { staggerChildren: 0.1 },
-  },
-};
-
-const itemVariants = {
-  hidden: { opacity: 0, y: 30 },
-  visible: { opacity: 1, y: 0 },
-};
-
 export function BlogClient({ posts }: BlogClientProps) {
   return (
     <main id="main-content" className="pt-16 sm:pt-10 pb-24 sm:pb-32">
       {/* Hero Section */}
       <section className="max-w-6xl mx-auto px-4 sm:px-6 mb-12 sm:mb-16">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="text-center max-w-3xl mx-auto"
-        >
+        <div className="text-center max-w-3xl mx-auto">
           <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold mb-4 sm:mb-6">
             <span className="text-foreground">Notes on Building</span>
             <br />
@@ -41,25 +21,15 @@ export function BlogClient({ posts }: BlogClientProps) {
           <p className="text-lg sm:text-xl text-muted-foreground max-w-2xl mx-auto">
             The decisions, tradeoffs, and lessons behind my AI and software projects.
           </p>
-        </motion.div>
+        </div>
       </section>
 
       {/* Posts Grid */}
       {posts.length > 0 && (
         <section className="max-w-6xl mx-auto px-4 sm:px-6">
-          <motion.div
-            className="grid gap-6 md:grid-cols-2 lg:grid-cols-3"
-            variants={containerVariants}
-            initial="hidden"
-            animate="visible"
-          >
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {posts.map((post) => (
-              <motion.div
-                key={post.slug}
-                variants={itemVariants}
-                whileHover={{ y: -8 }}
-                transition={{ type: "spring", stiffness: 300 }}
-              >
+              <div key={post.slug} className="transition-transform duration-200 hover:-translate-y-1">
                 <Link href={`/blog/${post.slug}`}>
                   <article className="glass rounded-2xl p-6 h-full relative overflow-hidden cursor-pointer group">
                     <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-accent/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
@@ -101,29 +71,22 @@ export function BlogClient({ posts }: BlogClientProps) {
                         )}
                       </div>
 
-                      <motion.div
-                        className="flex items-center gap-2 text-sm text-primary font-medium"
-                        whileHover={{ x: 5 }}
-                      >
+                      <div className="flex items-center gap-2 text-sm text-primary font-medium">
                         Read More <ArrowRight size={14} />
-                      </motion.div>
+                      </div>
                     </div>
                   </article>
                 </Link>
-              </motion.div>
+              </div>
             ))}
-          </motion.div>
+          </div>
         </section>
       )}
 
       {/* Empty State */}
       {posts.length === 0 && (
         <section className="max-w-6xl mx-auto px-4 sm:px-6">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="glass rounded-2xl sm:rounded-3xl p-12 sm:p-20 text-center"
-          >
+          <div className="glass rounded-2xl sm:rounded-3xl p-12 sm:p-20 text-center">
             <Sparkles size={48} className="mx-auto mb-6 text-primary" />
             <h2 className="text-2xl sm:text-3xl font-bold text-foreground mb-4">
               More Content Coming Soon
@@ -132,18 +95,13 @@ export function BlogClient({ posts }: BlogClientProps) {
               I&apos;m working on exciting new articles about web development, AI, and software engineering.
               Check back soon for fresh insights!
             </p>
-          </motion.div>
+          </div>
         </section>
       )}
 
       {/* Contact CTA */}
       <section className="max-w-6xl mx-auto px-4 sm:px-6 mt-16 sm:mt-20">
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="glass rounded-2xl sm:rounded-3xl p-8 sm:p-12 text-center relative overflow-hidden"
-        >
+        <div className="glass rounded-2xl sm:rounded-3xl p-8 sm:p-12 text-center relative overflow-hidden">
           <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-accent/10" />
 
           <div className="relative z-10">
@@ -154,17 +112,11 @@ export function BlogClient({ posts }: BlogClientProps) {
               Have a question about a project or an idea to explore together? Send me a message.
             </p>
 
-            <Link href="/contact">
-              <motion.button
-                className="px-8 py-4 bg-primary text-primary-foreground rounded-xl font-medium text-lg"
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.98 }}
-              >
-                Get in Touch
-              </motion.button>
+            <Link href="/contact" className="inline-block px-8 py-4 bg-primary text-primary-foreground rounded-xl font-medium text-lg transition-transform duration-200 hover:scale-105">
+              Get in Touch
             </Link>
           </div>
-        </motion.div>
+        </div>
       </section>
     </main>
   );

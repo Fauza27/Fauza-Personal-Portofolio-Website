@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import dynamic from 'next/dynamic';
+import { usePathname, useRouter } from 'next/navigation';
 import { AuroraBackground } from './AuroraBackground';
 import { FloatingDock } from './FloatingDock';
 import type { SearchableItem } from './CommandPalette';
@@ -19,6 +20,24 @@ interface ClientLayoutProps {
 
 export function ClientLayout({ children, searchItems, compactDock = false }: ClientLayoutProps) {
   const [isCommandOpen, setIsCommandOpen] = useState(false);
+  const pathname = usePathname();
+  const router = useRouter();
+
+  useEffect(() => {
+    const mainRoutes = ['/', '/projects', '/blog'];
+    if (!mainRoutes.includes(pathname)) return;
+
+    const destinations = mainRoutes.filter((route) => route !== pathname);
+    const prefetch = () => destinations.forEach((route) => router.prefetch(route));
+
+    if (typeof window.requestIdleCallback === 'function') {
+      const id = window.requestIdleCallback(prefetch, { timeout: 1500 });
+      return () => window.cancelIdleCallback(id);
+    }
+
+    const timer = setTimeout(prefetch, 300);
+    return () => clearTimeout(timer);
+  }, [pathname, router]);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {

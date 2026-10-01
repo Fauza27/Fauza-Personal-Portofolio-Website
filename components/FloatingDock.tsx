@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Home, FolderKanban, FileText, User, Mail, Search } from "lucide-react";
+import { Home, FolderKanban, FileText, User, Mail, Search, Menu, X } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState, useRef } from "react";
 import { ThemeToggle } from "./ThemeToggle";
@@ -54,13 +54,15 @@ const DockItem = ({ icon, label, isActive, onClick }: DockItemProps) => {
 
 interface FloatingDockProps {
   onOpenSearch: () => void;
+  compact?: boolean;
 }
 
-export const FloatingDock = ({ onOpenSearch }: FloatingDockProps) => {
+export const FloatingDock = ({ onOpenSearch, compact = false }: FloatingDockProps) => {
   const pathname = usePathname();
   const router = useRouter();
   const [activeHash, setActiveHash] = useState("");
   const [isHovered, setIsHovered] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
   const hoverTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const handleMouseEnter = () => {
@@ -79,6 +81,15 @@ export const FloatingDock = ({ onOpenSearch }: FloatingDockProps) => {
       if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current);
     };
   }, []);
+
+  useEffect(() => {
+    if (!compact || !isOpen) return;
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setIsOpen(false);
+    };
+    window.addEventListener('keydown', closeOnEscape);
+    return () => window.removeEventListener('keydown', closeOnEscape);
+  }, [compact, isOpen]);
 
   const isDetailPage = pathname.startsWith('/blog/') || pathname.startsWith('/projects/');
   const shouldEnlarge = !isDetailPage || isHovered;
@@ -124,6 +135,7 @@ export const FloatingDock = ({ onOpenSearch }: FloatingDockProps) => {
   }, [pathname]);
 
   const handleNavClick = (path: string) => {
+    setIsOpen(false);
     if (pathname === "/" && path.startsWith("/#")) {
       const hash = path.replace("/", "");
       setActiveHash(hash);
@@ -143,14 +155,29 @@ export const FloatingDock = ({ onOpenSearch }: FloatingDockProps) => {
 
   const navItems = [
     { icon: <Home size={20} />, label: "Home", path: "/" },
-    { icon: <User size={20} />, label: "About", path: "/#about" },
-    { icon: <FolderKanban size={20} />, label: "Projects", path: "/#projects" },
-    { icon: <FileText size={20} />, label: "Blog", path: "/#blog" },
-    { icon: <Mail size={20} />, label: "Contact", path: "/#contact" },
+    { icon: <User size={20} />, label: "About", path: pathname === "/" ? "/#about" : "/about" },
+    { icon: <FolderKanban size={20} />, label: "Projects", path: pathname === "/" ? "/#projects" : "/projects" },
+    { icon: <FileText size={20} />, label: "Blog", path: pathname === "/" ? "/#blog" : "/blog" },
+    { icon: <Mail size={20} />, label: "Contact", path: pathname === "/" ? "/#contact" : "/contact" },
   ];
 
   return (
-    <motion.nav
+    <>
+    {compact && !isOpen && (
+      <button
+        type="button"
+        onClick={() => setIsOpen(true)}
+        aria-label="Open navigation"
+        aria-expanded={false}
+        aria-controls="site-navigation-dock"
+        className="fixed bottom-4 left-4 z-50 flex h-11 w-11 items-center justify-center rounded-2xl border border-white/15 glass-strong text-foreground shadow-xl hover:text-primary"
+      >
+        <Menu size={21} />
+      </button>
+    )}
+    {(!compact || isOpen) && <motion.nav
+      id="site-navigation-dock"
+      aria-label="Site navigation"
       className="fixed bottom-2 sm:bottom-6 left-1/2 -translate-x-1/2 z-50 origin-bottom max-w-[calc(100vw-1rem)]"
       initial={{ y: 100, opacity: 0, scale: isDetailPage ? 0.85 : 1 }}
       animate={{
@@ -167,7 +194,7 @@ export const FloatingDock = ({ onOpenSearch }: FloatingDockProps) => {
           const isActive =
             item.path.startsWith("/#")
               ? activeHash === item.path.slice(1)
-              : pathname === item.path && (item.path !== "/" || !activeHash || activeHash === "#home");
+              : (pathname === item.path || pathname.startsWith(`${item.path}/`)) && (item.path !== "/" || !activeHash || activeHash === "#home");
 
           return (
             <DockItem
@@ -199,6 +226,11 @@ export const FloatingDock = ({ onOpenSearch }: FloatingDockProps) => {
           </span>
         </motion.button>
         <ThemeToggle />
+        {compact && (
+          <button type="button" onClick={() => setIsOpen(false)} aria-label="Close navigation" className="flex h-9 w-9 sm:h-14 sm:w-14 items-center justify-center rounded-xl sm:rounded-3xl bg-white/5 text-foreground/70 hover:text-foreground">
+            <X size={20} />
+          </button>
+        )}
       </div>
 
       <div className="hidden sm:block text-center mt-2">
@@ -206,6 +238,7 @@ export const FloatingDock = ({ onOpenSearch }: FloatingDockProps) => {
           Press ⌘K to search
         </span>
       </div>
-    </motion.nav>
+    </motion.nav>}
+    </>
   );
 };

@@ -14,9 +14,10 @@ const CommandPalette = dynamic(() => import('./CommandPalette').then((module) =>
 interface ClientLayoutProps {
   children: React.ReactNode;
   searchItems?: SearchableItem[];
+  compactDock?: boolean;
 }
 
-export function ClientLayout({ children, searchItems }: ClientLayoutProps) {
+export function ClientLayout({ children, searchItems, compactDock = false }: ClientLayoutProps) {
   const [isCommandOpen, setIsCommandOpen] = useState(false);
 
   useEffect(() => {
@@ -42,7 +43,7 @@ export function ClientLayout({ children, searchItems }: ClientLayoutProps) {
       </a>
 
       <AuroraBackground />
-      <FloatingDock onOpenSearch={() => setIsCommandOpen(true)} />
+      <FloatingDock onOpenSearch={() => setIsCommandOpen(true)} compact={compactDock} />
       {isCommandOpen && (
         <CommandPalette
           isOpen={isCommandOpen}
@@ -50,7 +51,7 @@ export function ClientLayout({ children, searchItems }: ClientLayoutProps) {
           searchItems={searchItems}
         />
       )}
-      <AIChatLauncher />
+      <AIChatLauncher compact={compactDock} />
       {children}
     </>
   );

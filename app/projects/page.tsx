@@ -20,7 +20,7 @@ export default async function Projects() {
     .map(toProjectSummary);
 
   return (
-    <ClientLayout>
+    <ClientLayout compactDock>
       <ProjectsClient projects={projects} />
     </ClientLayout>
   );

@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { ArrowRight, ExternalLink, Github, Calendar } from 'lucide-react';
+import { ArrowRight, ExternalLink, Github, Calendar, FolderKanban } from 'lucide-react';
 import Link from 'next/link';
 import type { ProjectSummary } from '@/lib/mdx';
 import { getVideoThumbnail } from '@/lib/media';
@@ -25,9 +25,9 @@ const itemVariants = {
 
 export function ProjectsClient({ projects }: ProjectsClientProps) {
   return (
-    <main id="main-content" className="pt-16 sm:pt-10 pb-24 sm:pb-32">
+    <main id="main-content" className="pt-14 sm:pt-10 pb-24 sm:pb-32">
       {/* Hero Section */}
-      <section className="max-w-6xl mx-auto px-4 sm:px-6 mb-12 sm:mb-16">
+      <section className="max-w-6xl mx-auto px-4 sm:px-6 mb-10 sm:mb-14">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -39,8 +39,8 @@ export function ProjectsClient({ projects }: ProjectsClientProps) {
             <span className="text-foreground">End to End</span>
           </h1>
           
-          <p className="text-lg sm:text-xl text-muted-foreground max-w-2xl mx-auto">
-            Explore the problems, my contributions, and the working demos behind each AI product.
+          <p className="text-base sm:text-xl text-muted-foreground max-w-2xl mx-auto">
+            Explore the problems, my contributions, and the working demos behind each AI and machine learning project.
           </p>
         </motion.div>
       </section>
@@ -53,32 +53,41 @@ export function ProjectsClient({ projects }: ProjectsClientProps) {
           initial="hidden"
           animate="visible"
         >
-          {projects.map((project) => (
+          {projects.map((project, index) => {
+            const isFeatured = index === 0 && projects.length % 2 === 1;
+            const preview = project.cover || getVideoThumbnail(project);
+
+            return (
             <motion.div
               key={project.slug}
               variants={itemVariants}
               whileHover={{ y: -8 }}
               transition={{ type: "spring", stiffness: 300 }}
-              className="relative"
+              className={`relative ${isFeatured ? 'md:col-span-2' : ''}`}
             >
-              <div className="glass rounded-2xl sm:rounded-3xl p-6 sm:p-8 h-full relative overflow-hidden cursor-pointer group">
+              <div className={`glass rounded-2xl sm:rounded-3xl p-5 sm:p-6 h-full relative overflow-hidden group flex flex-col ${isFeatured ? 'lg:flex-row lg:gap-7' : ''}`}>
                 {/* Background gradient on hover */}
                 <div className={`absolute inset-0 bg-gradient-to-br ${project.gradient} opacity-0 group-hover:opacity-100 transition-opacity duration-500`} />
                 
-                <div className="relative z-10">
-                  {(project.cover || getVideoThumbnail(project)) && (
-                    <Link href={`/projects/${project.slug}`} className="block mb-5 overflow-hidden rounded-xl focus-visible:outline-2 focus-visible:outline-primary" aria-label={`View ${project.title} case study`}>
-                      <div
-                        className="h-44 bg-cover bg-center transition-transform duration-300 group-hover:scale-[1.02]"
-                        style={{ backgroundImage: `linear-gradient(to top, rgba(17, 10, 34, .4), transparent), url("${project.cover || getVideoThumbnail(project)}")` }}
-                      />
-                    </Link>
+                <Link href={`/projects/${project.slug}`} className={`relative z-10 block mb-4 overflow-hidden rounded-xl focus-visible:outline-2 focus-visible:outline-primary ${isFeatured ? 'lg:mb-0 lg:w-[42%] lg:shrink-0' : ''}`} aria-label={`View ${project.title} case study`}>
+                  {preview ? (
+                    <div
+                      className={`h-32 sm:h-40 bg-cover bg-center transition-transform duration-300 group-hover:scale-[1.02] ${isFeatured ? 'lg:h-full lg:min-h-72' : ''}`}
+                      style={{ backgroundImage: `linear-gradient(to top, rgba(17, 10, 34, .4), transparent), url("${preview}")` }}
+                    />
+                  ) : (
+                    <div className={`h-32 sm:h-40 flex items-center justify-center gap-3 bg-linear-to-br ${project.gradient} border border-foreground/10 ${isFeatured ? 'lg:h-full lg:min-h-72' : ''}`}>
+                      <FolderKanban size={28} aria-hidden="true" className="text-primary/75" />
+                      <span className="text-xs font-semibold uppercase tracking-[0.2em] text-foreground/65">Project case study</span>
+                    </div>
                   )}
+                </Link>
+                <div className="relative z-10 flex min-w-0 flex-1 flex-col">
                   {/* Header */}
                   <div className="flex items-start justify-between mb-4">
                     <div className="flex-1">
-                      <div className="flex items-center gap-3 mb-3">
-                        <span className="px-3 py-1 text-xs glass rounded-full text-primary font-medium uppercase tracking-wider">
+                      <div className="flex flex-wrap items-center gap-2 mb-3">
+                        <span className="px-2.5 py-1 text-[11px] glass rounded-full text-primary font-medium uppercase tracking-wider">
                           {project.category}
                         </span>
                         <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
@@ -87,7 +96,7 @@ export function ProjectsClient({ projects }: ProjectsClientProps) {
                         </div>
                       </div>
                       <Link href={`/projects/${project.slug}`}>
-                        <h3 className="text-2xl sm:text-3xl font-bold text-foreground mb-3 group-hover:text-primary transition-colors">
+                        <h3 className="text-xl sm:text-2xl font-bold text-foreground mb-2 group-hover:text-primary transition-colors">
                           {project.title}
                         </h3>
                       </Link>
@@ -104,30 +113,30 @@ export function ProjectsClient({ projects }: ProjectsClientProps) {
 
                   {/* Description */}
                   <Link href={`/projects/${project.slug}`}>
-                    <p className="text-muted-foreground mb-6 line-clamp-2 leading-relaxed">
+                    <p className="text-sm sm:text-base text-muted-foreground mb-4 line-clamp-2 leading-relaxed">
                       {project.description}
                     </p>
                   </Link>
 
                   {project.role && <p className="mb-2 text-sm text-foreground/85"><span className="font-semibold">My role:</span> {project.role}</p>}
-                  {project.highlight && <p className="mb-5 rounded-lg bg-primary/8 p-3 text-sm font-medium text-foreground">{project.highlight}</p>}
+                  {project.highlight && <p className="mb-4 rounded-lg bg-primary/8 px-3 py-2 text-sm font-medium text-foreground">{project.highlight}</p>}
 
                   {/* Tech Stack */}
-                  <div className="flex flex-wrap gap-2 mb-6 pb-6 border-b border-foreground/10">
-                    {project.tech.slice(0, 5).map((tech) => (
+                  <div className="flex flex-wrap gap-2 mb-4 pb-4 border-b border-foreground/10">
+                    {project.tech.slice(0, 4).map((tech) => (
                       <span key={tech} className="px-3 py-1.5 text-xs glass rounded-lg text-foreground/70 font-medium">
                         {tech}
                       </span>
                     ))}
-                    {project.tech.length > 5 && (
+                    {project.tech.length > 4 && (
                       <span className="px-3 py-1.5 text-xs glass rounded-lg text-muted-foreground">
-                        +{project.tech.length - 5}
+                        +{project.tech.length - 4}
                       </span>
                     )}
                   </div>
 
                   {/* Action Buttons */}
-                  <div className="flex items-center gap-3">
+                  <div className="mt-auto flex items-center gap-3">
                     <Link href={`/projects/${project.slug}`}>
                       <motion.div
                         className="flex items-center gap-2 text-sm font-medium text-primary"
@@ -174,7 +183,7 @@ export function ProjectsClient({ projects }: ProjectsClientProps) {
                 </div>
               </div>
             </motion.div>
-          ))}
+          )})}
         </motion.div>
       </section>
 

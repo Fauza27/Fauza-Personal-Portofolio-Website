@@ -4,7 +4,6 @@ date: "2026-06-07"
 excerpt: "How building a voice-powered receipt app for traditional market merchants taught me that the best engineering decision is often removing complexity, not adding it."
 author: "Muhammad Fauza"
 tags: ["AI", "Multimodal", "Gemini", "PWA", "Offline-First", "Next.js", "Product Design"]
-readTime: "14 min read"
 featured: true
 ---
 
@@ -83,7 +82,7 @@ No intermediate transcription step. No second API call. The model heard the audi
 }
 ```
 
-The latency was roughly half of the two-step pipeline. One request instead of two. One point of failure instead of two. And because the model heard the original audio directly-instead of working from an intermediate transcription-it made fewer errors on ambiguous pricing expressions.
+The new pipeline uses one request instead of two, reducing the number of network round trips and failure points. I did not run a controlled latency or accuracy benchmark, so the improvement here is architectural. The model also hears the original audio directly instead of relying on an intermediate transcription.
 
 I deleted the Whisper integration. I deleted the GPT-4 parsing logic. I replaced hundreds of lines of orchestration code with a single 84-line route handler.
 

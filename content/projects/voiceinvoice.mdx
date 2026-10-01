@@ -91,7 +91,7 @@ flowchart LR
 
 Problems with this approach:
 
-* **Two network requests** instead of one-double the latency on mobile networks.
+* **Two sequential network requests** instead of one, adding a round trip on mobile networks.
 * **Two points of failure**-if either service was down, the entire pipeline broke.
 * **Accumulated errors**-if Whisper misheard "lima belas ribu" as "lima ribu", the LLM would faithfully parse the wrong number.
 * **Higher cost**-paying for two separate API calls per transaction.
@@ -110,9 +110,9 @@ flowchart LR
     style Chosen fill:#dcfce7
 ```
 
-The result was dramatic:
+The simpler architecture removed a request from the critical path:
 
-* **~50% lower latency**-one API call instead of two.
+* **One fewer network round trip**-a latency benefit in principle, although a controlled timing comparison was not reported.
 * **Single point of truth**-the model hears the audio directly instead of relying on an intermediate transcription.
 * **Simpler codebase**-the entire AI logic fits in a single 84-line route handler.
 
@@ -320,7 +320,7 @@ The Next.js middleware implements Supabase Auth with intelligent routing:
 
 | Decision | Choice | Reason |
 |----------|--------|--------|
-| **AI Model** | Gemini 2.0 Flash (multimodal) | Single request: audio → transcription + JSON. ~50% faster than two-step pipeline |
+| **AI Model** | Gemini 2.0 Flash (multimodal) | Single request: audio → transcription + JSON; avoids a second network round trip |
 | **Offline Storage** | Dexie.js (IndexedDB) | Reliable client-side persistence with automatic sync |
 | **State Management** | Zustand | Lightweight, simple API for managing recording state, items, and offline status |
 | **MIME Handling** | Runtime fallback | `audio/webm;codecs=opus` → `audio/webm` for Safari compatibility |

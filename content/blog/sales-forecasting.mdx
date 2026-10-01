@@ -1,10 +1,9 @@
 ---
 title: "Sales Forecasting: When Simple Beats Complex"
 date: "2024-03-10"
-excerpt: "Systematic comparison of ARIMA vs Linear Regression for sales forecasting. Plot twist: the simple model won by 41%"
+excerpt: "On this sales dataset, Linear Regression achieved 41.4% lower RMSE than ARIMA, while Ridge had the lowest MAE."
 author: "Muhammad Fauza"
 tags: ["Time Series", "Forecasting", "Python", "ARIMA", "Linear Regression", "Streamlit"]
-readTime: "10 min read"
 featured: true
 ---
 
@@ -14,7 +13,7 @@ This was my second ML project in 2024, still learning time series analysis.
 
 **Expectation**: ARIMA (time series specialist) would crush Linear Regression (simple baseline).
 
-**Reality**: Linear Regression won by 41%.
+**Reality**: Linear Regression had 41.4% lower RMSE than ARIMA on this comparison.
 
 This taught me an important lesson: **model complexity doesn't always correlate with performance**.
 
@@ -161,7 +160,7 @@ print(f"LR RMSE: ${rmse:.2f}") # $4,792
 
 **Results**: MAE $3,726, RMSE $4,792.
 
-**Wait, what?** Linear Regression beat ARIMA by 41%.
+**Wait, what?** Linear Regression lowered RMSE by 41.4% and MAE by 35.8% relative to ARIMA.
 
 ## Why Did Linear Regression Win?
 
@@ -173,7 +172,7 @@ This is counterintuitive. ARIMA is a time series specialist, LR is just a simple
 ARIMA excels at capturing seasonal patterns. But this data has no clear seasonality. Weekly sales are relatively random.
 
 ### Short Time Series
-ARIMA needs sufficient data to learn patterns (typically 50+ observations). We only have 13 weeks. Not enough.
+With only 13 weekly observations, an ARIMA model with several parameters is difficult to assess reliably. The short holdout also makes every error metric sensitive to individual weeks.
 
 ### Linear Trend
 Sales have a slight upward trend. Linear Regression is perfect for capturing this. ARIMA might overfit.
@@ -212,17 +211,19 @@ print(f"Ridge RMSE: ${rmse:.2f}") # $5,049
 
 **Results**: MAE $3,676 (slight improvement), RMSE $5,049.
 
-Ridge has slightly higher RMSE but better generalization (less overfitting).
+Ridge has a slightly higher RMSE on this holdout. Regularization may help with overfitting, but this small evaluation cannot establish better generalization.
 
 ## Final Model Comparison
 
-| Model | MAE | RMSE | vs ARIMA |
+| Model | MAE | RMSE | RMSE reduction vs ARIMA |
 |-------|-----|------|----------|
 | ARIMA (5,1,0) | $5,800 | $8,178 | Baseline |
-| Linear Regression | $3,726 | $4,792 | 41% better |
-| Ridge (α=0.1) | $3,676 | $5,049 | **Best** |
+| Linear Regression | $3,726 | $4,792 | 41.4% |
+| Ridge (α=0.1) | $3,676 | $5,049 | 38.3% |
 
-**Winner**: Ridge Regression for production.
+Ridge had the lowest MAE, while Linear Regression had the lowest RMSE. Choosing between them requires deciding which error measure matters more for the product.
+
+**Evaluation limit**: A 90/10 chronological split of 13 weeks leaves only a small holdout. These figures are exploratory; I would use a longer history and rolling-origin backtesting before selecting a model for operational planning.
 
 ## Streamlit Dashboard
 
@@ -265,14 +266,14 @@ Deployed to Streamlit Cloud.
 
 **Action**: Increase inventory by 10% (with buffer for uncertainty).
 
-**Expected Impact**: Reduce stockouts by 30%.
+This is a planning recommendation; a reduction in stockouts has not been measured here.
 
 ### Staffing Optimization
 **Finding**: Peak hours 13:00-15:00 and 19:00-20:00.
 
 **Action**: Schedule more staff during peak hours, reduce during slow hours.
 
-**Expected Impact**: 20% improvement in labor efficiency.
+This is a planning recommendation; staffing efficiency after deployment has not been measured here.
 
 ## Lessons Learned
 
@@ -280,7 +281,7 @@ Deployed to Streamlit Cloud.
 Don't assume ARIMA is always best for time series. Test simple baselines first.
 
 ### Data Size Matters
-ARIMA needs sufficient data (50+ observations). Our 13 weeks wasn't enough.
+Thirteen weeks left too little history for a confident comparison. A longer series and repeated temporal backtests would make the conclusion more reliable.
 
 ### Understand Your Data
 No seasonality = ARIMA's strength wasted. Linear trend = LR's sweet spot.
@@ -289,7 +290,7 @@ No seasonality = ARIMA's strength wasted. Linear trend = LR's sweet spot.
 Systematic comparison revealed a surprising winner. Don't rely on assumptions.
 
 ### Regularization Helps
-Ridge regression improved generalization with minimal complexity increase.
+Ridge regression changed the MAE/RMSE trade-off with minimal added complexity; better generalization still needs testing on more periods.
 
 ## What I'd Do Differently
 

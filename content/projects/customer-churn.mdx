@@ -12,15 +12,19 @@ demo: "https://customer-churn-fauza.streamlit.app/"
 github: "https://github.com/Fauza27/Customer-Churn-Project"
 ---
 
+## Project Summary & Role
+
+I built a churn classification workflow and a Streamlit dashboard to explore which customers might need retention outreach. My work covered data exploration, feature engineering, model comparison, evaluation, and the interactive demo. The reported 82.8% recall describes model evaluation on this dataset; retention outcomes were not measured.
+
 ## Technical Highlights
 
-**Complete ML Pipeline**: End-to-end development dari EDA, feature engineering, model training, hyperparameter tuning, hingga production deployment.
+**Complete ML Pipeline**: End-to-end development dari EDA, feature engineering, model training, hyperparameter tuning, hingga Streamlit demo deployment.
 
 **Class Imbalance Handling**: SMOTE implementation untuk handle 73-27 imbalanced dataset, improving recall dari 65% ke 82.8%.
 
 **Model Optimization**: Systematic comparison 5+ algorithms (Logistic Regression, Random Forest, Gradient Boosting, SVM, XGBoost) dengan focus pada recall optimization.
 
-**Production Deployment**: Interactive Streamlit dashboard dengan real-time prediction, batch processing, dan business insights visualization.
+**Demo Deployment**: Interactive Streamlit dashboard dengan prediction, batch processing, dan business insights visualization.
 
 ## Skills Demonstrated
 
@@ -54,7 +58,8 @@ github: "https://github.com/Fauza27/Customer-Churn-Project"
 - Precision: 65.7%
 - F1-Score: 73.3%
 - ROC-AUC: 86.0%
-- Response Time: Under 100ms
+
+The evaluation metrics describe classification performance on the reported dataset, not the success rate of a retention campaign. A prospective business test would be needed to measure whether outreach actually reduces churn.
 
 **Why Recall?** Dalam churn prediction, missing a churner (false negative) lebih mahal daripada false alarm (false positive). Better kasih promo ke non-churner daripada lose actual churner.
 
@@ -90,15 +95,15 @@ github: "https://github.com/Fauza27/Customer-Churn-Project"
 - Electronic check users: 45.3% churn rate
 
 **Actionable Recommendations**:
-- Incentivize yearly contracts (expected 30-40% churn reduction)
-- Enhanced onboarding untuk new customers (25% retention improvement)
-- Encourage auto-pay methods (15-20% churn reduction)
+- Test incentives for yearly contracts
+- Improve onboarding for new customers
+- Test whether auto-pay nudges reduce friction
 
-**ROI**: Dengan 82.8% recall, perusahaan bisa identify dan retain 83 dari 100 potential churners. Assuming $500 CAC dan $50/month revenue, ROI bisa reach $500K+ annually.
+These are recommendations based on observed risk patterns. Their effect on retention and ROI has not been measured in this project.
 
 ## Architecture
 
-**Data Pipeline**: Load → Clean → Feature Engineering → SMOTE → Train → Evaluate → Deploy
+**Data Pipeline**: Load → Clean → Split → Feature Engineering and SMOTE on training data → Train → Evaluate on held-out data → Demo deployment
 
 **Model Training**: Systematic comparison dengan consistent evaluation metrics. GridSearchCV untuk hyperparameter tuning.
 

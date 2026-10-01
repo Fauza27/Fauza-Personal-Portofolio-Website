@@ -1,12 +1,12 @@
 ---
 title: "Sales Forecasting with Time Series Analysis"
 category: "Machine Learning & Analytics"
-description: "Systematic model comparison (ARIMA vs Linear Regression) dengan hyperparameter tuning, achieving 41% improvement"
+description: "Comparison of ARIMA and linear models on a short sales series; Linear Regression reduced RMSE by 41.4% versus the ARIMA baseline."
 tech: ["Python", "Scikit-learn", "Statsmodels", "Streamlit", "Pandas", "NumPy"]
 year: "2024"
 role: "Machine Learning Developer"
 problem: "Short sales histories make reliable forecasts difficult."
-highlight: "41% lower MAE than the ARIMA baseline in model comparison"
+highlight: "41.4% lower RMSE than ARIMA in the reported model comparison"
 highlightLabel: "Evaluation result"
 demo: "https://sales-forecasting-fauza.streamlit.app/"
 github: "https://github.com/Fauza27/sales-forecasting-project"
@@ -18,7 +18,7 @@ github: "https://github.com/Fauza27/sales-forecasting-project"
 
 **Model Optimization**: GridSearchCV untuk hyperparameter tuning, Ridge regression dengan L2 regularization untuk better generalization.
 
-**Surprising Results**: Simple Linear Regression outperformed ARIMA by 41% (MAE $3,726 vs $5,800), demonstrating importance of model selection based on data characteristics.
+**Surprising Results**: Linear Regression reduced RMSE from $8,178 to $4,792 (41.4%) and MAE from $5,800 to $3,726 (35.8%) versus ARIMA on the reported comparison.
 
 **Interactive Dashboard**: Streamlit application dengan forecasting interface, confidence intervals, dan business insights visualization.
 
@@ -50,19 +50,21 @@ github: "https://github.com/Fauza27/sales-forecasting-project"
 
 ## Model Comparison Results
 
-| Model | MAE | RMSE | vs ARIMA |
+| Model | MAE | RMSE | RMSE reduction vs ARIMA |
 |-------|-----|------|----------|
 | ARIMA (5,1,0) | $5,800 | $8,178 | Baseline |
-| Linear Regression | $3,726 | $4,792 | **41% better** |
-| Ridge (α=0.1) | $3,676 | $5,049 | **Best** |
+| Linear Regression | $3,726 | $4,792 | **41.4%** |
+| Ridge (α=0.1) | $3,676 | $5,049 | 38.3% |
 
-**Winner**: Ridge Regression dengan alpha=0.1
+**Trade-off**: Ridge had the lowest MAE; Linear Regression had the lowest RMSE. The choice depends on which error measure matters most for the use case.
+
+**Evaluation limit**: The source covers only 13 weekly observations. With a 90/10 chronological split, the held-out window is very small, so these errors should be treated as an exploratory comparison. Rolling-origin evaluation on a longer history would provide stronger evidence.
 
 ## Why Linear Regression Won?
 
 **Data Characteristics**:
 - No strong seasonality (ARIMA's strength wasted)
-- Short time series (13 weeks, not enough untuk ARIMA)
+- Short time series (13 weeks, limiting reliable model comparison)
 - Clear linear trend (perfect untuk LR)
 - Simple model prevents overfitting
 
@@ -112,14 +114,11 @@ best_model = grid_search.fit(X_train, y_train)
 - **Staffing Optimization**: More staff during peak hours (13:00-15:00, 19:00-20:00)
 - **Promotion Planning**: Target slow days untuk boost sales
 
-**Expected Impact**:
-- 30% reduction in stockouts
-- 20% improvement in labor efficiency
-- 15% increase in slow-day sales
+These are planning ideas, not measured business outcomes. The forecast and model errors were evaluated; stockouts, staffing efficiency, and sales changes were not measured after deployment.
 
 ## Technical Challenges Solved
 
-**Short Time Series**: Only 13 weeks data. ARIMA needs 50+ observations. Solution: Use simple models yang nggak overfit.
+**Short Time Series**: Only 13 weeks of data. This limits parameter estimation and leaves a small holdout. I included simple models as baselines and would collect a longer history before making operational forecasts.
 
 **High Variability**: Daily sales std $1,842. Solution: Weekly aggregation untuk smooth noise.
 

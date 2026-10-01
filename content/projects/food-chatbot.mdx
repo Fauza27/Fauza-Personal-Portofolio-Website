@@ -1,16 +1,16 @@
 ---
 title: "Samarinda Food Chatbot: AI-Powered Restaurant Discovery"
 category: "AI Engineering & RAG"
-description: "A production-grade RAG chatbot that transforms 500+ Instagram food vlog videos into a searchable, context-aware restaurant recommendation platform using semantic search, multi-stage retrieval, and real-time operational status."
+description: "A RAG restaurant discovery app built from 900+ Instagram posts, with around 700 video transcriptions and 484 curated profiles for semantic search and recommendations."
 tech: ["LangChain", "FastAPI", "Qdrant", "Next.js", "OpenAI GPT-4o-mini", "Whisper AI", "Azure Speech", "Google Places API", "Docker"]
 year: "2025"
 role: "Solo Developer · AI & Full-Stack Engineer"
 problem: "Food recommendations in short videos are difficult to search and compare."
-highlight: "Searchable restaurant data built from 500+ food videos"
+highlight: "484 curated profiles from 900+ collected posts"
 highlightLabel: "Data pipeline output"
 demo: "https://food-recommendation-chatbot.vercel.app/"
 github: "https://github.com/Fauza27/food-recommendation-chatbot"
-live: "https://food-recomendation-chatbot.vercel.app"
+live: "https://food-recommendation-chatbot.vercel.app"
 videos:
   - title: "Demo Video"
     url: "https://youtu.be/IUCDBJEszZ8"
@@ -50,7 +50,7 @@ flowchart TD
         S3 --> S4["Step 4: Enrich with Location\n(Google Places API)"]
         S4 --> CSV["📋 Structured Dataset\n(806 → 18 features)"]
         CSV --> Ingest["Vector Ingestion\n(OpenAI Embeddings)"]
-        Ingest --> Qdrant["🔍 Qdrant Vector DB\n(900+ restaurants)"]
+        Ingest --> Qdrant["🔍 Qdrant Vector DB\n(searchable profiles)"]
     end
 
     subgraph App ["🤖 RAG Application (Live)"]
@@ -73,7 +73,7 @@ The most challenging part of this project wasn't the AI chatbot-it was building 
 ```mermaid
 flowchart LR
     subgraph Step1 ["Step 1: Transcribe"]
-        V["🎬 500+ Videos"] --> AZ["Azure Speech API\n(Indonesian)"]
+        V["🎬 Videos from collected posts"] --> AZ["Azure Speech API\n(Indonesian)"]
         AZ --> Raw["Raw Transcriptions\n(78% success rate)"]
     end
 
@@ -95,7 +95,7 @@ flowchart LR
 
 ### Step 1: Video Transcription
 
-After systematically collecting over 900 Instagram videos from his account, the first processing step was transcription. I used the Azure Speech API with Indonesian language support. Around 700 videos were successfully transcribed. The remaining videos were music-only, ambient, or too noisy.
+After systematically collecting over 900 Instagram posts from his account, I transcribed video posts with the Azure Speech API's Indonesian language support. Around 700 videos were successfully transcribed. Other posts were music-only clips, ambient recordings, or too noisy for reliable transcription.
 
 ### Step 2: Transcript Cleaning
 
@@ -115,7 +115,7 @@ Extracted locations were enriched with Google Places API to get precise Google M
 |--------|-------|
 | Instagram posts processed | 900+ |
 | Videos successfully transcribed | ~700 |
-| Restaurants in database | 900+ |
+| Candidate records collected | 900+ |
 | High-quality profiles | 484 (53.8%) |
 | Standardized food categories | 227 |
 | Data completeness rate | 97.4% |
@@ -287,7 +287,7 @@ Without streaming, the chatbot would feel "silent" for 3-5 seconds while the LLM
 ## Source Code & Live Demo
 
 - **GitHub Repository:** [food-recommendation-chatbot](https://github.com/Fauza27/food-recommendation-chatbot)
-- **Live Demo:** [food-recomendation-chatbot.vercel.app](https://food-recomendation-chatbot.vercel.app)
+- **Live Demo:** [food-recommendation-chatbot.vercel.app](https://food-recommendation-chatbot.vercel.app)
 - **Demo Video:** [YouTube](https://youtu.be/Dv-y_jWFmbA)
 
 The repository includes the complete FastAPI backend, Next.js frontend, 4-step ETL pipeline, and comprehensive documentation covering architecture, API reference, deployment, and troubleshooting.

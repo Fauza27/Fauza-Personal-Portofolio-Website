@@ -1,10 +1,9 @@
 ---
-title: "Unlocking Social Media: How I Turned 900+ Instagram Videos into an AI Search Engine"
+title: "Unlocking Social Media: How I Turned 900+ Instagram Posts into an AI Search Engine"
 date: "2025-11-03"
-excerpt: "How I discovered that the hardest part of building an AI chatbot isn't the AI-it's turning 900+ messy Instagram videos into clean, structured data that the AI can actually use."
+excerpt: "How I turned 900+ messy Instagram posts into searchable restaurant data, including around 700 video transcriptions and 484 curated profiles."
 author: "Muhammad Fauza"
 tags: ["AI", "RAG", "LangChain", "Data Engineering", "FastAPI", "Next.js", "Vector Database"]
-readTime: "14 min read"
 featured: true
 ---
 
@@ -48,9 +47,9 @@ Most people think building an AI application means writing prompts and calling A
 
 The first challenge was data acquisition. Processing hundreds of videos manually is impossible, and building reliable extraction pipelines for social media requires navigating complex platform restrictions.
 
-I engineered a systematic collection process to carefully gather over 900 of his Instagram videos over time. This approach allowed me to build a comprehensive raw dataset without compromising data integrity.
+I engineered a collection process to gather over 900 of his Instagram posts over time, including videos and captions.
 
-Once collected, each video was sent to **Azure Speech API** with Indonesian language support for transcription. Out of the 900+ videos, around 700 were successfully transcribed. The remaining videos were music-only clips, ambient noise, or audio too noisy for reliable transcription.
+I sent video posts to **Azure Speech API** with Indonesian language support for transcription. Around 700 videos were successfully transcribed. Other posts included music-only clips, ambient noise, or audio too noisy for reliable transcription.
 
 ### Step 2: Transcript Cleaning (Garbage In, Garbage Out)
 
@@ -206,7 +205,7 @@ There is an enormous amount of value hidden in plain sight-trapped in social med
 
 ---
 
-**Live Demo:** [food-recomendation-chatbot.vercel.app](https://food-recomendation-chatbot.vercel.app)
+**Live Demo:** [food-recommendation-chatbot.vercel.app](https://food-recommendation-chatbot.vercel.app)
 
 ---
 

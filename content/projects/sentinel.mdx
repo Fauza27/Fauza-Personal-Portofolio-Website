@@ -1,7 +1,7 @@
 ---
 title: "Sentinel: AI-Powered Predictive Maintenance Copilot"
 category: "AI Engineering & MLOps"
-description: "A production-grade multi-agent AI platform combining 10 specialized LangGraph agents, XGBoost failure prediction (95.45% recall), What-If simulation, and a real-time dashboard-built to help industrial maintenance teams prevent equipment failures before they happen."
+description: "A capstone multi-agent platform combining 10 LangGraph agents, an XGBoost model, What-If simulation, and a dashboard. The reported model evaluation reached 95.45% recall at 42.57% precision."
 tech: ["LangGraph", "XGBoost", "FastAPI", "React", "PostgreSQL", "AWS Bedrock", "Qdrant", "MLflow", "SHAP", "Docker"]
 year: "2025"
 role: "Team Lead · AI Engineer (team of five)"
@@ -30,7 +30,7 @@ gradient: "from-blue-500/20 via-indigo-500/20 to-violet-500/20"
 
 During our capstone project (Dicoding × Accenture ASAH Program), our team explored how AI could help industries move from reactive maintenance to proactive decision-making.
 
-Unexpected equipment failures in manufacturing are costly. A single unplanned downtime event can cost $260K per hour in lost production, create safety risks for workers, and trigger cascade failures across interconnected systems. Traditional maintenance approaches-either fixing things after they break (reactive) or replacing parts on a fixed schedule (preventive)-are both inefficient.
+Unexpected equipment failures in manufacturing can interrupt production, create safety risks, and affect connected systems. Traditional maintenance approaches-either fixing things after they break (reactive) or replacing parts on a fixed schedule (preventive)-can be inefficient.
 
 We wanted to investigate whether machine learning and AI agents could give maintenance teams a fundamentally better tool: one that predicts failures before they happen, explains why they're predicted, and helps engineers take the right action at the right time.
 
@@ -229,6 +229,8 @@ We deliberately optimized for **recall** (catching real failures) over precision
 | Precision | 42.57% |
 | Threshold | 0.3108 (tuned) |
 | Features | 44 engineered |
+
+The threshold favored catching failures, with a substantial false-positive trade-off reflected in 42.57% precision. These are model evaluation results; field performance and the cost of additional inspections were not measured.
 | Algorithm | XGBoost Ensemble |
 
 ### Automated Retraining Triggers
@@ -325,7 +327,7 @@ These reasoning steps are streamed to the frontend alongside the response, allow
 
 **Multi-Agent Systems Need Guardrails** - Without limits, the LangGraph pipeline could loop infinitely: tool selector → executor → validator → tool selector → ... I added `MAX_SUB_TASK_ITERATIONS`, `MAX_CONFIRMATION_ATTEMPTS`, and a recursion limit to prevent runaway execution. Guardrails aren't just nice-to-have-they're essential for production multi-agent systems.
 
-**Recall Matters More Than Accuracy** - In predictive maintenance, a 95% accurate model that misses 20% of real failures is worse than one with lower accuracy but 95.45% recall. The cost asymmetry ($500 false positive vs $260K/hour false negative) makes the optimization target obvious once you understand the domain.
+**Recall Matters More Than Accuracy** - For this capstone, we prioritized catching potential failures. The resulting 95.45% recall came with 42.57% precision, so any real deployment would need to test whether additional inspections are acceptable to maintenance teams.
 
 **Clean Architecture Enables Team Velocity** - The monolithic `main.py` (10,000+ lines) was a bottleneck. After refactoring into modular packages, team members could work on different agents simultaneously without merge conflicts. Architecture is a team productivity multiplier.
 

@@ -200,7 +200,7 @@ stateDiagram-v2
 
 ## Evaluation Results (RAGAS)
 
-I used the RAGAS framework to evaluate the system objectively-no cherry-picking, no manual grading.
+I used RAGAS to inspect retrieval and answer quality. These scores are diagnostic for the evaluated sample; without the sample size, question mix, and grading procedure, they should not be read as a general success rate.
 
 ```mermaid
 xychart-beta
@@ -211,15 +211,15 @@ xychart-beta
     line [0.7, 0.7, 0.7, 0.7, 0.7]
 ```
 
-| Metric | Score | Status | What This Actually Means |
-|--------|-------|--------|-----------------------------|
-| Faithfulness | 0.730 | ✅ PASS | No hallucinations-answers stick to source documents |
-| Context Precision | 0.842 | ✅ PASS | Retrieval finds the right information |
-| Answer Completeness | 5.24/10 | ✅ PASS | Answers cover what users need to know |
-| Answer Actionability | 4.79/10 | ✅ PASS | Users can actually act on the information |
-| Answer Relevancy | 0.585 | ⚠️ Note | Lower because I chose conversational over concise |
+| Metric | Score | Reading |
+|--------|-------|---------|
+| Faithfulness | 0.730 | Most evaluated answer content was supported by retrieved context; this does not rule out hallucinations. |
+| Context Precision | 0.842 | Relevant material generally ranked well in the evaluated retrievals. |
+| Answer Completeness | 5.24/10 | Answers left meaningful room for improvement. |
+| Answer Actionability | 4.79/10 | Practical next steps were often incomplete. |
+| Answer Relevancy | 0.585 | Answers did not consistently stay focused on the question. |
 
-**The Answer Relevancy Story** - This score initially worried me. RAGAS prefers short, dense answers. But I deliberately made the bot more conversational-like a helpful senior, not a search engine. Students prefer *"Here's what you need for KKP, and here's why each requirement matters..."* over a bare bullet list. The metric penalized this design choice, but user feedback validated it.
+**The Answer Relevancy Story** - This score warrants closer inspection. I chose a conversational answer style, which may contribute to longer responses, but the score alone cannot establish the cause. A useful next evaluation would compare concise and conversational answers on the same question set, then collect direct student feedback.
 
 ---
 
@@ -274,6 +274,6 @@ flowchart TD
 
 The complete source code for this project is available at:
 
-[GitHub Repository](https://github.com/Fauza27/penelitian-ilmiah?utm_source=chatgpt.com)
+[GitHub Repository](https://github.com/Fauza27/penelitian-ilmiah)
 
 The repository also includes Architecture Decision Records (ADR) documentation explaining various design decisions and technical trade-offs made during development.
